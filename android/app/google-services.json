@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820644781130",
+    "project_id": "fire-guard-5a3b2",
+    "storage_bucket": "fire-guard-5a3b2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820644781130:android:9d14e6065076e7c8af1ab3",
+        "android_client_info": {
+          "package_name": "com.example.fire_guard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg5XhnyjjzUYLTIdkZxmML0ZaPeDLS6pE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
