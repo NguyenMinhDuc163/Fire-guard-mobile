@@ -6,6 +6,8 @@ mixin AssetHelper {
   static const String icoLogo = '${_baseIconPath}ico_logo.png';
   static const String icoRectangleBlue = '${_baseIconPath}ico_rectangle_blue.png';
   static const String icoRectanglePink = '${_baseIconPath}ico_rectangle_pink.png';
+  static const String icoFireAlarm = '${_baseIconPath}ico_fire_alarm.png';
+  static const String icoApp = '${_baseIconPath}icon_app.png';
   static const String icoVN = '${_baseIconPath}ico_vn.png';
   static const String icoAmerica = '${_baseIconPath}ico_america.png';
   static const String leaderboard = '${_baseIconPath}leaderboard.svg';
@@ -29,5 +31,6 @@ mixin AssetHelper {
   static const String onboarding_1 = '${_baseImagePath}onboarding_1.png';
   static const String quizz = '${_baseImagePath}quizz.png';
   static const String backgroundCard = '${_baseImagePath}background_card.png';
+  static const String backgroundHome= '${_baseImagePath}bgr_home.png';
 
 }

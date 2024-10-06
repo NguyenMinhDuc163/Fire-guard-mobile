@@ -1,61 +1,75 @@
-// import 'package:flutter/material.dart';
-//
-// class ReorderableListViewWidget extends StatefulWidget {
-//   const ReorderableListViewWidget({super.key});
-//
-//   @override
-//   State<ReorderableListViewWidget> createState() =>
-//       _ReorderableListViewWidgetState();
-// }
-//
-// class _ReorderableListViewWidgetState extends State<ReorderableListViewWidget> {
-//   final List<String> _products = [
-//     'Delicious Apple',
-//     'Tropical Mango',
-//     'Juicy Orange',
-//     'Sweet Banana',
-//     'Fresh Strawberry',
-//     'Ripe Cherry'
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ReorderableListView.builder(
-//       itemCount: _products.length,
-//       itemBuilder: (context, index) {
-//         return Card(
-//           key: ValueKey(_products[index]),
-//           color: Colors.black,
-//           elevation: 4,
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(12),
-//           ),
-//           child: ListTile(
-//             contentPadding: const EdgeInsets.all(16),
-//             title: Text(
-//               _products[index],
-//               style: const TextStyle(
-//                   fontSize: 18,
-//                   fontWeight: FontWeight.bold,
-//                   color: Colors.black),
-//             ),
-//             tileColor: Colors.green.shade50,
-//             iconColor: Colors.black,
-//             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//           ),
-//         );
-//       },
-//       onReorder: (oldIndex, newIndex) {
-//         setState(() {
-//           if (newIndex > oldIndex) {
-//             newIndex -= 1;
-//           }
-//           final item = _products.removeAt(oldIndex);
-//           _products.insert(newIndex, item);
-//         });
-//       },
-//     );
-//   }
-// }
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'AppBar with Drawer',
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+      ),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My App'),
+        backgroundColor: Colors.orange,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              // Hành động khi ấn vào nút thông báo
+              print('Notification button pressed');
+            },
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.orange,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pop(context);
+                // Thêm hành động điều hướng khi ấn vào menu
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                // Thêm hành động điều hướng khi ấn vào menu
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Center(
+        child: Text('My App Content'),
+      ),
+    );
+  }
+}

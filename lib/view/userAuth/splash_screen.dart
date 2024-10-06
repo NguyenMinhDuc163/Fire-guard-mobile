@@ -48,8 +48,8 @@ class _SplashScreenState extends State<SplashScreen> {
         Center( // Sử dụng Center để hình ảnh nằm giữa
           child: ImageHelper.loadFromAsset(
             AssetHelper.icoLogo,
-            width: 150,
-            height: 150,
+            width: 250,
+            height: 250,
             alignment: Alignment.center,
           ),
         ),

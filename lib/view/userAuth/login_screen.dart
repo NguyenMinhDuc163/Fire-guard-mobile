@@ -1,4 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/main.dart';
+import 'package:fire_guard/res/core/extentions/size_extension.dart';
+import 'package:fire_guard/view/userAuth/intro_screen.dart';
+import 'package:fire_guard/view/userAuth/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +14,7 @@ import 'package:fire_guard/res/core/helpers/local_storage_helper.dart';
 import 'package:fire_guard/service/auth_services/auth_with_firebase.dart';
 import 'package:fire_guard/utils/router_names.dart';
 
+import '../../res/core/constants/dimension_constants.dart';
 import '../../viewModel/auth_view_model.dart';
 import 'widget/custom_rich_text_widget.dart';
 import 'widget/dividerR_row_widget.dart';
@@ -78,17 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
-          // IconButton(
-          //   icon: Icon(Icons.language, color: Colors.black),
-          //   onPressed: () {
-          //     // Chuyển đổi ngôn ngữ
-          //     if (context.locale == Locale('en', 'US')) {
-          //       context.setLocale(Locale('vi', 'VN'));
-          //     } else {
-          //       context.setLocale(Locale('en', 'US'));
-          //     }
-          //   },
-          // ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -123,79 +117,79 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: SizedBox(
-            width: 327,
-            child: Column(
-              children: [
-                Text(
-                  'welcome_back'.tr(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ).copyWith(
-                      color: ColorPalette.kGrayscaleDark100, fontSize: 20),
+          padding:  EdgeInsets.symmetric(horizontal: height_4, vertical: height_24),
+          child: Column(
+            children: [
+              Text(
+                'welcome_back'.tr(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ).copyWith(
+                    color: ColorPalette.kGrayscaleDark100, fontSize: 20),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'happy_to_see_you'.tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: ColorPalette.kGrayscale40,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'happy_to_see_you'.tr(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: ColorPalette.kGrayscale40,
+              ),
+               SizedBox(height: height_24),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Email',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: ColorPalette.kGrayscaleDark100,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 36),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Email',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: ColorPalette.kGrayscaleDark100,
-                      ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  PrimaryTextFormFieldWidget(
+                    borderRadius: BorderRadius.circular(24),
+                    hintText: 'abc@gmail.com',
+                    controller: emailC,
+                    width: width_300,
+                    height: height_40,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'password'.tr(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: ColorPalette.kGrayscaleDark100,
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    PrimaryTextFormFieldWidget(
-                      borderRadius: BorderRadius.circular(24),
-                      hintText: 'abc@gmail.com',
-                      controller: emailC,
-                      width: 327,
-                      height: 52,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'password'.tr(),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: ColorPalette.kGrayscaleDark100,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    PasswordTextFieldWidget(
-                      borderRadius: BorderRadius.circular(24),
-                      hintText: 'password'.tr(),
-                      controller: passwordC,
-                      width: 327,
-                      height: 52,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  ),
+                  const SizedBox(height: 8),
+                  PasswordTextFieldWidget(
+                    borderRadius: BorderRadius.circular(24),
+                    hintText: 'password'.tr(),
+                    controller: passwordC,
+                    width: width_300,
+                    height: height_40,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: EdgeInsets.only(left: width_230),
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     PrimaryTextButtonWidget(
                       onPressed: () {
@@ -206,84 +200,86 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
-                Column(
-                  children: [
-                    PrimaryButtonWidget(
-                      elevation: 0,
-                      onTap: () async {
-                        // TODO login
-                        // UserModel? userModel = await authService.signInWithEmailAndPassWord(email: emailC.text.trim(), password: passwordC.text.trim());
-                        // if(userModel != null){
-                        //   redirectSelectPreferencesScreen();
-                        // }else{
-                        //   showToast(message: 'Invalid email or password.');
-                        // }
-                        redirectSelectPreferencesScreen();
+              ),
+              const SizedBox(height: 32),
+              Column(
+                children: [
+                  PrimaryButtonWidget(
+                    elevation: 0,
+                    onTap: () async {
+                      // TODO login
+                      // UserModel? userModel = await authService.signInWithEmailAndPassWord(email: emailC.text.trim(), password: passwordC.text.trim());
+                      // if(userModel != null){
+                      //   redirectSelectPreferencesScreen();
+                      // }else{
+                      //   showToast(message: 'Invalid email or password.');
+                      // }
 
+                      Navigator.pushNamed(context, RouteNames.mainApp);
+                      // redirectSelectPreferencesScreen();
+
+                    },
+                    text: 'login'.tr(),
+                    bgColor: ColorPalette.kPrimary,
+                    borderRadius: 20,
+                    height: 46,
+                    width: 327,
+                    textColor: ColorPalette.kWhite,
+                    fontSize: 14,
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: CustomRichTextWidget(
+                      title: 'dont_have_account'.tr(),
+                      subtitle: 'create_here'.tr(),
+                      onTab: () {
+                        Navigator.pushNamed(context, RouteNames.signUpScreen);
                       },
-                      text: 'login'.tr(),
-                      bgColor: ColorPalette.kPrimary,
-                      borderRadius: 20,
-                      height: 46,
-                      width: 327,
-                      textColor: ColorPalette.kWhite,
-                      fontSize: 14,
-                    ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: CustomRichTextWidget(
-                        title: 'dont_have_account'.tr(),
-                        subtitle: 'create_here'.tr(),
-                        onTab: () {
-                          Navigator.pushNamed(context, RouteNames.signUpScreen);
-                        },
-                        subtitleTextStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette.kPrimary,
-                        ),
+                      subtitleTextStyle: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: ColorPalette.kPrimary,
                       ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Column(
+                  children: [
+                    DividerRowWidget(title: "or_sign_in_with".tr()),
+                    const SizedBox(height: 24),
+                    SecondaryButtonWidget(
+                      height: 56,
+                      textColor: ColorPalette.kGrayscaleDark100,
+                      width: 300,
+                      onTap: () {},
+                      borderRadius: 24,
+                      bgColor:
+                      ColorPalette.kBackground.withOpacity(0.3),
+                      text: 'continue_with_google'.tr(),
+                      icons: AssetHelper.kGoogleIcon,
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    children: [
-                      DividerRowWidget(title: "or_sign_in_with".tr()),
-                      const SizedBox(height: 24),
-                      SecondaryButtonWidget(
-                        height: 56,
-                        textColor: ColorPalette.kGrayscaleDark100,
-                        width: 300,
-                        onTap: () {},
-                        borderRadius: 24,
-                        bgColor:
-                        ColorPalette.kBackground.withOpacity(0.3),
-                        text: 'continue_with_google'.tr(),
-                        icons: AssetHelper.kGoogleIcon,
-                      ),
-                    ],
-                  ),
+              ),
+              const SizedBox(height: 50),
+               Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TermsAndPrivacyTextWidget(
+                  title1: 'by_signing_up'.tr(),
+                  title2: 'terms'.tr(),
+                  title3: 'and'.tr(),
+                  title4: 'conditions_of_use'.tr(),
                 ),
-                const SizedBox(height: 50),
-                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: TermsAndPrivacyTextWidget(
-                    title1: 'by_signing_up'.tr(),
-                    title2: 'terms'.tr(),
-                    title3: 'and'.tr(),
-                    title4: 'conditions_of_use'.tr(),
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),

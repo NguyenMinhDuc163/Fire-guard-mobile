@@ -1,10 +1,10 @@
 {
-  "titleIntro1": "Chào mừng đến với Quizzo!",
-  "titleIntro2": "Thử thách Kiến Thức Đỉnh Cao",
-  "titleIntro3": "Kiểm Tra Hiểu Biết cùng QuizPro",
-  "contentIntro1": "Tham gia cùng bạn bè, tích lũy điểm số và chinh phục bảng xếp hạng trong trò chơi đố vui đầy lôi cuốn này.",
-  "contentIntro2": "Thử sức hiểu biết của bạn và chứng minh khả năng qua nhiều chủ đề hấp dẫn trong trò chơi này.",
-  "contentIntro3": "Quizzo là ứng dụng hoàn hảo để bạn và bạn bè thách thức chính mình, với hàng ngàn câu đố vui ngay trong tầm tay.",
+  "titleIntro1": "Chào mừng đến với Fire Guard!",
+  "titleIntro2": "Phản Hồi Tức Thì",
+  "titleIntro3": "An Toàn Chỉ Với Một Chạm",
+  "contentIntro1": "Giới thiệu hệ thống báo cháy thông minh từ nhóm 12 lớp IoT, giải pháp nhanh chóng và chính xác trong các tình huống khẩn cấp.",
+  "contentIntro2": "Ứng dụng của chúng tôi kết nối tức thời với cơ quan cứu hỏa, giúp phản ứng nhanh và an toàn trong mọi trường hợp hỏa hoạn.",
+  "contentIntro3": "Bảo vệ cuộc sống và tài sản chưa bao giờ dễ dàng hơn. Hãy sẵn sàng ứng phó mọi nguy cơ chỉ với một chạm.",
   "buttonNext": "Tiếp tục",
   "buttonGetStarted": "Bắt đầu ngay",
   "skip": "Bỏ qua",
@@ -50,9 +50,17 @@
   "beat_the_best": "Thách thức người giỏi nhất!",
   "start_now": "Bắt đầu ngay",
   "home": "Trang chủ",
-  "quizzes": "Bài kiểm tra",
-  "leaderboard": "Bảng xếp hạng",
-  "friends": "Bạn bè",
+  "fireNews": "Tin PCCC",
+  "fireSafetySkills": "Kĩ năng PCCC",
+  "personalProfile": "Cá nhân",
+
+  "fireAlarm": "Báo Cháy",
+  "atYourLocation": "tại vị trí của bạn",
+  "fireWarningMessage": "Hết sức giữ bình tĩnh khi có dấu hiệu hỏa hoạn và hãy nhấn 'Báo cháy' ngay để gửi thông báo đến những người xung quanh bạn.",
+  "viewAndReportFireLocation": "Xem và Thông báo vị trí đám cháy",
+  "call114": "Gọi 114",
+
+
   "search": "Tìm kiếm",
   "topPlayer" : "Vị trí đứng đầu vẫn đang chờ đợi người xứng đáng!",
   "continue": "Tiếp tục"

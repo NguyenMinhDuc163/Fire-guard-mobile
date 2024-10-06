@@ -9,6 +9,9 @@ const double kMinPadding = 5.0; // minimum default padding
 const double kTopPadding = 8.0; // default top padding
 
 const double kDefaultIconSize = 18;
+double widthScreen(context) => MediaQuery.of(context).size.width;
+
+double heightScreen(context) => MediaQuery.of(context).size.height;
 
 const BorderRadius kDefaultBorderRadius = BorderRadius.all(Radius.circular(8));
 
@@ -63,6 +66,7 @@ double width_120 = 120.w;
 double width_130 = 130.w;
 double width_150 = 150.w;
 double width_200 = 200.w;
+double width_230 = 230.w;
 double width_250 = 250.w;
 double width_300 = 300.w;
 double width_320 = 320.w;
@@ -91,6 +95,7 @@ double height_130 = 130.h;
 double height_140 = 140.h;
 double height_150 = 150.h;
 double height_160 = 160.h;
+double height_200 = 200.h;
 double height_400 = 400.h;
 double height_550 = 550.h;
 double height_500 = 500.h;
