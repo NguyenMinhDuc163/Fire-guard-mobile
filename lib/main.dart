@@ -22,17 +22,17 @@ void main() async {
   await LocalStorageHelper.initLocalStorageHelper();
   await dotenv.load(fileName: ".env");
 
-  await Firebase.initializeApp(
-      options:  FirebaseOptions(
-        apiKey: dotenv.env['API_KEY']!,
-        appId: dotenv.env['APP_ID']!,
-        messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-        projectId: dotenv.env['PROJECT_ID']!,
-      )
-  );
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.playIntegrity, // Sử dụng SafetyNet cho Android
-  );
+  // await Firebase.initializeApp(
+  //     options:  FirebaseOptions(
+  //       apiKey: dotenv.env['API_KEY']!,
+  //       appId: dotenv.env['APP_ID']!,
+  //       messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+  //       projectId: dotenv.env['PROJECT_ID']!,
+  //     )
+  // );
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider: AndroidProvider.playIntegrity, // Sử dụng SafetyNet cho Android
+  // );
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,

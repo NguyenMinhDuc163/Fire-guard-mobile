@@ -11,7 +11,7 @@ import 'package:fire_guard/models/user_model.dart';
 import 'package:fire_guard/res/core/constants/color_constants.dart';
 import 'package:fire_guard/res/core/helpers/asset_helper.dart';
 import 'package:fire_guard/res/core/helpers/local_storage_helper.dart';
-import 'package:fire_guard/service/auth_services/auth_with_firebase.dart';
+/// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
 import 'package:fire_guard/utils/router_names.dart';
 
 import '../../res/core/constants/dimension_constants.dart';
@@ -36,8 +36,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController emailC;
   late TextEditingController passwordC;
-  final authService = AuthWithFirebase();
+  /// final authService = AuthWithFirebase(); // Firebase Authentication Service
   bool isVietnamese = true;
+
   @override
   void initState() {
     super.initState();
@@ -57,16 +58,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void redirectSelectPreferencesScreen() async{
-    // man hinh nay chi xuat hien trong lan khoi dong dau tien
+  void redirectSelectPreferencesScreen() async {
+    // màn hình này chỉ xuất hiện trong lần khởi động đầu tiên
     final ignoreSelectPreferencesScreen = LocalStorageHelper.getValue('ignoreSelectPreferencesScreen') as bool?;
     await Future.delayed(const Duration(milliseconds: 1000));
-    if(ignoreSelectPreferencesScreen != null && ignoreSelectPreferencesScreen){
+    if (ignoreSelectPreferencesScreen != null && ignoreSelectPreferencesScreen) {
       Navigator.of(context).pushNamed(RouteNames.mainApp);
       // Navigator.of(context).pushNamed(IntroScreen.routeName);
-
-    }
-    else{
+    } else {
       LocalStorageHelper.setValue('ignoreSelectPreferencesScreen', true);
       Navigator.of(context).pushNamed(RouteNames.selectPreferencesScreen);
     }
@@ -78,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final authViewModel = Provider.of<AuthViewModel>(context);
     return Scaffold(
       backgroundColor: ColorPalette.kWhite,
-      appBar:  AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -91,7 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 50,
               ),
               GestureDetector(
-                // onTap: _toggleImage,
                 onTap: () {
                   isVietnamese = !isVietnamese;
                   if (isVietnamese) {
@@ -107,9 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 42,
                     padding: const EdgeInsets.all(8),
                     child: isVietnamese
-
-                        ? const IconLanguageWidget( name: "VN", path: AssetHelper.icoVN)
-                        : const IconLanguageWidget( name: "EN", path: AssetHelper.icoAmerica)),
+                        ? const IconLanguageWidget(name: "VN", path: AssetHelper.icoVN)
+                        : const IconLanguageWidget(name: "EN", path: AssetHelper.icoAmerica)),
               ),
             ],
           )
@@ -117,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: height_4, vertical: height_24),
+          padding: EdgeInsets.symmetric(horizontal: height_4, vertical: height_24),
           child: Column(
             children: [
               Text(
@@ -126,8 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                ).copyWith(
-                    color: ColorPalette.kGrayscaleDark100, fontSize: 20),
+                ).copyWith(color: ColorPalette.kGrayscaleDark100, fontSize: 20),
               ),
               const SizedBox(height: 8),
               Text(
@@ -139,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: ColorPalette.kGrayscale40,
                 ),
               ),
-               SizedBox(height: height_24),
+              SizedBox(height: height_24),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -151,9 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: ColorPalette.kGrayscaleDark100,
                     ),
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
                   PrimaryTextFormFieldWidget(
                     borderRadius: BorderRadius.circular(24),
                     hintText: 'abc@gmail.com',
@@ -189,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: EdgeInsets.only(left: width_230),
                 child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     PrimaryTextButtonWidget(
                       onPressed: () {
@@ -208,16 +201,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     elevation: 0,
                     onTap: () async {
                       // TODO login
-                      // UserModel? userModel = await authService.signInWithEmailAndPassWord(email: emailC.text.trim(), password: passwordC.text.trim());
-                      // if(userModel != null){
-                      //   redirectSelectPreferencesScreen();
-                      // }else{
-                      //   showToast(message: 'Invalid email or password.');
-                      // }
-
+                      /// UserModel? userModel = await authService.signInWithEmailAndPassWord(
+                      ///   email: emailC.text.trim(), password: passwordC.text.trim());
+                      /// if (userModel != null) {
+                      ///   redirectSelectPreferencesScreen();
+                      /// } else {
+                      ///   showToast(message: 'Invalid email or password.');
+                      /// }
                       Navigator.pushNamed(context, RouteNames.mainApp);
                       // redirectSelectPreferencesScreen();
-
                     },
                     text: 'login'.tr(),
                     bgColor: ColorPalette.kPrimary,
@@ -227,9 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     textColor: ColorPalette.kWhite,
                     fontSize: 14,
                   ),
-                  const SizedBox(
-                    height: 24,
-                  ),
+                  const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.only(left: 4),
                     child: CustomRichTextWidget(
@@ -260,8 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 300,
                       onTap: () {},
                       borderRadius: 24,
-                      bgColor:
-                      ColorPalette.kBackground.withOpacity(0.3),
+                      bgColor: ColorPalette.kBackground.withOpacity(0.3),
                       text: 'continue_with_google'.tr(),
                       icons: AssetHelper.kGoogleIcon,
                     ),
@@ -269,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 50),
-               Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: TermsAndPrivacyTextWidget(
                   title1: 'by_signing_up'.tr(),
@@ -285,5 +274,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
 }

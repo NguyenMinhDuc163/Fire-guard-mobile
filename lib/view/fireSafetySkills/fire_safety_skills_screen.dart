@@ -2,59 +2,57 @@ import 'package:flutter/material.dart';
 
 class FireSafetySkillsScreen extends StatefulWidget {
   const FireSafetySkillsScreen({super.key});
+
   @override
   _FireSafetySkillsScreenState createState() => _FireSafetySkillsScreenState();
 }
 
-class _FireSafetySkillsScreenState extends State<FireSafetySkillsScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _FireSafetySkillsScreenState extends State<FireSafetySkillsScreen> {
+  List<bool> isSelected = [true, false];
+  bool isFireSafetySkills = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kỹ năng PCCC & Thoát hiểm'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(
-              icon: Icon(Icons.settings),
-              text: 'Kỹ năng PCCC',
-            ),
-            Tab(
-              icon: Icon(Icons.directions_run),
-              text: 'Kỹ năng thoát hiểm',
-            ),
-          ],
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.orange,
-          indicator: BoxDecoration(
-            borderRadius: BorderRadius.circular(30), // Bo tròn góc
-            color: Colors.orange, // Màu của tab đang được chọn
-          ),
-          labelPadding: EdgeInsets.symmetric(horizontal: 10.0),
-          unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
-          labelStyle: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const Text('Kỹ năng PCCC & Thoát hiểm'),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          FireSafetySkillsList(),
-          EscapeSkillsList(),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Center(
+              child: ToggleButtons(
+                borderRadius: BorderRadius.circular(30),
+                borderWidth: 2,
+                fillColor: Colors.orange,
+                selectedColor: Colors.white,
+                color: Colors.orange,
+                constraints: const BoxConstraints(
+                  minHeight: 50.0,
+                  minWidth: 150.0,
+                ),
+                children: const <Widget>[
+                  Text('Kỹ năng PCCC'),
+                  Text('Kỹ năng thoát hiểm'),
+                ],
+                isSelected: isSelected,
+                onPressed: (int index) {
+                  setState(() {
+                    isFireSafetySkills = index == 0;
+                    for (int i = 0; i < isSelected.length; i++) {
+                      isSelected[i] = i == index;
+                    }
+                  });
+                },
+              ),
+            ),
+          ),
+          Expanded(
+            child: isFireSafetySkills
+                ? const FireSafetySkillsList()
+                : const EscapeSkillsList(),
+          ),
         ],
       ),
     );
@@ -62,11 +60,13 @@ class _FireSafetySkillsScreenState extends State<FireSafetySkillsScreen>
 }
 
 class FireSafetySkillsList extends StatelessWidget {
+  const FireSafetySkillsList({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(8.0),
-      children: [
+      padding: const EdgeInsets.all(8.0),
+      children: const [
         SkillItem(number: '1', description: 'Kỹ năng cần thiết người dân cần trang bị để xử lý khi có cháy'),
         SkillItem(number: '2', description: 'Cách phòng ngừa cháy nổ từ máy sấy quần áo'),
         SkillItem(number: '3', description: 'Cách bảo đảm an toàn PCCC dịp Tết Nguyên đán'),
@@ -80,11 +80,13 @@ class FireSafetySkillsList extends StatelessWidget {
 }
 
 class EscapeSkillsList extends StatelessWidget {
+  const EscapeSkillsList({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(8.0),
-      children: [
+      padding: const EdgeInsets.all(8.0),
+      children: const [
         SkillItem(number: '1', description: 'Kỹ năng thoát hiểm khi có hỏa hoạn trong nhà cao tầng'),
         SkillItem(number: '2', description: 'Cách sử dụng thang thoát hiểm an toàn'),
         SkillItem(number: '3', description: 'Kỹ năng thoát hiểm khi gặp cháy trong xe ô tô'),
@@ -99,12 +101,16 @@ class SkillItem extends StatelessWidget {
   final String number;
   final String description;
 
-  SkillItem({required this.number, required this.description});
+  const SkillItem({required this.number, required this.description, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
       child: ListTile(
         leading: CircleAvatar(
           child: Text(number),
@@ -118,7 +124,7 @@ class SkillItem extends StatelessWidget {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: FireSafetySkillsScreen(),
   ));
 }

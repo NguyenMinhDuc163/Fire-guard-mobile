@@ -103,79 +103,83 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     // Nút Gọi 114
-                    GestureDetector(
-                      onTap: () async {
-                        final Uri phoneUri = Uri(scheme: 'tel', path: '114'); // Thay bằng số điện thoại của bạn
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          final Uri phoneUri = Uri(scheme: 'tel', path: '114'); // Thay bằng số điện thoại của bạn
 
-                        if (await canLaunchUrl(phoneUri)) {
-                          await launchUrl(phoneUri);
-                        } else {
-                          throw 'Could not launch $phoneUri';
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(16.0),
-                        width: 150,  // Chiều rộng của mỗi nút
-                        height: 100, // Chiều cao của mỗi nút
-                        decoration: BoxDecoration(
-                          color: Colors.white,  // Màu nền của nút
-                          borderRadius: BorderRadius.circular(20.0),  // Bo góc
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),  // Đổ bóng nhẹ
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 2),  // Vị trí của bóng
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.phone, color: Colors.orange, size: 30),  // Icon Gọi 114
-                            SizedBox(height: 10),
-                            Text(
-                              'call114'.tr(),
-                              style: TextStyle(color: Colors.orange, fontSize: 16),
-                            ),
-                          ],
+                          if (await canLaunchUrl(phoneUri)) {
+                            await launchUrl(phoneUri);
+                          } else {
+                            throw 'Could not launch $phoneUri';
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(16.0),
+                          width: 150,  // Chiều rộng của mỗi nút
+                          height: 100, // Chiều cao của mỗi nút
+                          decoration: BoxDecoration(
+                            color: Colors.white,  // Màu nền của nút
+                            borderRadius: BorderRadius.circular(20.0),  // Bo góc
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),  // Đổ bóng nhẹ
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 2),  // Vị trí của bóng
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.phone, color: Colors.orange, size: 30),  // Icon Gọi 114
+                              SizedBox(height: 10),
+                              Text(
+                                'call114'.tr(),
+                                style: TextStyle(color: Colors.orange, fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-
+                    SizedBox(width: width_20),
                     // Nút Xem và Thông báo vị trí đám cháy
-                    GestureDetector(
-                      onTap: () {
-                        // Hành động khi nhấn vào nút Thông báo vị trí đám cháy
-                        print('Xem và Thông báo vị trí đám cháy pressed');
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: height_8),
-                        width: 150,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child:  const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.map, color: Colors.orange, size: 30),  // Icon bản đồ
-                            SizedBox(height: 10),
-                            Text(
-                              'Xem và Thông báo vị trí đám cháy',
-                              style: TextStyle(color: Colors.orange, fontSize: 14),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          // Hành động khi nhấn vào nút Thông báo vị trí đám cháy
+                          print('Xem và Thông báo vị trí đám cháy pressed');
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: height_8),
+                          width: 150,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child:  const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.map, color: Colors.orange, size: 30),  // Icon bản đồ
+                              SizedBox(height: 10),
+                              Text(
+                                'Xem và Thông báo vị trí đám cháy',
+                                style: TextStyle(color: Colors.orange, fontSize: 14),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

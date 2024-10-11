@@ -32,5 +32,6 @@ mixin AssetHelper {
   static const String quizz = '${_baseImagePath}quizz.png';
   static const String backgroundCard = '${_baseImagePath}background_card.png';
   static const String backgroundHome= '${_baseImagePath}bgr_home.png';
+  static const String avatar= '${_baseImagePath}avatar.jpg';
 
 }
