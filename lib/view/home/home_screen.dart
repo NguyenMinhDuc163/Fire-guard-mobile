@@ -5,6 +5,7 @@ import 'package:fire_guard/res/core/helpers/asset_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:fire_guard/res/core/constants/color_constants.dart';
 import 'package:fire_guard/view/home/widget/drawer_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -103,9 +104,14 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     // Nút Gọi 114
                     GestureDetector(
-                      onTap: () {
-                        // Hành động khi nhấn vào nút Gọi 114
-                        print('Gọi 114 pressed');
+                      onTap: () async {
+                        final Uri phoneUri = Uri(scheme: 'tel', path: '114'); // Thay bằng số điện thoại của bạn
+
+                        if (await canLaunchUrl(phoneUri)) {
+                          await launchUrl(phoneUri);
+                        } else {
+                          throw 'Could not launch $phoneUri';
+                        }
                       },
                       child: Container(
                         padding: EdgeInsets.all(16.0),

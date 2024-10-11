@@ -62,6 +62,7 @@ dependencies:
   json_annotation: ^4.8.1
   logger: ^2.4.0
   flutter_local_notifications: ^17.2.2
+  url_launcher: ^6.3.0
 
 
 dev_dependencies:

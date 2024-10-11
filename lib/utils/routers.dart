@@ -1,7 +1,11 @@
 
+import 'package:fire_guard/view/fireNews/fire_news_screen.dart';
+import 'package:fire_guard/view/personalProfile/personal_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fire_guard/init.dart';
 import 'package:fire_guard/utils/router_names.dart';
+
+import '../view/fireSafetySkills/fire_safety_skills_screen.dart';
 
 
 final Map<String, WidgetBuilder> routes = {
@@ -12,9 +16,9 @@ final Map<String, WidgetBuilder> routes = {
   RouteNames.signUpScreen: (context) => const SignUpScreen(),
   RouteNames.forgotPasswordScreen: (context) => const ForgotPasswordScreen(),
   RouteNames.homeScreen: (context) => const HomeScreen(),
-  RouteNames.friendScreen: (context) => const FriendScreen(),
-  RouteNames.leaderBoardScreen: (context) => const LeaderBoard(),
-  RouteNames.quizzesScreen: (context) => const QuizzesScreen(),
+  RouteNames.friendScreen: (context) => const FireNewsScreen(),
+  RouteNames.leaderBoardScreen: (context) => const FireSafetySkillsScreen(),
+  RouteNames.quizzesScreen: (context) => const PersonalProfileScreen(),
   RouteNames.mainApp: (context) => const MainApp(),
   RouteNames.selectPreferencesScreen: (context) => const SelectPreferencesScreen(),
 
