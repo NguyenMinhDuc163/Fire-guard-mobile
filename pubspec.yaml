@@ -64,6 +64,11 @@ dependencies:
   logger: ^2.4.0
   flutter_local_notifications: ^17.2.2
   url_launcher: ^6.3.0
+  fire_guard_mobile:
+    hosted:
+      name: fire_guard_mobile
+      url: https://dart.pkg.github.com/NguyenMinhDuc163/Fire-guard-mobile
+    version: ^1.0.0
 
 
 dev_dependencies:
@@ -100,7 +105,8 @@ flutter:
     - assets/images/
     - assets/icons/
     - .env
-
+false_secrets:
+  - android/app/google-services.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
