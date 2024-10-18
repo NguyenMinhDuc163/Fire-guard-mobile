@@ -3,8 +3,7 @@ description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 #publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-repository: https://github.com/NguyenMinhDuc163/Fire-guard-mobile
-publish_to: https://dart.pkg.github.com/NguyenMinhDuc163/Fire-guard-mobile
+
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -64,11 +63,6 @@ dependencies:
   logger: ^2.4.0
   flutter_local_notifications: ^17.2.2
   url_launcher: ^6.3.0
-  fire_guard_mobile:
-    hosted:
-      name: fire_guard_mobile
-      url: https://dart.pkg.github.com/NguyenMinhDuc163/Fire-guard-mobile
-    version: ^1.0.0
 
 
 dev_dependencies:
