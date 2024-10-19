@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/network_service.dart';
 import 'response/api_response.dart';
 
@@ -6,7 +7,7 @@ abstract class BaseApiService {
   final Dio dio = NetworkService().dio;
 
   // Hàm dùng chung cho các request HTTP
-  Future<ApiResponse<T>> sendRequest<T>(
+  Future<BaseResponse<T>> sendRequest<T>(
       String url, {
         required T Function(Map<String, dynamic>) fromJson,
         String method = 'GET',
@@ -32,21 +33,21 @@ abstract class BaseApiService {
 
       // Xử lý nếu status code là 200
       if (response.statusCode == 200) {
-        return ApiResponse(data: fromJson(response.data));
+        return BaseResponse(data: fromJson(response.data));
       } else {
-        return ApiResponse(
+        return BaseResponse(
             error: 'Server error: ${response.statusCode} - ${response.statusMessage}');
       }
     } on DioException catch (e) {
       if (e.response != null) {
-        return ApiResponse(
+        return BaseResponse(
             error:
             'DioError: ${e.response?.statusCode} - ${e.response?.data}');
       } else {
-        return ApiResponse(error: 'DioError: ${e.message}');
+        return BaseResponse(error: 'DioError: ${e.message}');
       }
     } catch (e) {
-      return ApiResponse(error: 'Unexpected Error: $e');
+      return BaseResponse(error: 'Unexpected Error: $e');
     }
   }
 }

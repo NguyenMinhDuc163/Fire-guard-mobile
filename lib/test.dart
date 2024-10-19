@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'service/api_service/response/api_response.dart';
 import 'service/api_service/api_service.dart';
 import 'service/api_service/request/send_data_sensor_request.dart';
 import 'service/api_service/response/send_data_sensor_response.dart';
+import 'viewModel/sensor_view_model.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => SensorViewModel(), // Cung cấp SensorViewModel cho ứng dụng
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,32 +30,11 @@ class SensorDataPage extends StatefulWidget {
 }
 
 class _SensorDataPageState extends State<SensorDataPage> {
-  final ApiServices _sensorService = ApiServices();
-  String _responseMessage = 'Nhấn nút để gửi dữ liệu cảm biến';
-
-  void _sendSensorData() async {
-    SendDataSensorRequest request = SendDataSensorRequest(
-      deviceId: 'esp8266_001',
-      flameSensor: true,
-      mq2GasLevel: 500,
-      mq135AirQuality: 300,
-      timestamp: DateTime.now().toUtc(),
-    );
-
-    ApiResponse<SendDataSensorResponse> response =
-    await _sensorService.sendSensorData(request);
-
-    setState(() {
-      if (response.hasError) {
-        _responseMessage = 'Lỗi: ${response.error}';
-      } else {
-        _responseMessage = 'Thành công: ${response.data?.message}';
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    final sensorViewModel = Provider.of<SensorViewModel>(context);
+    final model = sensorViewModel.model;
     return Scaffold(
       appBar: AppBar(
         title: Text('Gửi Dữ Liệu Cảm Biến'),
@@ -59,12 +45,12 @@ class _SensorDataPageState extends State<SensorDataPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: _sendSensorData,
+              onPressed: sensorViewModel.uploadSensorData,
               child: Text('Gửi Dữ Liệu'),
             ),
             SizedBox(height: 20),
             Text(
-              _responseMessage,
+              model.responseMessage,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),

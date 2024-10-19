@@ -1,11 +1,12 @@
 //tạo ra chuỗi xác thực với Bearer token cho HTTP request.
+import 'package:fire_guard/service/api_service/response/base_response.dart';
+
 class HttpUtility {
   static String getBearerAuthentication(String token) {
     return "Bearer $token";
   }
-// static String getBearerAuthentication(String token) {
-//   return '${Utils.getCurrentTimeStringRequest()}|${value.userName}|X-AUTH-TOKEN $token|DEVICE_ID ${value.deviceId}';
-// }
+
+
 }
 
 class StringUtility {
@@ -29,5 +30,13 @@ class StringUtility {
       from = from.substring(0, from.length - pattern.length);
     }
     return from;
+  }
+}
+
+String handleApiResponse<T>(BaseResponse<T> response, {String? successMessage}) {
+  if (response.code != 200 || response.error?.isNotEmpty == true) {
+    return 'Lỗi: ${response.error ?? "Không xác định"}';
+  } else {
+    return successMessage ?? 'Thành công: ${response.message}';
   }
 }
