@@ -1,10 +1,7 @@
 import 'dart:async';
+import 'package:fire_guard/utils/core/constants/textstyle_ext.dart';
 import 'package:flutter/material.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
-import 'package:fire_guard/res/core/constants/dimension_constants.dart';
-import 'package:fire_guard/res/core/constants/textstyle_ext.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
-import 'package:fire_guard/res/core/helpers/image_helper.dart';
+import '../../../init.dart';
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/view/userAuth/widget/button_intro_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';

@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:fire_guard/utils/core/constants/textstyle_ext.dart';
 import 'package:flutter/material.dart';
 
-import '../../../res/core/constants/color_constants.dart';
-import '../../../res/core/constants/dimension_constants.dart';
-import '../../../res/core/constants/textstyle_ext.dart';
+import '../../../init.dart';
 
 class ButtonIntroWidget extends StatelessWidget {
   final String title;

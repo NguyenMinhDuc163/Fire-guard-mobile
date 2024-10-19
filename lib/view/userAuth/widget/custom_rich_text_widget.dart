@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
-
+import '../../../init.dart';
 class CustomRichTextWidget extends StatelessWidget {
   const CustomRichTextWidget({
     super.key,

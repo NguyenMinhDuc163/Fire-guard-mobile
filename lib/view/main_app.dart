@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/utils/core/constants/color_constants.dart';
+import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
 import 'package:fire_guard/view/fireNews/fire_news_screen.dart';
 import 'package:fire_guard/view/fireSafetySkills/fire_safety_skills_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
 import 'package:fire_guard/view/home/home_screen.dart';
 
 import 'personalProfile/personal_profile_screen.dart';  // Đảm bảo rằng bạn đã tạo HomeScreen và các màn hình khác

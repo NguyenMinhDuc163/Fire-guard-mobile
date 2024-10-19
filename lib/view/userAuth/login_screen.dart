@@ -1,20 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:fire_guard/main.dart';
-import 'package:fire_guard/res/core/extentions/size_extension.dart';
-import 'package:fire_guard/view/userAuth/intro_screen.dart';
-import 'package:fire_guard/view/userAuth/splash_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
-import 'package:fire_guard/global/common/toast.dart';
-import 'package:fire_guard/models/user_model.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
-import 'package:fire_guard/res/core/helpers/local_storage_helper.dart';
 /// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
 import 'package:fire_guard/utils/router_names.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../res/core/constants/dimension_constants.dart';
+import '../../../init.dart';
 import '../../viewModel/auth_view_model.dart';
 import 'widget/custom_rich_text_widget.dart';
 import 'widget/dividerR_row_widget.dart';
@@ -25,7 +15,6 @@ import 'widget/primary_text_button_widget.dart';
 import 'widget/primary_text_form_field_widget.dart';
 import 'widget/secondary_button_widget.dart';
 import 'widget/terms_and_privacyText_widget.dart';
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 

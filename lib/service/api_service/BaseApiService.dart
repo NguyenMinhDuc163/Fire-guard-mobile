@@ -33,7 +33,8 @@ abstract class BaseApiService {
 
       // Xử lý nếu status code là 200
       if (response.statusCode == 200) {
-        return BaseResponse(data: fromJson(response.data));
+        return BaseResponse.fromJson(response.data, (json) => fromJson(json),
+        );
       } else {
         return BaseResponse(
             error: 'Server error: ${response.statusCode} - ${response.statusMessage}');

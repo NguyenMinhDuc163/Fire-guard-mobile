@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fire_guard/global/common/toast.dart';
 import 'package:fire_guard/models/user_model.dart';
 import 'package:fire_guard/service/auth_services/auth_service.dart';
+import '../../../init.dart';
 
 class AuthWithFirebase implements AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance; // instance of firebase auth

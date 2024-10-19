@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fire_guard/global/common/toast.dart';
+import '../../../init.dart';
 import 'package:fire_guard/models/user_model.dart';
 
 class FirebaseAuthService {

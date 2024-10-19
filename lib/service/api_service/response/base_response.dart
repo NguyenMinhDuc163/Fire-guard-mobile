@@ -8,7 +8,7 @@ class BaseResponse<T> {
   });
 
   final int? code;
-  final T? data;
+  final List<T>? data; // data là một danh sách các đối tượng T
   final String? status;
   final String? message;
   final String? error;
@@ -19,7 +19,9 @@ class BaseResponse<T> {
       ) =>
       BaseResponse<T>(
         code: json["code"],
-        data: json["data"] != null ? fromJsonT(json["data"]) : null,
+        data: json["data"] != null
+            ? List<T>.from(json["data"].map((x) => fromJsonT(x)))
+            : [],
         status: json["status"],
         message: json["message"],
         error: json["error"],
@@ -27,7 +29,7 @@ class BaseResponse<T> {
 
   Map<String, dynamic> toJson() => {
     "code": code,
-    "data": data,
+    "data": data != null ? data!.map((e) => e).toList() : [],
     "status": status,
     "message": message,
     "error": error,

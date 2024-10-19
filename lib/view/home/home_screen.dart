@@ -1,12 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:fire_guard/main.dart';
-import 'package:fire_guard/res/core/constants/dimension_constants.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
 import 'package:fire_guard/view/home/widget/drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import '../../../init.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 

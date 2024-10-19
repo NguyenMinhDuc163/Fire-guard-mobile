@@ -2,8 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
+import '../../../init.dart';
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

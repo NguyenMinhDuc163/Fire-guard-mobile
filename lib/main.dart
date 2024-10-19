@@ -1,19 +1,17 @@
 import 'package:error_stack/error_stack.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:fire_guard/res/core/helpers/local_storage_helper.dart';
 import 'package:fire_guard/utils/routers.dart';
 import 'package:fire_guard/view/userAuth/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/provider_setup.dart';
-import 'res/core/constants/dimension_constants.dart';
+import '../../../init.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

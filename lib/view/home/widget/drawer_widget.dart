@@ -1,4 +1,4 @@
-import 'package:fire_guard/res/core/constants/color_constants.dart';
+import '../../../init.dart';
 import 'package:flutter/material.dart';
 
 class DrawerWidget extends StatelessWidget {

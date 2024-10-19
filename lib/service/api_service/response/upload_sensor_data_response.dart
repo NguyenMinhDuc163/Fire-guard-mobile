@@ -1,16 +1,17 @@
 class UploadSensorDataResponse {
-  UploadSensorDataResponse({
-    this.message,
-  });
-
-  final String? message;
-
+  UploadSensorDataResponse({this.a});
+  final String? a;
   factory UploadSensorDataResponse.fromJson(Map<String, dynamic> json) =>
       UploadSensorDataResponse(
-        message: json["message"],
+        a: json["a"],
       );
 
   Map<String, dynamic> toJson() => {
-    "message": message,
+        "a": a,
   };
+  @override
+  String toString() {
+    print('a: $a');
+    return super.toString();
+  }
 }

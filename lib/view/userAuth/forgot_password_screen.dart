@@ -1,9 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
+
 
 import 'widget/primary_button_widget.dart';
 import 'widget/primary_text_form_field_widget.dart';
+import '../../../init.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});

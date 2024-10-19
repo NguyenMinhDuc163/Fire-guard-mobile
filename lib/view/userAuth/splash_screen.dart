@@ -1,12 +1,6 @@
+import 'package:fire_guard/utils/router_names.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
-
-import '../../../res/core/helpers/asset_helper.dart';
-import '../../../res/core/helpers/image_helper.dart';
-import '../../res/core/helpers/local_storage_helper.dart';
-import '../../utils/router_names.dart';
-import 'intro_screen.dart';
-import 'login_screen.dart';
+import '../../../init.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

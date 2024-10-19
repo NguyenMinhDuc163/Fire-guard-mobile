@@ -1,11 +1,24 @@
-import 'package:dio/dio.dart';
 import 'package:fire_guard/service/api_service/BaseApiService.dart';
+import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
+import 'package:fire_guard/service/api_service/request/device_status_request.dart';
+import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
+import 'package:fire_guard/service/api_service/request/save_device_status_request.dart';
+import 'package:fire_guard/service/api_service/request/send_family_alert_request.dart';
+import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
 import 'package:fire_guard/service/api_service/request/upload_sensor_data_request.dart';
+import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
+import 'package:fire_guard/service/api_service/response/device_status_response.dart';
+import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
+import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
+import 'package:fire_guard/service/api_service/response/send_family_alert_response.dart';
+import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
 import 'package:fire_guard/service/api_service/response/upload_sensor_data_response.dart';
 
 import 'request/send_data_sensor_request.dart';
-import 'response/api_response.dart';
+import 'response/guide_and_news_response.dart';
+import 'response/HistoryResponse.dart';
+import 'response/guide_and_news_response.dart';
 import 'response/send_data_sensor_response.dart';
 
 
@@ -14,20 +27,128 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<SendDataSensorResponse>> sendSensorData(
       SendDataSensorRequest request) async {
     return await sendRequest<SendDataSensorResponse>(
-      '/api/v1/sensors/data',
+      'sensors/data',
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => SendDataSensorResponse.fromJson(json),
     );
   }
-
+  //Lưu Dữ Liệu Vào Cơ Sở Dữ Liệu
   Future<BaseResponse<UploadSensorDataResponse>> uploadSensorData(
       UploadSensorDataRequest request) async {
     return await sendRequest<UploadSensorDataResponse>(
-      '/api/v1/data/save',
+      'data/save',
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => UploadSensorDataResponse.fromJson(json),
     );
   }
+
+//Gửi Thông Báo Đến Người Dùng
+  Future<BaseResponse<SendNotificationResponse>> sendNotification(
+      SendNotificationRequest request) async {
+    return await sendRequest<SendNotificationResponse>(
+      'notifications/send',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => SendNotificationResponse.fromJson(json),
+    );
+  }
+
+  //Gửi Thông Báo Đến Người than
+  Future<BaseResponse<SendFamilyAlertResponse>> sendFamilyAlert(
+      SendFamilyAlertRequest request) async {
+    return await sendRequest<SendFamilyAlertResponse>(
+      'notifications/family',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => SendFamilyAlertResponse.fromJson(json),
+    );
+  }
+
+  //Lưu trạng thái thiết bị vào hệ thống
+  Future<BaseResponse<SaveDeviceStatusResponse>> saveDeviceStatus(
+      List<SaveDeviceStatusRequest> request) async {
+    final data = saveDeviceStatusRequestToJson(request);
+    return await sendRequest<SaveDeviceStatusResponse>(
+      'iot/status/save',
+      method: 'POST',
+      data: data,
+      fromJson: (json) => SaveDeviceStatusResponse.fromJson(json),
+    );
+  }
+
+  //Gọi Lực Lượng Cứu Hỏa
+  Future<BaseResponse<FireEmergencyResponse>> sendFireEmergency(
+      FireEmergencyRequest request) async {
+    return await sendRequest<FireEmergencyResponse>(
+      'emergency/call',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => FireEmergencyResponse.fromJson(json),
+    );
+  }
+
+
+// Thêm Dữ Liệu Hướng Dẫn và Tin Tức
+  Future<BaseResponse<AddGuideAndNewsResponse>> addDocument(
+      List<AddGuideAndNewsRequest> request) async {
+    final data = addGuideAndNewsRequestToJson(request);
+    return await sendRequest<AddGuideAndNewsResponse>(
+      'guides_and_news/add',
+      method: 'POST',
+      data: data,
+      fromJson: (json) => AddGuideAndNewsResponse.fromJson(json),
+    );
+  }
+
+
+
+  // Kiểm Tra Trạng Thái Hệ Thống IoT
+  Future<BaseResponse<DeviceStatusResponse>> getDeviceStatus() async {
+    return await sendRequest<DeviceStatusResponse>(
+      'iot/status',
+      method: 'GET',
+      fromJson: (json) => DeviceStatusResponse.fromJson(json),
+    );
+  }
+
+  Future<BaseResponse<HistoryResponse>> getHistory({
+    required String userId,
+    required String startDate,
+    required String endDate,
+  }) async {
+    final queryParams = {
+      "user_id": userId,
+      "start_date": startDate,
+      "end_date": endDate,
+    };
+
+    return await sendRequest<HistoryResponse>(
+      'history',
+      method: 'GET',
+      data: queryParams,
+      fromJson: (json) => HistoryResponse.fromJson(json),
+    );
+  }
+
+
+  Future<BaseResponse<GuideAndNewsResponse>> getGuidesAndNews({
+    required String category,
+    required int limit,
+  }) async {
+    final queryParams = {
+      "category": category,
+      "limit": limit.toString(),
+    };
+
+    return await sendRequest<GuideAndNewsResponse>(
+      'guides_and_news',
+      method: 'GET',
+      data: queryParams,
+      fromJson: (json) => GuideAndNewsResponse.fromJson(json),
+    );
+  }
+
+
 }

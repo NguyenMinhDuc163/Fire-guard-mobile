@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
 import 'package:fire_guard/view/home/widget/card_widget.dart';
+
+import '../../../init.dart';
 
 class CardListViewWidget extends StatelessWidget {
   const CardListViewWidget({Key? key}) : super(key: key);

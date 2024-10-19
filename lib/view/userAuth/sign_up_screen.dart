@@ -1,12 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:fire_guard/res/core/constants/dimension_constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fire_guard/global/common/toast.dart';
 import 'package:fire_guard/models/user_model.dart';
-import 'package:fire_guard/res/core/constants/color_constants.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
 import 'package:fire_guard/service/auth_services/auth_service.dart';
 import 'package:fire_guard/service/auth_services/auth_with_firebase.dart';
 import 'package:fire_guard/utils/router_names.dart';
@@ -19,6 +15,7 @@ import 'widget/primary_button_widget.dart';
 import 'widget/primary_text_form_field_widget.dart';
 import 'widget/secondary_button_widget.dart';
 import 'widget/terms_and_privacyText_widget.dart';
+import '../../../init.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

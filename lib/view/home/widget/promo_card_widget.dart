@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:fire_guard/res/core/constants/dimension_constants.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
+import '../../../init.dart';
 
 class PromoCardWidget extends StatelessWidget {
   const PromoCardWidget({Key? key}) : super(key: key);

@@ -45,7 +45,7 @@ class _SensorDataPageState extends State<SensorDataPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: sensorViewModel.uploadSensorData,
+              onPressed: sensorViewModel.addGuideAndNewsResponse,
               child: Text('Gửi Dữ Liệu'),
             ),
             SizedBox(height: 20),

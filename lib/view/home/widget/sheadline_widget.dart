@@ -1,9 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fire_guard/res/core/constants/dimension_constants.dart';
-import 'package:fire_guard/res/core/helpers/asset_helper.dart';
-
+import '../../../init.dart';
 class SHeadlineWidget extends StatefulWidget {
   const SHeadlineWidget({super.key, required this.topPlayers, required this.score, required this.rate});
   final List<String> topPlayers;
