@@ -3,23 +3,27 @@ import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
 import 'package:fire_guard/service/api_service/request/device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
+import 'package:fire_guard/service/api_service/request/login_request.dart';
+import 'package:fire_guard/service/api_service/request/register_request.dart';
 import 'package:fire_guard/service/api_service/request/save_device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/send_data_sensor_request.dart';
 import 'package:fire_guard/service/api_service/request/send_family_alert_request.dart';
 import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
 import 'package:fire_guard/service/api_service/request/upload_sensor_data_request.dart';
 import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
-import 'package:fire_guard/service/api_service/response/api_response.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
 
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
+import 'package:fire_guard/service/api_service/response/login_response.dart';
+import 'package:fire_guard/service/api_service/response/register_response.dart';
 import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
 import 'package:fire_guard/service/api_service/response/send_data_sensor_response.dart';
 import 'package:fire_guard/service/api_service/response/send_family_alert_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
 import 'package:fire_guard/service/api_service/response/upload_sensor_data_response.dart';
 import 'package:flutter/cupertino.dart';
+
 
 class SensorViewModel extends ChangeNotifier {
   final ApiServices apiServices = ApiServices();
@@ -238,6 +242,41 @@ class SensorViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  void sendLogin() async {
+    LoginRequest request = LoginRequest(
+      email: 'testuser@example.com',
+      password: 'password123',
+    );
+    final BaseResponse<LoginResponse> response =
+    await apiServices.sendLogin(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
+  }
+
+
+  void sendRegister() async {
+    RegisterRequest request = RegisterRequest(
+        username: "testusser",
+        email: "testudssssssaser@exasdssdasdsdsmsple.com",
+        password: "password123",
+        tokenFcm: "abc123xyz"
+    );
+    final BaseResponse<RegisterResponse> response =
+    await apiServices.sendRegister(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
   }
 
 }

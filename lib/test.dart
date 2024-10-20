@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'service/api_service/response/api_response.dart';
-import 'service/api_service/api_service.dart';
-import 'service/api_service/request/send_data_sensor_request.dart';
-import 'service/api_service/response/send_data_sensor_response.dart';
 import 'viewModel/sensor_view_model.dart';
 
 void main() {
@@ -45,7 +41,7 @@ class _SensorDataPageState extends State<SensorDataPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: sensorViewModel.addGuideAndNewsResponse,
+              onPressed: sensorViewModel.sendLogin,
               child: Text('Gửi Dữ Liệu'),
             ),
             SizedBox(height: 20),

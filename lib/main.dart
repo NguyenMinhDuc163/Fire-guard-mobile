@@ -1,17 +1,18 @@
 import 'package:error_stack/error_stack.dart';
-
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:fire_guard/utils/routers.dart';
-import 'package:fire_guard/view/userAuth/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/provider_setup.dart';
 import '../../../init.dart';
+import 'service/notification/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,30 +21,30 @@ void main() async {
   await LocalStorageHelper.initLocalStorageHelper();
   await dotenv.load(fileName: ".env");
 
-  // await Firebase.initializeApp(
-  //     options:  FirebaseOptions(
-  //       apiKey: dotenv.env['API_KEY']!,
-  //       appId: dotenv.env['APP_ID']!,
-  //       messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-  //       projectId: dotenv.env['PROJECT_ID']!,
-  //     )
-  // );
-  // await FirebaseAppCheck.instance.activate(
-  //   androidProvider: AndroidProvider.playIntegrity, // Sử dụng SafetyNet cho Android
-  // );
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: dotenv.env['API_KEY']!,
+      appId: dotenv.env['APP_ID']!,
+      messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+      projectId: dotenv.env['PROJECT_ID']!,
+    ),
+  );
+
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+  );
+
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
-
-  Locale defaultLocale = const Locale('en', 'US'); // Ngôn ngữ mặc định
+  Locale defaultLocale = const Locale('en', 'US');
   String? savedLocale = LocalStorageHelper.getValue('languageCode');
   if (savedLocale != null) {
     defaultLocale = Locale(savedLocale);
   }
 
-  // Initialize ErrorStack
   await ErrorStack.init();
 
   runApp(
@@ -53,29 +54,37 @@ void main() async {
       fallbackLocale: const Locale('en', 'US'),
       child: MultiProvider(
         providers: ProviderSetup.getProviders(),
-        child: MyApp(),
+        child: const MyApp(),
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    final NotificationService _notificationService = NotificationService();
+    // Khởi tạo Notification Service với context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _notificationService.init(context);
+    });
+
     return ScreenUtilInit(
-      designSize: const Size(360, 690), // Kích thước màn hình thiết kế gốc
+      designSize: const Size(360, 690),
       minTextAdapt: true,
       builder: (context, child) {
         return MaterialApp(
-          title: 'Quizz Pro',
+          title: 'Fire Guard',
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           home: const SplashScreen(),
-          navigatorKey: NavigationService.navigatorKey, // Dieu huong toan cuc
-          routes: routes, // Đã định nghĩa routes ở bên trên
+          navigatorKey: NavigationService.navigatorKey,
+          routes: routes,
           debugShowCheckedModeBanner: false,
-          onGenerateRoute: generateRoutes, // Đã định nghĩa generateRoutes ở bên trên
+          onGenerateRoute: generateRoutes,
         );
       },
     );

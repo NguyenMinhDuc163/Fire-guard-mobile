@@ -63,6 +63,8 @@ dependencies:
   logger: ^2.4.0
   flutter_local_notifications: ^17.2.2
   url_launcher: ^6.3.0
+  audioplayers: ^6.1.0
+
 
 
 dev_dependencies:
@@ -98,6 +100,7 @@ flutter:
     - assets/translations/
     - assets/images/
     - assets/icons/
+    - assets/sounds/alarm.wav
     - .env
 false_secrets:
   - android/app/google-services.json
