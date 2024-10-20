@@ -12,8 +12,8 @@ class NetworkService    {
   NetworkService ._internal() {
     dio = Dio(BaseOptions(
       baseUrl: StatusApi.BASE_API_URL,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
+      connectTimeout: const Duration(milliseconds: StatusApi.TIME_OUT),
+      receiveTimeout: const Duration(milliseconds: StatusApi.TIME_OUT),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

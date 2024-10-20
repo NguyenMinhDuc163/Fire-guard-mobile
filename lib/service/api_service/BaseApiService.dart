@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/network_service.dart';
-import 'response/api_response.dart';
 
 abstract class BaseApiService {
   final Dio dio = NetworkService().dio;
@@ -32,7 +31,7 @@ abstract class BaseApiService {
       }
 
       // Xử lý nếu status code là 200
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return BaseResponse.fromJson(response.data, (json) => fromJson(json),
         );
       } else {

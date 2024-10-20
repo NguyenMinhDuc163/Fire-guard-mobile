@@ -1,12 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fire_guard/utils/router_names.dart';
+import 'package:fire_guard/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fire_guard/models/user_model.dart';
-import 'package:fire_guard/service/auth_services/auth_service.dart';
-import 'package:fire_guard/service/auth_services/auth_with_firebase.dart';
-import 'package:fire_guard/utils/router_names.dart';
 
+import '../../../init.dart';
 import '../../viewModel/auth_view_model.dart';
 import 'widget/custom_rich_text_widget.dart';
 import 'widget/dividerR_row_widget.dart';
@@ -15,7 +13,6 @@ import 'widget/primary_button_widget.dart';
 import 'widget/primary_text_form_field_widget.dart';
 import 'widget/secondary_button_widget.dart';
 import 'widget/terms_and_privacyText_widget.dart';
-import '../../../init.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -29,7 +26,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late TextEditingController lastName; // Sửa lại tên biến từ `listName` thành `lastName`
   late TextEditingController emailC;
   late TextEditingController passwordC;
-  final AuthService _auth = AuthWithFirebase();
   @override
   void initState() {
     super.initState();
@@ -184,18 +180,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     elevation: 0,
                     onTap: () async {
                       //TODO sign up
-                      UserModel? user = await _auth.signUpWithEmailAndPassWord(
+                      if(emailC.text.trim().isEmpty || passwordC.text.trim().isEmpty || !Utils.isValidEmail(emailC.text.trim())){
+                        showToast(message: 'invalid_email_password'.tr());
+                        return;
+                      }
+                      authViewModel.signUp(
+                        firstName: firstName.text.trim(),
+                        lastName: lastName.text.trim(),
                         email: emailC.text.trim(),
                         password: passwordC.text.trim(),
-                        userName: '${firstName.text} ${lastName.text}',
                       );
-                      if(user != null){
-                        showToast(message: 'Sign up success');
-                        Navigator.pushNamed(context, RouteNames.loginScreen);
-                      }
-                      else{
-                        showToast(message: 'Sign up failed');
-                      }
                     },
                     text: 'create_account'.tr(),
                     bgColor: ColorPalette.kPrimary,

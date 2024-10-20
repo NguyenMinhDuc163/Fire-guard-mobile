@@ -1,7 +1,10 @@
+
 import 'package:fire_guard/service/api_service/BaseApiService.dart';
 import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
 import 'package:fire_guard/service/api_service/request/device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
+import 'package:fire_guard/service/api_service/request/login_request.dart';
+import 'package:fire_guard/service/api_service/request/register_request.dart';
 import 'package:fire_guard/service/api_service/request/save_device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/send_family_alert_request.dart';
 import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
@@ -10,6 +13,8 @@ import 'package:fire_guard/service/api_service/response/add_guide_and_news_respo
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
+import 'package:fire_guard/service/api_service/response/login_response.dart';
+import 'package:fire_guard/service/api_service/response/register_response.dart';
 import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
 import 'package:fire_guard/service/api_service/response/send_family_alert_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
@@ -21,11 +26,9 @@ import 'response/HistoryResponse.dart';
 import 'response/guide_and_news_response.dart';
 import 'response/send_data_sensor_response.dart';
 
-
 class ApiServices extends BaseApiService {
   // Phương thức gửi dữ liệu cảm biến
-  Future<BaseResponse<SendDataSensorResponse>> sendSensorData(
-      SendDataSensorRequest request) async {
+  Future<BaseResponse<SendDataSensorResponse>> sendSensorData(SendDataSensorRequest request) async {
     return await sendRequest<SendDataSensorResponse>(
       'sensors/data',
       method: 'POST',
@@ -33,6 +36,7 @@ class ApiServices extends BaseApiService {
       fromJson: (json) => SendDataSensorResponse.fromJson(json),
     );
   }
+
   //Lưu Dữ Liệu Vào Cơ Sở Dữ Liệu
   Future<BaseResponse<UploadSensorDataResponse>> uploadSensorData(
       UploadSensorDataRequest request) async {
@@ -89,7 +93,6 @@ class ApiServices extends BaseApiService {
     );
   }
 
-
 // Thêm Dữ Liệu Hướng Dẫn và Tin Tức
   Future<BaseResponse<AddGuideAndNewsResponse>> addDocument(
       List<AddGuideAndNewsRequest> request) async {
@@ -102,8 +105,6 @@ class ApiServices extends BaseApiService {
     );
   }
 
-
-
   // Kiểm Tra Trạng Thái Hệ Thống IoT
   Future<BaseResponse<DeviceStatusResponse>> getDeviceStatus() async {
     return await sendRequest<DeviceStatusResponse>(
@@ -113,6 +114,7 @@ class ApiServices extends BaseApiService {
     );
   }
 
+  // api lấy lịch sử cảnh báo
   Future<BaseResponse<HistoryResponse>> getHistory({
     required String userId,
     required String startDate,
@@ -132,7 +134,7 @@ class ApiServices extends BaseApiService {
     );
   }
 
-
+  // api lấy hướng dẫn và tin tức
   Future<BaseResponse<GuideAndNewsResponse>> getGuidesAndNews({
     required String category,
     required int limit,
@@ -151,4 +153,30 @@ class ApiServices extends BaseApiService {
   }
 
 
+  // api login
+  Future<BaseResponse<LoginResponse>> sendLogin(LoginRequest request) async {
+    return await sendRequest<LoginResponse>(
+      'auth/login',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => LoginResponse.fromJson(json),
+    );
+  }
+
+
+  // api register
+
+  Future<BaseResponse<RegisterResponse>> sendRegister(RegisterRequest request) async {
+    return await sendRequest<RegisterResponse>(
+      'auth/register',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => RegisterResponse.fromJson(json),
+    );
+  }
+
 }
+
+
+
+
