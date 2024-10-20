@@ -1,14 +1,14 @@
-import 'package:fire_guard/models/user.dart';
+import 'package:fire_guard/models/user_model.dart';
 
 class RegisterResponse {
-  final User user;
+  final UserModel user;
 
   RegisterResponse({required this.user});
 
   // Ánh xạ JSON sang RegisterResponse
   factory RegisterResponse.fromJson(Map<String, dynamic> json) {
     return RegisterResponse(
-      user: User.fromJson(json),
+      user: UserModel.fromJson(json),
     );
   }
 

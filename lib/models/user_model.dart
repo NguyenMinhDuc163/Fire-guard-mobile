@@ -1,50 +1,38 @@
 class UserModel {
-  String? id;
-  String? userName;
-  String? phoneNum;
-  String? email;
-  String? password;
+  final int id;
+  final String username;
+  final String email;
+  final String? createdAt;
 
   UserModel({
-    this.id,
-    this.userName,
-    this.phoneNum,
-    this.email,
-    this.password,
+    required this.id,
+    required this.username,
+    required this.email,
+    this.createdAt,
   });
+
+  // Ánh xạ JSON sang User
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'] as int,
+      username: json['username'] as String,
+      email: json['email'] as String,
+      createdAt: json['created_at'] as String?,
+    );
+  }
+
+  // Chuyển đối tượng User sang JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'username': username,
+      'email': email,
+      'created_at': createdAt,
+    };
+  }
 
   @override
   String toString() {
-    return 'UserModel{id: $id, userName: $userName, phoneNum: $phoneNum, email: $email, password: $password}';
-  }
-
-  factory UserModel.fromMap(Map<String, dynamic> data, String id) {
-    return UserModel(
-      id: id,
-      userName: data['userName'],
-      phoneNum: data['phoneNum'],
-      email: data['email'],
-      password: data['password'],
-    );
-  }
-
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['id'],
-      userName: json['userName'],
-      phoneNum: json['phoneNum'],
-      email: json['email'],
-      password: json['password'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['userName'] = userName;
-    data['phoneNum'] = phoneNum;
-    data['email'] = email;
-    data['password'] = password;
-    return data;
+    return 'User{id: $id, username: $username, email: $email, createdAt: $createdAt}';
   }
 }

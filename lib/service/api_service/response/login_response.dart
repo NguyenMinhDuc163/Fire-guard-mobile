@@ -1,4 +1,4 @@
-import 'package:fire_guard/models/user.dart';
+import 'package:fire_guard/models/user_model.dart';
 
 class LoginResponse {
   final String key;
@@ -10,8 +10,8 @@ class LoginResponse {
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
       key: json['key'] as String,
-      value: json['key'] == 'user'
-          ? User.fromJson(json['value'])
+      value: json['key'] == 'UserModel'
+          ? UserModel.fromJson(json['value'])
           : json['value'],
     );
   }
@@ -19,7 +19,7 @@ class LoginResponse {
   Map<String, dynamic> toJson() {
     return {
       'key': key,
-      'value': value is User ? (value as User).toJson() : value,
+      'value': value is UserModel ? (value as UserModel).toJson() : value,
     };
   }
 

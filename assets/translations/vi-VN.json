@@ -63,5 +63,11 @@
 
   "search": "Tìm kiếm",
   "topPlayer" : "Vị trí đứng đầu vẫn đang chờ đợi người xứng đáng!",
-  "continue": "Tiếp tục"
+  "continue": "Tiếp tục",
+
+  "registration_success": "Đăng ký thành công",
+  "registration_failed": "Đăng ký thất bại",
+  "login_success": "Đăng nhập thành công",
+  "login_failed": "Đăng nhập thất bại",
+  "invalid_email_password": "Vui lòng nhập email và mật khẩu hợp lệ"
 }

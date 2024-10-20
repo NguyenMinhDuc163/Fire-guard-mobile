@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 /// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
 import 'package:fire_guard/utils/router_names.dart';
+import 'package:fire_guard/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -63,7 +64,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+
     final authViewModel = Provider.of<AuthViewModel>(context);
+    final model = authViewModel.model;
+
+
     return Scaffold(
       backgroundColor: ColorPalette.kWhite,
       appBar: AppBar(
@@ -190,15 +196,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     elevation: 0,
                     onTap: () async {
                       // TODO login
-                      /// UserModel? userModel = await authService.signInWithEmailAndPassWord(
-                      ///   email: emailC.text.trim(), password: passwordC.text.trim());
-                      /// if (userModel != null) {
-                      ///   redirectSelectPreferencesScreen();
-                      /// } else {
-                      ///   showToast(message: 'Invalid email or password.');
-                      /// }
+                        if(emailC.text.trim().isEmpty || passwordC.text.trim().isEmpty || !Utils.isValidEmail(emailC.text.trim())){
+                          showToast(message: 'invalid_email_password'.tr());
+                          return;
+                        }
+                       authViewModel.signIn(username: emailC.text.trim(), password: passwordC.text.trim());
                       Navigator.pushNamed(context, RouteNames.mainApp);
-                      // redirectSelectPreferencesScreen();
                     },
                     text: 'login'.tr(),
                     bgColor: ColorPalette.kPrimary,

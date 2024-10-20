@@ -64,6 +64,12 @@
 
   "search": "Search",
   "topPlayer" : "The top spot is still waiting for the deserving one!",
-  "continue": "Continue"
+  "continue": "Continue",
+
+  "registration_success": "Registration Successful",
+  "registration_failed": "Registration Failed",
+  "login_success": "Login Successful",
+  "login_failed": "Login Failed",
+  "invalid_email_password": "Please enter valid email and password"
 
 }
