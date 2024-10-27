@@ -39,7 +39,7 @@ class HomeViewModel extends ChangeNotifier{
   }
 
 
-  Future<bool> sendFireEmergency() async {
+  Future<int?> sendFireEmergency() async {
     FireEmergencyRequest request = FireEmergencyRequest(
       location: 'Hà Nội',
       incidentDetails: 'Phát hiện cháy lớn.',
@@ -53,8 +53,9 @@ class HomeViewModel extends ChangeNotifier{
     print('Message: ${response.message}');
     print('Error: ${response.error}');
     print('Data: ${response.data}');
-    return response.code == 200;
     notifyListeners();
+    return response.code ;
+
   }
 
 

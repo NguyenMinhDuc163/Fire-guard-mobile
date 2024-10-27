@@ -1,3 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/main.dart';
+import 'package:fire_guard/utils/core/constants/color_constants.dart';
+import 'package:fire_guard/view/home/widget/drawer_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'widget/new_item_widget.dart';
@@ -14,41 +18,57 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 56.0),
-          child: Center(
-            child: ToggleButtons(
-              borderRadius: BorderRadius.circular(30),
-              borderWidth: 2,
-              fillColor: Colors.orange,
-              selectedColor: Colors.white,
-              color: Colors.orange,
-              constraints: const BoxConstraints(
-                minHeight: 50.0,
-                minWidth: 120.0,
+    return Scaffold(
+      appBar: AppBar(
+        title:  Text('fire_news'.tr()),
+        backgroundColor: ColorPalette.colorFFBB35,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              // Hành động khi ấn vào nút thông báo
+              print('Notification button pressed');
+            },
+          ),
+        ],
+      ),
+      drawer: const DrawerWidget(),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 56.0),
+            child: Center(
+              child: ToggleButtons(
+                borderRadius: BorderRadius.circular(30),
+                borderWidth: 2,
+                fillColor: Colors.orange,
+                selectedColor: Colors.white,
+                color: Colors.orange,
+                constraints: const BoxConstraints(
+                  minHeight: 50.0,
+                  minWidth: 120.0,
+                ),
+                children: const <Widget>[
+                  Text('Tin tức cháy nổ'),
+                  Text('Người tốt việc tốt'),
+                ],
+                isSelected: [isFireNews, !isFireNews],
+                onPressed: (int index) {
+                  setState(() {
+                    isFireNews = index == 0;
+                  });
+                },
               ),
-              children: const <Widget>[
-                Text('Tin tức cháy nổ'),
-                Text('Người tốt việc tốt'),
-              ],
-              isSelected: [isFireNews, !isFireNews],
-              onPressed: (int index) {
-                setState(() {
-                  isFireNews = index == 0;
-                });
-              },
             ),
           ),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(8.0),
-            children: isFireNews ? _buildFireNews() : _buildGoodPeopleStories(),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(8.0),
+              children: isFireNews ? _buildFireNews() : _buildGoodPeopleStories(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

@@ -1,3 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/utils/core/constants/color_constants.dart';
+import 'package:fire_guard/view/home/widget/drawer_widget.dart';
 import 'package:flutter/material.dart';
 
 class FireSafetySkillsScreen extends StatefulWidget {
@@ -14,9 +17,21 @@ class _FireSafetySkillsScreenState extends State<FireSafetySkillsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
-        title: const Text('Kỹ năng PCCC & Thoát hiểm'),
+        title:  Text('fire_safety_skills_escape'.tr()),
+        backgroundColor: ColorPalette.colorFFBB35,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              // Hành động khi ấn vào nút thông báo
+              print('Notification button pressed');
+            },
+          ),
+        ],
       ),
+      drawer: const DrawerWidget(),
       body: Column(
         children: [
           Padding(

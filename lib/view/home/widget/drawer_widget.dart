@@ -1,3 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../init.dart';
 import 'package:flutter/material.dart';
 
@@ -31,9 +35,46 @@ class DrawerWidget extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.location_on_outlined),
+            title: Text('registered_location'.tr()),
+            onTap: () {
+              Navigator.pop(context);
+              // Thêm hành động điều hướng khi ấn vào menu
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.family_restroom),
+            title: Text('manage_family_members'.tr()),
+            onTap: () {
+              Navigator.pop(context);
+              // Thêm hành động điều hướng khi ấn vào menu
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.policy),
+            title: Text('privacy_policy'.tr()),
+            onTap: () {
+              Navigator.pop(context);
+              // Thêm hành động điều hướng khi ấn vào menu
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
             onTap: () {
+              Navigator.pop(context);
+              // Thêm hành động điều hướng khi ấn vào menu
+            },
+          ),
+
+          ListTile(
+            leading: Icon(Icons.info),
+            title: Text('about'.tr()),
+            onTap: () async {
+              final Uri url = Uri.parse('https://github.com/NguyenMinhDuc163/Fire-guard-mobile/blob/main/README.md');
+              if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+              throw 'Could not launch URL}';
+              }
               Navigator.pop(context);
               // Thêm hành động điều hướng khi ấn vào menu
             },

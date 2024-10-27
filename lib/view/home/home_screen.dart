@@ -110,18 +110,17 @@ class HomeScreen extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          bool isCall = await homeViewModel.sendFireEmergency();
-                          if(isCall){
+                          int? isCall = await homeViewModel.sendFireEmergency();
+                          if(isCall == 200){
                             showToast(message: 'send_alert_success'.tr(),);
-                          }else{
+                          }else if(isCall == 429){
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Thông báo'),
-                                  content: const Text(
-                                    'Vui lòng đợi 5 phút trước khi gửi thông báo cứu hỏa tiếp theo, '
-                                        'hoặc có thể gọi điện trực tiếp.',
+                                  title: Text('notification'.tr()),
+                                  content:  Text(
+                                    'wait_before_next_alert'.tr(),
                                     textAlign: TextAlign.center,
                                   ),
                                   actions: [
@@ -130,13 +129,13 @@ class HomeScreen extends StatelessWidget {
                                       children: [
                                         ElevatedButton(
                                           onPressed:  homeViewModel.directCall,
-                                          child: Text('Gọi ngay'),
+                                          child: Text('call_now'.tr()),
                                         ),
                                         ElevatedButton(
                                           onPressed: () {
                                             Navigator.of(context).pop(); // Đóng popup
                                           },
-                                          child: Text('Huỷ'),
+                                          child: Text('cancel'.tr()),
                                         ),
                                       ],
                                     ),
@@ -144,7 +143,6 @@ class HomeScreen extends StatelessWidget {
                                 );
                               },
                             );
-
 
                           }
                         },

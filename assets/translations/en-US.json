@@ -73,6 +73,22 @@
   "invalid_email_password": "Please enter valid email and password",
 
   "send_alert_success": "Alert sent successfully",
-  "send_alert_failure": "Failed to send alert"
+  "send_alert_failure": "Failed to send alert",
+
+  "notification": "Notification",
+  "wait_before_next_alert": "Please wait 5 minutes before sending the next fire alert, or you may call directly.",
+  "call_now": "Call Now",
+  "cancel": "Cancel",
+  "connection_error": "Connection Error",
+  "connection_timeout": "Connection to server timed out, please try again.",
+  "ok": "OK",
+
+  "registered_location": "Registered Location",
+  "manage_family_members": "Manage Family Members",
+  "privacy_policy": "Privacy Policy",
+  "about": "About",
+  "personal_info_iot_system": "Personal Information & IoT System",
+  "fire_safety_skills_escape": "Fire Safety Skills & Escape",
+  "fire_news": "Fire News"
 
 }

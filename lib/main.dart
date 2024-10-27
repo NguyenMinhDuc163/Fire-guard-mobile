@@ -60,6 +60,7 @@ void main() async {
   );
 }
 
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       minTextAdapt: true,
+
       builder: (context, child) {
         return MaterialApp(
           title: 'Fire Guard',

@@ -1,5 +1,8 @@
 
+import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
+import 'package:fire_guard/view/home/widget/drawer_widget.dart';
 import 'package:flutter/material.dart';
 
 
@@ -16,9 +19,20 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thông tin cá nhân & Hệ thống IoT'),
-        backgroundColor: Colors.orange,
+        title:  Text('personal_info_iot_system'.tr()),
+        backgroundColor: ColorPalette.colorFFBB35,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              // Hành động khi ấn vào nút thông báo
+              print('Notification button pressed');
+            },
+          ),
+        ],
       ),
+      drawer: const DrawerWidget(),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
