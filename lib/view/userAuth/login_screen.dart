@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/service/common/status_api.dart';
 /// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/utils/utils.dart';
@@ -26,6 +27,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController emailC;
   late TextEditingController passwordC;
+  late TextEditingController apiUrlController;
+  late TextEditingController apiPortController;
   /// final authService = AuthWithFirebase(); // Firebase Authentication Service
   bool isVietnamese = true;
 
@@ -34,6 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     emailC = TextEditingController();
     passwordC = TextEditingController();
+    apiUrlController = TextEditingController(text: StatusApi.BASE_API_URL);
+    apiPortController = TextEditingController(text: "3000");
     // Kiểm tra ngôn ngữ đã lưu trong Hive
     String? savedLocale = LocalStorageHelper.getValue('languageCode');
     if (savedLocale != null) {
@@ -45,6 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     emailC.dispose();
     passwordC.dispose();
+    apiUrlController.dispose();
+    apiPortController.dispose();
+
     super.dispose();
   }
 
@@ -69,6 +77,63 @@ class _LoginScreenState extends State<LoginScreen> {
     final authViewModel = Provider.of<AuthViewModel>(context);
     final model = authViewModel.model;
 
+    void _showApiConfigSheet() {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true, // Cho phép `BottomSheet` mở toàn màn hình nếu cần.
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (context) {
+          return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.5, // Chiều cao ban đầu (50% màn hình).
+            minChildSize: 0.3, // Chiều cao tối thiểu (30% màn hình).
+            maxChildSize: 0.8, // Chiều cao tối đa (80% màn hình).
+            builder: (context, scrollController) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView(
+                  controller: scrollController, // Để cuộn nếu nội dung nhiều.
+                  children: [
+                    const Text(
+                      "API Configuration",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: apiUrlController,
+                      decoration: const InputDecoration(labelText: "API URL"),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: apiPortController,
+                      decoration: const InputDecoration(labelText: "Port"),
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          StatusApi.BASE_API_URL =
+                          "${apiUrlController.text}:${apiPortController.text}/api/v1/";
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Save"),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
 
     return Scaffold(
       backgroundColor: ColorPalette.kWhite,
@@ -76,37 +141,49 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                width: 80,
-                height: 50,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Đẩy 2 nút ra 2 bên
+          children: [
+            // Nút Config ở bên trái
+            GestureDetector(
+              onTap: _showApiConfigSheet,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blueAccent,
+                ),
+                child: const Icon(Icons.settings, color: Colors.white),
               ),
-              GestureDetector(
-                onTap: () {
-                  isVietnamese = !isVietnamese;
-                  if (isVietnamese) {
-                    context.setLocale(const Locale('vi', 'VN'));
-                    LocalStorageHelper.setValue('languageCode', 'vi'); // Lưu trạng thái vào Hive
-                  } else {
-                    context.setLocale(const Locale('en', 'US'));
-                    LocalStorageHelper.setValue('languageCode', 'en'); // Lưu trạng thái vào Hive
-                  }
-                },
-                child: Container(
-                    width: 65,
-                    height: 42,
-                    padding: const EdgeInsets.all(8),
-                    child: isVietnamese
-                        ? const IconLanguageWidget(name: "VN", path: AssetHelper.icoVN)
-                        : const IconLanguageWidget(name: "EN", path: AssetHelper.icoAmerica)),
+            ),
+
+            // Nút Chuyển Ngôn Ngữ ở bên phải
+            GestureDetector(
+              onTap: () {
+                isVietnamese = !isVietnamese;
+                if (isVietnamese) {
+                  context.setLocale(const Locale('vi', 'VN'));
+                  LocalStorageHelper.setValue('languageCode', 'vi');
+                } else {
+                  context.setLocale(const Locale('en', 'US'));
+                  LocalStorageHelper.setValue('languageCode', 'en');
+                }
+              },
+              child: Container(
+                width: 65,
+                height: 42,
+                padding: const EdgeInsets.all(8),
+                child: isVietnamese
+                    ? const IconLanguageWidget(
+                    name: "VN", path: AssetHelper.icoVN)
+                    : const IconLanguageWidget(
+                    name: "EN", path: AssetHelper.icoAmerica),
               ),
-            ],
-          )
-        ],
-      ),
+            ),
+          ],
+        ),
+      )
+      ,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: height_4, vertical: height_24),
@@ -196,10 +273,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     elevation: 0,
                     onTap: () async {
                       // TODO login
-                        if(emailC.text.trim().isEmpty || passwordC.text.trim().isEmpty || !Utils.isValidEmail(emailC.text.trim())){
-                          showToast(message: 'invalid_email_password'.tr());
-                          return;
-                        }
+                      print('----------------- ${StatusApi.BASE_API_URL}');
+
+                       //  if(emailC.text.trim().isEmpty || passwordC.text.trim().isEmpty || !Utils.isValidEmail(emailC.text.trim())){
+                       //    showToast(message: 'invalid_email_password'.tr());
+                       //    return;
+                       //  }
                        authViewModel.signIn(username: emailC.text.trim(), password: passwordC.text.trim());
                       Navigator.pushNamed(context, RouteNames.mainApp);
                     },
@@ -260,6 +339,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+
             ],
           ),
         ),

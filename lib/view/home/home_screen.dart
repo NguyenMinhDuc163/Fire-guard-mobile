@@ -1,13 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fire_guard/view/home/widget/drawer_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
+
 import '../../../init.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
+  static const String routeName = '/home_screen';
   @override
   Widget build(BuildContext context) {
+
+    final homeViewModel = Provider.of<HomeViewModel>(context);
+    final model = homeViewModel.model;
+
     return Scaffold(
       backgroundColor: ColorPalette.backgroundScaffoldColor,
       appBar: AppBar(
@@ -18,6 +24,7 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(Icons.notifications),
             onPressed: () {
               // Hành động khi ấn vào nút thông báo
+              homeViewModel.sendNotification();
               print('Notification button pressed');
             },
           ),
@@ -39,6 +46,7 @@ class HomeScreen extends StatelessWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () {
+                      homeViewModel.sendNotification();
                       // Hành động khi nút được bấm
                       print('Báo cháy button pressed');
                     },
@@ -86,7 +94,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   child: Text(
                     'fireWarningMessage'.tr(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.black87,  // Màu chữ
                     ),
@@ -102,18 +110,46 @@ class HomeScreen extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          final Uri phoneUri = Uri(scheme: 'tel', path: '114'); // Thay bằng số điện thoại của bạn
+                          int? isCall = await homeViewModel.sendFireEmergency();
+                          if(isCall == 200){
+                            showToast(message: 'send_alert_success'.tr(),);
+                          }else if(isCall == 429){
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('notification'.tr()),
+                                  content:  Text(
+                                    'wait_before_next_alert'.tr(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  actions: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed:  homeViewModel.directCall,
+                                          child: Text('call_now'.tr()),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Đóng popup
+                                          },
+                                          child: Text('cancel'.tr()),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
 
-                          if (await canLaunchUrl(phoneUri)) {
-                            await launchUrl(phoneUri);
-                          } else {
-                            throw 'Could not launch $phoneUri';
                           }
                         },
                         child: Container(
                           padding: EdgeInsets.all(16.0),
-                          width: 150,  // Chiều rộng của mỗi nút
-                          height: 100, // Chiều cao của mỗi nút
+                          width: 150,  // Chiều rộng của nút
+                          height: 100, // Chiều cao của nút
                           decoration: BoxDecoration(
                             color: Colors.white,  // Màu nền của nút
                             borderRadius: BorderRadius.circular(20.0),  // Bo góc
@@ -129,7 +165,7 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.phone, color: Colors.orange, size: 30),  // Icon Gọi 114
+                              Icon(Icons.phone, color: Colors.orange, size: 30),  // Icon Gọi
                               SizedBox(height: 10),
                               Text(
                                 'call114'.tr(),
@@ -138,7 +174,8 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ),
+                      )
+                      ,
                     ),
                     SizedBox(width: width_20),
                     // Nút Xem và Thông báo vị trí đám cháy

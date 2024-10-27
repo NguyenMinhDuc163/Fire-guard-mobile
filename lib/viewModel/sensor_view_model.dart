@@ -90,6 +90,7 @@ class SensorViewModel extends ChangeNotifier {
       userId: "user_002",
       message: "Người thân của bạn đang gặp nguy hiểm.",
       familyMemberId: 'family_002',
+      phoneNumber: '+84916562796',
       timestamp: DateTime.now().toUtc(),
     );
     final BaseResponse<SendFamilyAlertResponse> response =
@@ -131,6 +132,7 @@ class SensorViewModel extends ChangeNotifier {
     FireEmergencyRequest request = FireEmergencyRequest(
       location: 'Hà Nội',
       incidentDetails: 'Phát hiện cháy lớn.',
+      phoneNumber: '+84916562796',
       timestamp: DateTime.now().toUtc(),
     );
     final BaseResponse<FireEmergencyResponse> response =

@@ -69,5 +69,24 @@
   "registration_failed": "Đăng ký thất bại",
   "login_success": "Đăng nhập thành công",
   "login_failed": "Đăng nhập thất bại",
-  "invalid_email_password": "Vui lòng nhập email và mật khẩu hợp lệ"
+  "invalid_email_password": "Vui lòng nhập email và mật khẩu hợp lệ",
+
+  "send_alert_success": "Gửi cảnh báo thành công",
+  "send_alert_failure": "Gửi cảnh báo thất bại",
+
+  "notification": "Thông báo",
+  "wait_before_next_alert": "Vui lòng đợi 5 phút trước khi gửi thông báo cứu hỏa tiếp theo, hoặc có thể gọi điện trực tiếp.",
+  "call_now": "Gọi ngay",
+  "cancel": "Huỷ",
+  "connection_error": "Lỗi kết nối",
+  "connection_timeout": "Kết nối đến máy chủ quá thời gian, vui lòng thử lại sau.",
+  "ok": "OK",
+
+  "registered_location": "Vị trí đã đăng ký",
+  "manage_family_members": "Quản lý người thân",
+  "privacy_policy": "Chính sách bảo mật",
+  "about": "Giới thiệu",
+  "personal_info_iot_system": "Thông tin cá nhân & Hệ thống IoT",
+  "fire_safety_skills_escape": "Kỹ năng PCCC & Thoát hiểm",
+  "fire_news": "Tin tức cháy nổ"
 }

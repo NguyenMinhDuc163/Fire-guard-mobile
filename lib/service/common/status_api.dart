@@ -2,9 +2,9 @@
 
 class StatusApi {
 
-static const  String BASE_API_URL = "http://192.168.1.4:3000/api/v1/"; // test local
+static String BASE_API_URL = "http://192.168.1.6:3000/api/v1/"; // test local
 
-static const int TIME_OUT = 20000;
+static const int TIME_OUT = 1000;
 
 }
 
