@@ -41,7 +41,7 @@ class _SensorDataPageState extends State<SensorDataPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: sensorViewModel.sendLogin,
+              onPressed: sensorViewModel.sendNotification,
               child: Text('Gửi Dữ Liệu'),
             ),
             SizedBox(height: 20),

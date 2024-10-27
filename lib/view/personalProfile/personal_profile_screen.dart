@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class PersonalProfileScreen extends StatefulWidget {
   const PersonalProfileScreen({super.key});
-
+  static const String routeName = '/personalProfileScreen';
   @override
   State<PersonalProfileScreen> createState() => _PersonalProfileScreenState();
 }

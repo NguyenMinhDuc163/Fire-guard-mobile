@@ -4,7 +4,7 @@ import 'widget/new_item_widget.dart';
 
 class FireNewsScreen extends StatefulWidget {
   const FireNewsScreen({super.key});
-
+  static const String routeName = '/fireNewsScreen';
   @override
   State<FireNewsScreen> createState() => _FireNewsScreenState();
 }

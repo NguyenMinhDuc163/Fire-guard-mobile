@@ -2,11 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.fire_alarm_app">
 
-    <!-- Quyền cần thiết cho ứng dụng -->
+    <!-- Các quyền cần thiết -->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:label="fire_guard"
@@ -33,17 +38,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Cấu hình Firebase Messaging Service -->
+        <!-- Firebase Messaging Service -->
         <service
             android:name="com.google.firebase.messaging.FirebaseMessagingService"
             android:exported="true"
-            tools:replace="android:exported">  <!-- Sửa lỗi xung đột -->
+            tools:replace="android:exported">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
-        <!-- Cấu hình Firebase Instance ID Receiver -->
+        <!-- Firebase Instance ID Receiver -->
         <receiver
             android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
             android:exported="true"
@@ -54,12 +59,11 @@
             </intent-filter>
         </receiver>
 
-        <!-- Cấu hình kênh thông báo cho Firebase -->
+        <!-- Thông báo Firebase -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="fire_alarm_channel" />
 
-        <!-- Khai báo Firebase Embedding API -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

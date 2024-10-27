@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FireSafetySkillsScreen extends StatefulWidget {
   const FireSafetySkillsScreen({super.key});
-
+  static const String routeName = '/fireSafetySkillsScreen';
   @override
   _FireSafetySkillsScreenState createState() => _FireSafetySkillsScreenState();
 }

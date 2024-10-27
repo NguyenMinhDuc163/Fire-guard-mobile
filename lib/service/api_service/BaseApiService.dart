@@ -30,24 +30,26 @@ abstract class BaseApiService {
           response = await dio.get(url, queryParameters: data);
       }
 
-      // Xử lý nếu status code là 200
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return BaseResponse.fromJson(response.data, (json) => fromJson(json),
+      // Map dữ liệu khi thành công
+      return BaseResponse.fromJson(
+        response.data,
+            (json) => fromJson(json),
+      );
+    } on DioException catch (e) {
+      // Trường hợp lỗi với phản hồi từ server
+      if (e.response != null) {
+        return BaseResponse.fromJson(
+          e.response!.data,
+              (json) => fromJson(json),
         );
       } else {
-        return BaseResponse(
-            error: 'Server error: ${response.statusCode} - ${response.statusMessage}');
-      }
-    } on DioException catch (e) {
-      if (e.response != null) {
-        return BaseResponse(
-            error:
-            'DioError: ${e.response?.statusCode} - ${e.response?.data}');
-      } else {
-        return BaseResponse(error: 'DioError: ${e.message}');
+        // Trường hợp lỗi không có phản hồi từ server
+        return BaseResponse<T>(error: 'DioError: ${e.message}');
       }
     } catch (e) {
-      return BaseResponse(error: 'Unexpected Error: $e');
+      // Trường hợp lỗi không mong muốn
+      return BaseResponse<T>(error: 'Unexpected Error: $e');
     }
   }
+
 }

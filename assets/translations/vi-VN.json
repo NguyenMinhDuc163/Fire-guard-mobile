@@ -69,5 +69,8 @@
   "registration_failed": "Đăng ký thất bại",
   "login_success": "Đăng nhập thành công",
   "login_failed": "Đăng nhập thất bại",
-  "invalid_email_password": "Vui lòng nhập email và mật khẩu hợp lệ"
+  "invalid_email_password": "Vui lòng nhập email và mật khẩu hợp lệ",
+
+  "send_alert_success": "Gửi cảnh báo thành công",
+  "send_alert_failure": "Gửi cảnh báo thất bại"
 }

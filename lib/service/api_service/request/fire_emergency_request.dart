@@ -11,16 +11,19 @@ class FireEmergencyRequest {
     this.location,
     this.incidentDetails,
     this.timestamp,
+    this.phoneNumber,
   });
 
   final String? location;
   final String? incidentDetails;
+  final String? phoneNumber;
   final DateTime? timestamp;
 
   factory FireEmergencyRequest.fromJson(Map<String, dynamic> json) =>
       FireEmergencyRequest(
         location: json["location"],
         incidentDetails: json["incident_details"],
+        phoneNumber: json["phone_number"],
         timestamp: json["timestamp"] == null
             ? null
             : DateTime.parse(json["timestamp"]),
@@ -29,6 +32,7 @@ class FireEmergencyRequest {
   Map<String, dynamic> toJson() => {
     "location": location,
     "incident_details": incidentDetails,
+    "phone_number": phoneNumber,
     "timestamp": timestamp?.toIso8601String(),
   };
 }

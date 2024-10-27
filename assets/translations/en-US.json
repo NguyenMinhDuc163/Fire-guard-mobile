@@ -70,6 +70,9 @@
   "registration_failed": "Registration Failed",
   "login_success": "Login Successful",
   "login_failed": "Login Failed",
-  "invalid_email_password": "Please enter valid email and password"
+  "invalid_email_password": "Please enter valid email and password",
+
+  "send_alert_success": "Alert sent successfully",
+  "send_alert_failure": "Failed to send alert"
 
 }
