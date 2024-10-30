@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
-import 'package:fire_guard/service/network_service.dart';
+import 'package:fire_guard/service/base_connect.dart';
+import 'package:fire_guard/service/service_config/network_service.dart';
 import 'package:fire_guard/utils/core/common/dialog_alert.dart';
 import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
 import 'package:flutter/material.dart';

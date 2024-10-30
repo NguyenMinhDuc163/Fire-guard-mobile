@@ -1,10 +1,10 @@
+import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/core/constants/dimension_constants.dart';
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;

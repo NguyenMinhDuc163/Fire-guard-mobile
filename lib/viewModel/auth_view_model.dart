@@ -7,7 +7,7 @@ import 'package:fire_guard/service/api_service/request/register_request.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/login_response.dart';
 import 'package:fire_guard/service/api_service/response/register_response.dart';
-import 'package:fire_guard/service/notification/notification_service.dart';
+import 'package:fire_guard/service/service_config//notification_service.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/material.dart';
