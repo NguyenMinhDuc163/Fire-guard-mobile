@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 
 import 'providers/provider_setup.dart';
 import '../../../init.dart';
-import 'service/notification/notification_service.dart';
+import 'service/service_config//notification_service.dart';
+import 'service/service_config/firebase_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +32,8 @@ void main() async {
       projectId: dotenv.env['PROJECT_ID']!,
     ),
   );
-
+  final firebaseService = FirebaseService();
+  print("Current base URL from Firebase Remote Config: ${firebaseService.getBaseURLServer()}");
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
   );
@@ -40,6 +42,8 @@ void main() async {
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
+
+  // Khởi tạo FirebaseService để kích hoạt Remote Config
 
   Locale defaultLocale = const Locale('en', 'US');
   String? savedLocale = LocalStorageHelper.getValue('languageCode');
