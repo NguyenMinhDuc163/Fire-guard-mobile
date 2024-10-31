@@ -1,5 +1,8 @@
 import 'package:fire_guard/view/fireNews/fire_news_screen.dart';
+import 'package:fire_guard/view/home/family_management_screen.dart';
+import 'package:fire_guard/view/home/notification_screen.dart';
 import 'package:fire_guard/view/personalProfile/personal_profile_screen.dart';
+import 'package:fire_guard/view/personalProfile/settings_screen.dart';
 import 'package:fire_guard/viewModel/fire_news_view_model.dart';
 import 'package:fire_guard/viewModel/fire_safety_skill_view_model.dart';
 import 'package:fire_guard/viewModel/home_view_model.dart';
@@ -21,6 +24,9 @@ final Map<String, WidgetBuilder> routes = {
   // RouteNames.homeScreen: (context) => const HomeScreen(),
   RouteNames.mainApp: (context) => const MainApp(),
   RouteNames.selectPreferencesScreen: (context) => const SelectPreferencesScreen(),
+  RouteNames.familyManagementScreen: (context) => const FamilyManagementScreen(),
+  RouteNames.notifications: (context) => const NotificationsScreen(),
+  RouteNames.settings: (context) => const SettingsScreen(),
 };
 
 MaterialPageRoute<dynamic>? generateRoutes(RouteSettings settings) {

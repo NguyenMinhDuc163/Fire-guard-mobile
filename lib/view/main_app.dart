@@ -62,6 +62,7 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: _widgetOptions[_selectedIndex],  // Hiển thị màn hình tương ứng với chỉ số hiện tại
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

@@ -105,11 +105,11 @@ class SensorViewModel extends ChangeNotifier {
   }
 
 
-  void saveDeviceStatus() async {
+  void saveDeviceStatus({required String deviceName, required String status}) async {
     List<SaveDeviceStatusRequest> requests = [
       SaveDeviceStatusRequest(
-        deviceName: 'esp8266_001',
-        status: 'active',
+        deviceName: deviceName,
+        status: status,
         timestamp: DateTime.now().toUtc(),
       )
     ];
