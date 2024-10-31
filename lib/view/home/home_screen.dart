@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fire_guard/view/home/widget/drawer_widget.dart';
@@ -23,9 +24,7 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.notifications),
             onPressed: () {
-              // Hành động khi ấn vào nút thông báo
-              homeViewModel.sendNotification();
-              print('Notification button pressed');
+              Navigator.pushNamed(context, RouteNames.notifications);
             },
           ),
         ],

@@ -10,4 +10,7 @@ class RouteNames {
   static const String homeScreen = '/home_screen';
   static const String mainApp = '/main_app';
   static const String selectPreferencesScreen = '/select_preferences_screen';
+  static const String familyManagementScreen = '/family_management';
+  static const String notifications = '/notifications';
+  static const String settings = '/settings';
 }
