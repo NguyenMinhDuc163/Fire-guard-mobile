@@ -39,7 +39,7 @@ class DrawerWidget extends StatelessWidget {
             leading: const Icon(Icons.location_on_outlined),
             title: Text('registered_location'.tr()),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pushNamed(context, RouteNames.registerCoordinatesScreen);
               // Thêm hành động điều hướng khi ấn vào menu
             },
           ),

@@ -18,6 +18,9 @@ mixin AssetHelper {
   static const String icoCard2 = '${_baseIconPath}ico_card_2.svg';
   static const String icoCard3 = '${_baseIconPath}ico_card_3.svg';
   static const String icoUser = '${_baseIconPath}ico_user.svg';
+  static const String icoFire = '${_baseIconPath}ico_fire.svg';
+  static const String icoFamilyMap = '${_baseIconPath}ico_family_map.svg';
+  static const String icoHomeMap = '${_baseIconPath}icon_home_map.svg';
 
 
 

@@ -71,11 +71,11 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(height: 10),
                           Text(
                             'fireAlarm'.tr(),
-                            style: TextStyle(color: Colors.white, fontSize: 24),
+                            style: const TextStyle(color: Colors.white, fontSize: 24),
                           ),
                           Text(
                             'atYourLocation'.tr(),
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: const TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ],
                       ),
@@ -182,6 +182,7 @@ class HomeScreen extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           // Hành động khi nhấn vào nút Thông báo vị trí đám cháy
+                          Navigator.pushNamed(context, RouteNames.fireAlertMapScreen);
                           print('Xem và Thông báo vị trí đám cháy pressed');
                         },
                         child: Container(

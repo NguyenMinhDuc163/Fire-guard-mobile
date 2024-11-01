@@ -1,6 +1,8 @@
 import 'package:fire_guard/view/fireNews/fire_news_screen.dart';
 import 'package:fire_guard/view/home/family_management_screen.dart';
+import 'package:fire_guard/view/home/fire_alert_map_screen.dart';
 import 'package:fire_guard/view/home/notification_screen.dart';
+import 'package:fire_guard/view/home/register_coordinates_screen.dart';
 import 'package:fire_guard/view/personalProfile/personal_profile_screen.dart';
 import 'package:fire_guard/view/personalProfile/settings_screen.dart';
 import 'package:fire_guard/viewModel/fire_news_view_model.dart';
@@ -27,6 +29,8 @@ final Map<String, WidgetBuilder> routes = {
   RouteNames.familyManagementScreen: (context) => const FamilyManagementScreen(),
   RouteNames.notifications: (context) => const NotificationsScreen(),
   RouteNames.settings: (context) => const SettingsScreen(),
+  RouteNames.fireAlertMapScreen: (context) => const FireAlertMapScreen(),
+  RouteNames.registerCoordinatesScreen: (context) => const RegisterCoordinatesScreen(),
 };
 
 MaterialPageRoute<dynamic>? generateRoutes(RouteSettings settings) {

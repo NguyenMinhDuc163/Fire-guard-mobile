@@ -13,4 +13,7 @@ class RouteNames {
   static const String familyManagementScreen = '/family_management';
   static const String notifications = '/notifications';
   static const String settings = '/settings';
+  static const String fireAlertMapScreen = '/fire_alert_map_screen';
+  static const String registerCoordinatesScreen = '/register_coordinates_screen';
+
 }
