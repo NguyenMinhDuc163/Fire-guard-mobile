@@ -275,10 +275,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       // TODO login
                       print('----------------- ${StatusApi.BASE_API_URL}');
 
-                       //  if(emailC.text.trim().isEmpty || passwordC.text.trim().isEmpty || !Utils.isValidEmail(emailC.text.trim())){
-                       //    showToast(message: 'invalid_email_password'.tr());
-                       //    return;
-                       //  }
+                        if(emailC.text.trim().isEmpty || passwordC.text.trim().isEmpty || !Utils.isValidEmail(emailC.text.trim())){
+                          showToast(message: 'invalid_email_password'.tr());
+                          return;
+                        }
                        authViewModel.signIn(username: emailC.text.trim(), password: passwordC.text.trim());
                       Navigator.pushNamed(context, RouteNames.mainApp);
                     },

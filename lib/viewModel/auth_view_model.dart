@@ -30,12 +30,27 @@ class AuthViewModel extends ChangeNotifier {
     );
     final BaseResponse<LoginResponse> response =
     await apiServices.sendLogin(request);
+
     print('Code: ${response.code}');
     print('Status: ${response.status}');
     print('Message: ${response.message}');
     print('Error: ${response.error}');
     print('Data: ${response.data}');
     if(response.code != null){
+
+      for (var item in response.data!) {
+        if (item.key == 'user' && item.value is Map<String, dynamic>) {
+          Map<String, dynamic> userMap = item.value as Map<String, dynamic>;
+          String username = userMap['username'] ?? 'Nguyễn Minh Đức';
+          String email = userMap['email'] ?? 'ngminhduc1603@gmail.com';
+          LocalStorageHelper.setValue("userName", username);
+          LocalStorageHelper.setValue("email", email);
+
+          print('=>>>>>>Username: ${LocalStorageHelper.getValue('userName')} + Email: ${LocalStorageHelper.getValue('email')}');
+          break; // Dừng vòng lặp khi tìm thấy user
+        }
+      }
+
       showToast(message: 'login_success'.tr(),);
     }else{
       showToast(message: 'login_failed'.tr(),);

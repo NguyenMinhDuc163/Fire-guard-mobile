@@ -1,11 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/models/personal_profile_model.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/view/home/widget/drawer_widget.dart';
+import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
 import 'package:fire_guard/viewModel/sensor_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../init.dart';
 
 class PersonalProfileScreen extends StatefulWidget {
   const PersonalProfileScreen({super.key});
@@ -21,12 +25,30 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
   bool isGasSensorOn = true;
   bool isAirQualitySensorOn = true;
   bool isAlarmOn = false;
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Sử dụng WidgetsBinding để hoãn cập nhật trạng thái cho đến khi cây widget được xây dựng
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final personalProfileViewModel = Provider.of<PersonalProfileViewModel>(context, listen: false);
+      personalProfileViewModel.setPersonalProfile(
+        name: LocalStorageHelper.getValue('userName'),
+        email: LocalStorageHelper.getValue('email'),
+      );
+    });
+  }
   @override
   Widget build(BuildContext context) {
 
+    final personalProfileViewModel = Provider.of<PersonalProfileViewModel>(context);
     final sensorViewModel = Provider.of<SensorViewModel>(context);
-    final model = sensorViewModel.model;
+    final model = personalProfileViewModel.model;
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +69,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const Center(
+             Center(
               child: Column(
                 children: [
                   CircleAvatar(
@@ -56,7 +78,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Nguyễn Minh Đức',
+                    model.name ?? 'Nguyễn Minh Đức',
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -64,7 +86,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    'ngminhduc1603@gmail.com',
+                    model.email ?? 'ngminhduc1603@gmail.com',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey,

@@ -1,0 +1,66 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.fire_guard.app-mergeReleaseResources-55:/values-v21/values-v21.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Nguyen Duc\\.gradle\\caches\\transforms-3\\a24b90f502cfc0f2bc18e2e31a2aa603\\transformed\\core-1.13.1\\res\\values-v21\\values-v21.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,13",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,173,237,304,368,484,610,736,864,1036",
+                        "endLines": "2,3,4,5,6,7,8,9,12,17",
+                        "endColumns": "117,63,66,63,115,125,125,127,12,12",
+                        "endOffsets": "168,232,299,363,479,605,731,859,1031,1383"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,14,18,30,33",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,173,237,304,368,484,941,1235,2023,2195",
+                        "endLines": "2,3,4,5,6,7,14,18,32,37",
+                        "endColumns": "117,63,66,63,115,125,125,127,12,12",
+                        "endOffsets": "168,232,299,363,479,605,1062,1358,2190,2542"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Nguyen Duc\\.gradle\\caches\\transforms-3\\d9310caf49554b1bd29772566cd6aec0\\transformed\\media-1.1.0\\res\\values-v21\\values-v21.xml",
+                    "from": {
+                        "startLines": "2,5,8,11",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,223,386,554",
+                        "endLines": "4,7,10,13",
+                        "endColumns": "12,12,12,12",
+                        "endOffsets": "218,381,549,716"
+                    },
+                    "to": {
+                        "startLines": "8,11,15,19",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "610,778,1067,1363",
+                        "endLines": "10,13,17,21",
+                        "endColumns": "12,12,12,12",
+                        "endOffsets": "773,936,1230,1525"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Nguyen Duc\\.gradle\\caches\\transforms-3\\1f6f7be000326b144b1e9c0ca6be4852\\transformed\\jetified-credentials-play-services-auth-1.2.0-rc01\\res\\values-v21\\values-v21.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "9",
+                        "endColumns": "12",
+                        "endOffsets": "543"
+                    },
+                    "to": {
+                        "startLines": "22",
+                        "startColumns": "4",
+                        "startOffsets": "1530",
+                        "endLines": "29",
+                        "endColumns": "12",
+                        "endOffsets": "2018"
+                    }
+                }
+            ]
+        }
+    ]
+}

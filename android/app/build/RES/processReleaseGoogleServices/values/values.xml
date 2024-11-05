@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">820644781130</string>
+    <string name="google_api_key" translatable="false">AIzaSyBg5XhnyjjzUYLTIdkZxmML0ZaPeDLS6pE</string>
+    <string name="google_app_id" translatable="false">1:820644781130:android:9d14e6065076e7c8af1ab3</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBg5XhnyjjzUYLTIdkZxmML0ZaPeDLS6pE</string>
+    <string name="google_storage_bucket" translatable="false">fire-guard-5a3b2.appspot.com</string>
+    <string name="project_id" translatable="false">fire-guard-5a3b2</string>
+</resources>

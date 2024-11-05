@@ -80,6 +80,24 @@ class DrawerWidget extends StatelessWidget {
               // Thêm hành động điều hướng khi ấn vào menu
             },
           ),
+
+          ListTile(
+            leading: Icon(Icons.info),
+            title: Text('logout'.tr()),
+            onTap: () async {
+              LocalStorageHelper.deleteValue('userName');
+              LocalStorageHelper.deleteValue('email');
+
+              // Điều hướng về màn hình đăng nhập và xóa tất cả các route trước đó
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RouteNames.loginScreen, // Tên route của màn hình đăng nhập
+                    (Route<dynamic> route) => false, // Xóa tất cả các route trước đó
+              );
+
+              // Thêm hành động điều hướng khi ấn vào menu
+            },
+          ),
         ],
       ),
     );
