@@ -116,23 +116,33 @@ class ApiServices extends BaseApiService {
 
   // api lấy lịch sử cảnh báo
   Future<BaseResponse<HistoryResponse>> getHistory({
-    required String userId,
-    required String startDate,
-    required String endDate,
+    String? userId,
+    String? startDate,
+    String? endDate,
   }) async {
-    final queryParams = {
-      "user_id": userId,
-      "start_date": startDate,
-      "end_date": endDate,
-    };
+    final queryParams = <String, String>{};
+
+    // Thêm tham số vào queryParams nếu chúng không null hoặc không rỗng
+    if (userId != null && userId.isNotEmpty) {
+      queryParams["user_id"] = userId;
+    }
+    if (startDate != null && startDate.isNotEmpty) {
+      queryParams["start_date"] = startDate;
+    }
+    if (endDate != null && endDate.isNotEmpty) {
+      queryParams["end_date"] = endDate;
+    }
 
     return await sendRequest<HistoryResponse>(
       'history',
       method: 'GET',
-      data: queryParams,
+      data: queryParams, // Truyền queryParams vào đây
       fromJson: (json) => HistoryResponse.fromJson(json),
     );
   }
+
+
+
 
   // api lấy hướng dẫn và tin tức
   Future<BaseResponse<GuideAndNewsResponse>> getGuidesAndNews({

@@ -26,7 +26,6 @@ class SensorDataPage extends StatefulWidget {
 }
 
 class _SensorDataPageState extends State<SensorDataPage> {
-
   @override
   Widget build(BuildContext context) {
     final sensorViewModel = Provider.of<SensorViewModel>(context);
@@ -41,7 +40,10 @@ class _SensorDataPageState extends State<SensorDataPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: sensorViewModel.sendNotification,
+              onPressed: () {
+                // sensorViewModel.saveDeviceStatus(deviceName: 'buzzer', status: 'active');
+                sensorViewModel.fetchHistory();
+              },
               child: Text('Gửi Dữ Liệu'),
             ),
             SizedBox(height: 20),

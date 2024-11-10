@@ -24,8 +24,9 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
   bool isFlameSensorOn = true;
   bool isGasSensorOn = true;
   bool isAirQualitySensorOn = true;
-  bool isAlarmOn = false;
-@override
+  bool isAlarmOn = true;
+  bool _isWaitingForResponse = false;
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -252,15 +253,38 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                     leading: const Icon(Icons.notifications, color: Colors.green),
                     title: const Text('Còi báo'),
                     trailing: Switch(
-                      value: isAlarmOn,
-                      onChanged: (value) {
-                        sensorViewModel.saveDeviceStatus(deviceName: 'Alarm', status: isAlarmOn ? "active" : "inactive");
+                    value: isAlarmOn,
+                    onChanged: (value) async {
+                      if (_isWaitingForResponse) {
+                        showToastTop(message: 'Đang thực hiện tắt/bật còi. Vui lòng đợi...');
+                        return;
+                      }
 
+                      setState(() {
+                        _isWaitingForResponse = true;
+                      });
+
+                      bool isBuzzer = await sensorViewModel.saveDeviceStatus(
+                        deviceName: 'buzzer',
+                        // status: value ? "active" : "inactive",
+                        status: "active",
+                      );
+
+                      if (isBuzzer) {
                         setState(() {
                           isAlarmOn = value;
                         });
-                      },
-                    ),
+                        showToastTop(message: 'Đã cập nhật trạng thái còi thành công!');
+
+                      } else {
+                        showToastTop(message: 'Có lỗi xảy ra, vui lòng thử lại sau.');
+                      }
+
+                      setState(() {
+                        _isWaitingForResponse = false;
+                      });
+                    },
+                  ),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(

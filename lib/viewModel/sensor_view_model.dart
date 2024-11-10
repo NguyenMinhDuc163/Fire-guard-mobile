@@ -105,7 +105,7 @@ class SensorViewModel extends ChangeNotifier {
   }
 
 
-  void saveDeviceStatus({required String deviceName, required String status}) async {
+  Future<bool> saveDeviceStatus({required String deviceName, required String status}) async {
     List<SaveDeviceStatusRequest> requests = [
       SaveDeviceStatusRequest(
         deviceName: deviceName,
@@ -118,13 +118,14 @@ class SensorViewModel extends ChangeNotifier {
     // await apiServices.addDocument(requests);
     final BaseResponse<SaveDeviceStatusResponse> response =
     await apiServices.saveDeviceStatus(requests);
-    print('Code: ${response.code}');
+    print('=?????/Code: ${response.code}');
     print('Status: ${response.status}');
     print('Message: ${response.message}');
     print('Error: ${response.error}');
     print('Data: ${response.data}');
 
     notifyListeners();
+    return response.code == 200;
   }
 
 
@@ -204,9 +205,12 @@ class SensorViewModel extends ChangeNotifier {
   void fetchHistory() async {
     try {
       final response = await apiServices.getHistory(
-        userId: "user_001",
-        startDate: "2024-10-13",
-        endDate: "2024-10-13",
+        // userId: "user_001",
+        // startDate: "2024-10-13",
+        // endDate: "2024-10-13",
+        userId: null,
+        startDate: null,
+        endDate: null,
       );
 
       print('Code: ${response.code}');

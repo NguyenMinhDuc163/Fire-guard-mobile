@@ -9,7 +9,7 @@ class ProviderSetup {
     return [
       ChangeNotifierProvider(create: (_) => AuthViewModel()),
       ChangeNotifierProvider(create: (_) => SensorViewModel()),
-      // ChangeNotifierProvider(create: (_) => HomeViewModel()),
+      ChangeNotifierProvider(create: (_) => HomeViewModel()),
       // Thêm các Provider khác ở đây
     ];
   }

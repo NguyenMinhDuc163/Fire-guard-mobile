@@ -84,4 +84,52 @@ class HomeViewModel extends ChangeNotifier{
       print('Quyền gọi điện bị từ chối.');
     }
   }
+
+// Hàm sửa lại để trả về dữ liệu
+  Future<List<Map<String, dynamic>>> fetchHistory({required DateTime startDate, required DateTime endDate}) async {
+    try {
+      // Chuyển đổi startDate và endDate thành chuỗi với định dạng yyyy-MM-dd
+      final String formattedStartDate = DateFormat('yyyy-MM-dd').format(startDate);
+      final String formattedEndDate = DateFormat('yyyy-MM-dd').format(endDate);
+
+      final response = await apiServices.getHistory(
+        // Truyền các giá trị đã chuẩn hóa vào API
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      );
+
+      print('->>>>>> response: $response');
+      print('Code: ${response.code}');
+      print('Status: ${response.status}');
+      print('Message: ${response.message}');
+      print('data: ${response.data}');
+
+      if (response.data != null) {
+        List<Map<String, dynamic>> notifications = [];
+        for (var incident in response.data!) {
+          DateTime timestamp;
+          if (incident.timestamp is String) {
+            timestamp = DateTime.parse(incident.timestamp as String);
+          } else if (incident.timestamp is DateTime) {
+            timestamp = incident.timestamp as DateTime;
+          } else {
+            timestamp = DateTime.now();
+          }
+
+          notifications.add({
+            'incidentId': incident.incidentId,
+            'message': incident.message,
+            'timestamp': DateFormat('dd/MM/yyyy HH:mm:ss').format(timestamp.toLocal()),
+          });
+        }
+        return notifications;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error: $e');
+      return [];
+    }
+  }
+
 }
