@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/models/home_model.dart';
 import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
 import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
+import 'package:fire_guard/service/api_service/request/user_location_request.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
+import 'package:fire_guard/service/api_service/response/user_list_response.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -130,6 +134,23 @@ class HomeViewModel extends ChangeNotifier{
       print('Error: $e');
       return [];
     }
+  }
+  Future<List<dynamic>> sendUserList() async {
+    UserLocationRequest request = UserLocationRequest(
+      type: "all",
+    );
+    final BaseResponse<UserListResponse> response =
+    await apiServices.sendUserList(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+    List<UserListResponse> data = response.data!;
+    notifyListeners();
+    return data;
+
+
   }
 
 }

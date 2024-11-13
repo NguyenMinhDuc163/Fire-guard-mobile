@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fire_guard/models/sensor_model.dart';
 import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
@@ -10,6 +12,7 @@ import 'package:fire_guard/service/api_service/request/send_data_sensor_request.
 import 'package:fire_guard/service/api_service/request/send_family_alert_request.dart';
 import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
 import 'package:fire_guard/service/api_service/request/upload_sensor_data_request.dart';
+import 'package:fire_guard/service/api_service/request/user_location_request.dart';
 import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
@@ -18,10 +21,13 @@ import 'package:fire_guard/service/api_service/response/fire_emergency_response.
 import 'package:fire_guard/service/api_service/response/login_response.dart';
 import 'package:fire_guard/service/api_service/response/register_response.dart';
 import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
+import 'package:fire_guard/service/api_service/response/save_location_response.dart';
 import 'package:fire_guard/service/api_service/response/send_data_sensor_response.dart';
 import 'package:fire_guard/service/api_service/response/send_family_alert_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
 import 'package:fire_guard/service/api_service/response/upload_sensor_data_response.dart';
+import 'package:fire_guard/service/api_service/response/user_list_response.dart';
+import 'package:fire_guard/service/api_service/response/user_location_response.dart';
 import 'package:flutter/cupertino.dart';
 
 
@@ -285,4 +291,62 @@ class SensorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  void sendUserList() async {
+    UserLocationRequest request = UserLocationRequest(
+        type: "all",
+    );
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    final BaseResponse<UserListResponse> response =
+    await apiServices.sendUserList(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+    List<UserListResponse> data = response.data!;
+    for (var user in data) {
+      print('User ID: ${user.id}, Username: ${user.username}, Email: ${user.email}');
+    }
+
+    notifyListeners();
+  }
+
+  void sendLocation() async {
+    UserLocationRequest request = UserLocationRequest(
+      type: "longitude",
+    );
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    final BaseResponse<UserLocationResponse> response =
+    await apiServices.sendLocationUser(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
+  }
+
+  void saveLocation() async {
+    UserLocationRequest request = UserLocationRequest(
+      type: "save",
+      longitude: "105.8523",
+      latitude: "21.0285",
+      userID: 7,
+    );
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    final BaseResponse<SaveLocatonResponse> response =
+    await apiServices.saveLocationUser(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
+  }
 }

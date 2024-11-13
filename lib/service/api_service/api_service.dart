@@ -9,6 +9,7 @@ import 'package:fire_guard/service/api_service/request/save_device_status_reques
 import 'package:fire_guard/service/api_service/request/send_family_alert_request.dart';
 import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
 import 'package:fire_guard/service/api_service/request/upload_sensor_data_request.dart';
+import 'package:fire_guard/service/api_service/request/user_location_request.dart';
 import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
@@ -16,9 +17,12 @@ import 'package:fire_guard/service/api_service/response/fire_emergency_response.
 import 'package:fire_guard/service/api_service/response/login_response.dart';
 import 'package:fire_guard/service/api_service/response/register_response.dart';
 import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
+import 'package:fire_guard/service/api_service/response/save_location_response.dart';
 import 'package:fire_guard/service/api_service/response/send_family_alert_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
 import 'package:fire_guard/service/api_service/response/upload_sensor_data_response.dart';
+import 'package:fire_guard/service/api_service/response/user_list_response.dart';
+import 'package:fire_guard/service/api_service/response/user_location_response.dart';
 
 import 'request/send_data_sensor_request.dart';
 import 'response/guide_and_news_response.dart';
@@ -185,6 +189,38 @@ class ApiServices extends BaseApiService {
     );
   }
 
+  //Lay danh sach User
+  Future<BaseResponse<UserListResponse>> sendUserList(
+      UserLocationRequest request) async {
+    return await sendRequest<UserListResponse>(
+      '/user_location',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => UserListResponse.fromJson(json),
+    );
+  }
+
+  // lay DS toa do
+  Future<BaseResponse<UserLocationResponse>> sendLocationUser(
+      UserLocationRequest request) async {
+    return await sendRequest<UserLocationResponse>(
+      '/user_location',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => UserLocationResponse.fromJson(json),
+    );
+  }
+
+  // luu toa do user
+  Future<BaseResponse<SaveLocatonResponse>> saveLocationUser(
+      UserLocationRequest request) async {
+    return await sendRequest<SaveLocatonResponse>(
+      '/user_location',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => SaveLocatonResponse.fromJson(json),
+    );
+  }
 }
 
 

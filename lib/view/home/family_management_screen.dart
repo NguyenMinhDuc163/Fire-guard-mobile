@@ -1,17 +1,49 @@
+import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FamilyManagementScreen extends StatefulWidget {
   const FamilyManagementScreen({super.key});
   static const String routeName = '/family_management';
+
   @override
   State<FamilyManagementScreen> createState() => _FamilyManagementScreenState();
 }
 
 class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
-  List<Map<String, String>> familyMembers = [
-    {'name': 'Nguyễn Văn A', 'contact': '0123456789', 'status': 'Đã nhận thông báo'},
-    {'name': 'Trần Thị B', 'contact': 'username_b', 'status': 'Chưa nhận thông báo'},
-  ];
+  List<Map<String, String>> familyMembers = [];
+  bool isLoading = false; // Thêm biến isLoading để kiểm soát trạng thái loading
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      _loadData();
+    });
+  }
+
+  Future<void> _loadData() async {
+    setState(() {
+      isLoading = true; // Bắt đầu loading
+    });
+
+    try {
+      final fetchedUsers = await Provider.of<HomeViewModel>(context, listen: false).sendUserList();
+      setState(() {
+        familyMembers = fetchedUsers.map<Map<String, String>>((user) => {
+          'name': user.username,
+          'contact': user.email,
+          'status': 'Đang hoạt động',
+        }).toList();
+      });
+    } catch (e) {
+      print('Lỗi khi tải dữ liệu từ API: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Kết thúc loading
+      });
+    }
+  }
 
   void _addFamilyMember() {
     showDialog(
@@ -52,7 +84,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
                     familyMembers.add({
                       'name': name,
                       'contact': contact,
-                      'status': 'Chưa nhận thông báo',
+                      'status': 'Đang hoạt động',
                     });
                   });
                   Navigator.pop(context);
@@ -79,7 +111,9 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
         title: const Text('Quản Lý Người Thân'),
         backgroundColor: Colors.orange,
       ),
-      body: Padding(
+      body: isLoading // Kiểm tra trạng thái loading
+          ? Center(child: CircularProgressIndicator()) // Hiển thị loading nếu isLoading = true
+          : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -98,7 +132,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
                           Text(
                             familyMembers[index]['status']!,
                             style: TextStyle(
-                              color: familyMembers[index]['status'] == 'Đã nhận thông báo'
+                              color: familyMembers[index]['status'] == 'Đang hoạt động'
                                   ? Colors.green
                                   : Colors.red,
                               fontWeight: FontWeight.bold,
@@ -113,7 +147,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
                         ],
                       ),
                       onTap: () {
-                        // Thêm logic khi ấn vào người thân (nếu cần)
+                        // Logic khi ấn vào người thân (nếu cần)
                       },
                     ),
                   );
