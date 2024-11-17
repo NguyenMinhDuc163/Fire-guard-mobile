@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fire_guard/models/sensor_model.dart';
 import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
+import 'package:fire_guard/service/api_service/request/change_password_request.dart';
 import 'package:fire_guard/service/api_service/request/device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
 import 'package:fire_guard/service/api_service/request/login_request.dart';
@@ -15,6 +16,7 @@ import 'package:fire_guard/service/api_service/request/upload_sensor_data_reques
 import 'package:fire_guard/service/api_service/request/user_location_request.dart';
 import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
+import 'package:fire_guard/service/api_service/response/change_password_response.dart';
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
 
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
@@ -339,7 +341,7 @@ class SensorViewModel extends ChangeNotifier {
     );
     print('JSON request data: ${jsonEncode(request.toJson())}');
 
-    final BaseResponse<SaveLocatonResponse> response =
+    final BaseResponse<SaveLocationResponse> response =
     await apiServices.saveLocationUser(request);
     print('Code: ${response.code}');
     print('Status: ${response.status}');
@@ -349,4 +351,24 @@ class SensorViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void changePassword() async {
+    ChangePasswordRequest request = ChangePasswordRequest(
+      userID: 7,
+      oldPassword: 'password1234',
+      newPassword: '123456',
+    );
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    final BaseResponse<ChangePasswordResponse> response =
+    await apiServices.changePassword(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
+  }
+
 }

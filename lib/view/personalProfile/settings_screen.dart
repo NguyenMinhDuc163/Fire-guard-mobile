@@ -1,4 +1,5 @@
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
+import 'package:fire_guard/view/personalProfile/change_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart'; // Thư viện đổi ngôn ngữ
 import 'settings_detail_screen.dart'; // Import màn hình chi tiết
@@ -64,22 +65,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(),
 
           // Đổi mật khẩu
+          // Đổi mật khẩu
           ListTile(
             leading: const Icon(Icons.lock, color: Colors.red),
             title: const Text('Đổi mật khẩu'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsDetailScreen(
-                    title: 'Đổi mật khẩu',
-                    hintText: 'Nhập mật khẩu mới',
-                    inputType: TextInputType.visiblePassword,
-                  ),
-                ),
+                MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
               );
             },
           ),
+
           const Divider(),
 
           // Thay đổi email

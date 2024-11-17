@@ -12,6 +12,7 @@ import 'package:fire_guard/service/api_service/response/send_notification_respon
 import 'package:fire_guard/service/api_service/response/user_list_response.dart';
 import 'package:fire_guard/service/api_service/response/user_location_response.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
+import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -187,12 +188,12 @@ class HomeViewModel extends ChangeNotifier{
       type: "save",
       longitude: longitude,
       latitude: latitude,
-      userID: 7,
+      userID: LocalStorageHelper.getValue('userId'),
       isFire: isFire
     );
     print('JSON request data: ${jsonEncode(request.toJson())}');
 
-    final BaseResponse<SaveLocatonResponse> response =
+    final BaseResponse<SaveLocationResponse> response =
     await apiServices.saveLocationUser(request);
     print('Code: ${response.code}');
     print('Status: ${response.status}');

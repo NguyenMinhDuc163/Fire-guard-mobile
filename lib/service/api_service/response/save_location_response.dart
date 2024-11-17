@@ -1,8 +1,8 @@
-class SaveLocatonResponse {
-  SaveLocatonResponse();
+class SaveLocationResponse {
+  SaveLocationResponse();
 
-  factory SaveLocatonResponse.fromJson(Map<String, dynamic> json) =>
-      SaveLocatonResponse();
+  factory SaveLocationResponse.fromJson(Map<String, dynamic> json) =>
+      SaveLocationResponse();
 
   Map<String, dynamic> toJson() => {};
 }

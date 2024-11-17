@@ -118,6 +118,12 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
         _currentPosition = position;
         _isLoading = false;
       });
+
+      // Luu toa do
+      LocalStorageHelper.setValue("latitude", position.latitude.toString());
+      LocalStorageHelper.setValue("longitude", position.longitude.toString());
+
+      print('=====> Latitude: ${LocalStorageHelper.getValue("latitude")} + Longitude: ${LocalStorageHelper.getValue("longitude")}');
     } catch (e) {
       print("Error getting location: $e");
     }
@@ -129,9 +135,42 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
     );
 
     if (await canLaunchUrl(googleMapsUri)) {
-      await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication);
+      try {
+        await launchUrl(
+          googleMapsUri,
+          mode: LaunchMode.externalApplication, // Cố mở trong ứng dụng trước
+        );
+      } catch (e) {
+        print("Lỗi khi mở Google Maps trong ứng dụng: $e");
+        _openInWebBrowser(googleMapsUri); // Fallback mở trong trình duyệt
+      }
     } else {
-      print("Không thể mở $googleMapsUri");
+      print("Không thể mở Google Maps ứng dụng.");
+      _openInWebBrowser(googleMapsUri); // Fallback mở trong trình duyệt
+    }
+  }
+
+  void _openInWebBrowser(Uri googleMapsUri) async {
+    if (await canLaunchUrl(googleMapsUri)) {
+      try {
+        await launchUrl(
+          googleMapsUri,
+          mode: LaunchMode.inAppWebView, // Mở trong trình duyệt nếu ứng dụng không hoạt động
+        );
+      } catch (e) {
+        print("Lỗi khi mở Google Maps trong trình duyệt: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Không thể mở Google Maps. Vui lòng kiểm tra kết nối mạng."),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Không thể mở Google Maps. Vui lòng kiểm tra ứng dụng hoặc trình duyệt."),
+        ),
+      );
     }
   }
 
@@ -209,12 +248,20 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
                   ),
                   width: 40,
                   height: 40,
-                  child: SvgPicture.asset(
-                    _isHomeOnFire
-                        ? AssetHelper.icoFire
-                        : AssetHelper.icoHomeMap,
-                    width: 40,
-                    height: 40,
+                  child: GestureDetector(
+                    onTap: () {
+                      _openGoogleMaps(LatLng(
+                        _currentPosition!.latitude,
+                        _currentPosition!.longitude,
+                      ));
+                    },
+                    child: SvgPicture.asset(
+                      _isHomeOnFire
+                          ? AssetHelper.icoFire
+                          : AssetHelper.icoHomeMap,
+                      width: 40,
+                      height: 40,
+                    ),
                   ),
                 ),
               // Các vị trí từ API
@@ -235,6 +282,7 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
               )),
             ],
           ),
+
         ],
       ),
       floatingActionButton: Column(

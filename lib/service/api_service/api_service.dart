@@ -1,6 +1,7 @@
 
 import 'package:fire_guard/service/api_service/BaseApiService.dart';
 import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
+import 'package:fire_guard/service/api_service/request/change_password_request.dart';
 import 'package:fire_guard/service/api_service/request/device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
 import 'package:fire_guard/service/api_service/request/login_request.dart';
@@ -12,6 +13,7 @@ import 'package:fire_guard/service/api_service/request/upload_sensor_data_reques
 import 'package:fire_guard/service/api_service/request/user_location_request.dart';
 import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
+import 'package:fire_guard/service/api_service/response/change_password_response.dart';
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
 import 'package:fire_guard/service/api_service/response/login_response.dart';
@@ -212,13 +214,26 @@ class ApiServices extends BaseApiService {
   }
 
   // luu toa do user
-  Future<BaseResponse<SaveLocatonResponse>> saveLocationUser(
+  Future<BaseResponse<SaveLocationResponse>> saveLocationUser(
       UserLocationRequest request) async {
-    return await sendRequest<SaveLocatonResponse>(
+    return await sendRequest<SaveLocationResponse>(
       '/user_location',
       method: 'POST',
       data: request.toJson(),
-      fromJson: (json) => SaveLocatonResponse.fromJson(json),
+      fromJson: (json) => SaveLocationResponse.fromJson(json),
+    );
+  }
+
+  // doi mat khau
+
+  // luu toa do user
+  Future<BaseResponse<ChangePasswordResponse>> changePassword(
+      ChangePasswordRequest request) async {
+    return await sendRequest<ChangePasswordResponse>(
+      '/auth/change_password',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => ChangePasswordResponse.fromJson(json),
     );
   }
 }

@@ -19,7 +19,7 @@ class AuthViewModel extends ChangeNotifier {
   AuthModel authModel = AuthModel();
   AuthModel get model => authModel;
 
-  void signIn({required String username, required String password}) async {
+  Future<bool> signIn({required String username, required String password}) async {
     final tokenFCM = LocalStorageHelper.getValue('fcm_token');
     print('đã lấy được Token FCM: $tokenFCM');
 
@@ -36,26 +36,33 @@ class AuthViewModel extends ChangeNotifier {
     print('Message: ${response.message}');
     print('Error: ${response.error}');
     print('Data: ${response.data}');
-    if(response.code != null){
+    if(response.code != null ){
+        for (var item in response.data!) {
+          if (item.key == 'user' && item.value is Map<String, dynamic>) {
+            Map<String, dynamic> userMap = item.value as Map<String, dynamic>;
+            String username = userMap['username'] ?? 'Nguyễn Minh Đức';
+            String email = userMap['email'] ?? 'ngminhduc1603@gmail.com';
+            int id = userMap['id'] ?? 1;
+            LocalStorageHelper.setValue("userName", username);
+            LocalStorageHelper.setValue("email", email);
+            LocalStorageHelper.setValue("userId", id);
 
-      for (var item in response.data!) {
-        if (item.key == 'user' && item.value is Map<String, dynamic>) {
-          Map<String, dynamic> userMap = item.value as Map<String, dynamic>;
-          String username = userMap['username'] ?? 'Nguyễn Minh Đức';
-          String email = userMap['email'] ?? 'ngminhduc1603@gmail.com';
-          LocalStorageHelper.setValue("userName", username);
-          LocalStorageHelper.setValue("email", email);
-
-          print('=>>>>>>Username: ${LocalStorageHelper.getValue('userName')} + Email: ${LocalStorageHelper.getValue('email')}');
-          break; // Dừng vòng lặp khi tìm thấy user
+          print('=>>>>>>Username: ${LocalStorageHelper.getValue('userName')} + Email: ${LocalStorageHelper.getValue('email')} + ID: ${LocalStorageHelper.getValue('userId')}');
+            break; // Dừng vòng lặp khi tìm thấy user
+          }
         }
-      }
-
-      showToast(message: 'login_success'.tr(),);
-    }else{
-      showToast(message: 'login_failed'.tr(),);
     }
+
     notifyListeners();
+    if(response.code == 200 || response.code == 201){
+      showToastTop(message: response.message.toString(),);
+      return true;}
+    else{
+      showToastTop(message:response.message.toString(),);
+      return false;
+    }
+
+
 
   }
 
