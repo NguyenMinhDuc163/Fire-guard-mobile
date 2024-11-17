@@ -115,55 +115,58 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
           ? Center(child: CircularProgressIndicator()) // Hiển thị loading nếu isLoading = true
           : Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: familyMembers.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ListTile(
-                      title: Text(familyMembers[index]['name']!),
-                      subtitle: Text('Liên hệ: ${familyMembers[index]['contact']}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            familyMembers[index]['status']!,
-                            style: TextStyle(
-                              color: familyMembers[index]['status'] == 'Đang hoạt động'
-                                  ? Colors.green
-                                  : Colors.red,
-                              fontWeight: FontWeight.bold,
+        child: RefreshIndicator(
+          onRefresh: _loadData,
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: familyMembers.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: ListTile(
+                        title: Text(familyMembers[index]['name']!),
+                        subtitle: Text('Liên hệ: ${familyMembers[index]['contact']}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              familyMembers[index]['status']!,
+                              style: TextStyle(
+                                color: familyMembers[index]['status'] == 'Đang hoạt động'
+                                    ? Colors.green
+                                    : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              _deleteFamilyMember(index);
-                            },
-                          ),
-                        ],
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                _deleteFamilyMember(index);
+                              },
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          // Logic khi ấn vào người thân (nếu cần)
+                        },
                       ),
-                      onTap: () {
-                        // Logic khi ấn vào người thân (nếu cần)
-                      },
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: _addFamilyMember,
-              icon: const Icon(Icons.add),
-              label: const Text('Thêm Người Thân'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                onPressed: _addFamilyMember,
+                icon: const Icon(Icons.add),
+                label: const Text('Thêm Người Thân'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

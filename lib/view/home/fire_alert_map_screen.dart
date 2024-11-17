@@ -1,9 +1,11 @@
 import 'package:fire_guard/init.dart';
+import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FireAlertMapScreen extends StatefulWidget {
@@ -18,46 +20,95 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
   final MapController _mapController = MapController();
   Position? _currentPosition;
   bool _isLoading = true;
-  String _selectedMapStyle = "World Street Map"; // Mặc định chọn World Street Map
+  bool _isHomeOnFire = false; // Trạng thái cháy tại vị trí hiện tại
+  String _selectedMapStyle = "World Street Map";
 
-  // Danh sách các kiểu bản đồ
   final Map<String, String> _mapStyles = {
     "OpenStreetMap": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    "World Street Map": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-    "World Imagery": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    "Topographic": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+    "World Street Map":
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    "World Imagery":
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "Topographic":
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
   };
 
-  // Dữ liệu giả định nghĩa trực tiếp
-  final List<Map<String, dynamic>> fakeFamilyMembers = [
-    {
-      'name': 'Người thân 1',
-      'position': LatLng(21.028511, 105.804817),
-      'imageURL': AssetHelper.icoFire,
-    },
-    {
-      'name': 'Người thân 2',
-      'position': LatLng(21.038511, 105.814817),
-      'imageURL': AssetHelper.icoFire,
-    },
-    {
-      'name': 'Người thân 3',
-      'position': LatLng(21.048511, 105.824817),
-      'imageURL': AssetHelper.icoFamilyMap,
-    },
-
-    {
-      'name': 'Người thân 4',
-      'position': LatLng(21.0015463, 105.8045407),
-      'imageURL': AssetHelper.icoFamilyMap,
-    }
-  ];
+  List<Map<String, dynamic>> familyMembers = [];
 
   @override
   void initState() {
     super.initState();
-    _getCurrentPosition();
+    Future.delayed(Duration.zero, () {
+      _getCurrentPosition();
+      _loadLocation();
+    });
   }
+
+  Future<void> _loadLocation() async {
+    try {
+      final response =
+      await Provider.of<HomeViewModel>(context, listen: false).sendLocation();
+
+      if (response.data != null) {
+        final apiFamilyMembers = response.data!
+            .map<Map<String, dynamic>>((location) => {
+          'name': 'Vị trí từ API',
+          'position': LatLng(
+            double.parse(location.latitude),
+            double.parse(location.longitude),
+          ),
+          'isFire': location.isFire,
+          'imageURL': location.isFire
+              ? AssetHelper.icoFire
+              : AssetHelper.icoFamilyMap,
+        })
+            .toList();
+
+        // Kiểm tra cháy tại vị trí hiện tại
+        if (_currentPosition != null) {
+          final LatLng currentPosition = LatLng(
+            _currentPosition!.latitude,
+            _currentPosition!.longitude,
+          );
+
+          // Kiểm tra vị trí hiện tại có cháy hay không
+          final currentLocationFire = apiFamilyMembers.firstWhere(
+                (location) =>
+            (location['position'] as LatLng).latitude.toStringAsFixed(5) ==
+                currentPosition.latitude.toStringAsFixed(5) &&
+                (location['position'] as LatLng).longitude.toStringAsFixed(5) ==
+                    currentPosition.longitude.toStringAsFixed(5) &&
+                location['isFire'] == true,
+            orElse: () => {
+              'name': 'No Fire',
+              'position': currentPosition,
+              'isFire': false,
+              'imageURL': AssetHelper.icoHomeMap,
+            },
+          );
+
+          setState(() {
+            _isHomeOnFire = currentLocationFire['isFire'] == true;
+          });
+
+          setState(() {
+            _isHomeOnFire = currentLocationFire != null;
+          });
+        }
+
+        setState(() {
+          familyMembers = apiFamilyMembers; // Cập nhật danh sách từ API
+        });
+      }
+    } catch (e) {
+      print('Error loading location data: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
 
   Future<void> _getCurrentPosition() async {
     try {
@@ -72,7 +123,6 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
     }
   }
 
-  // Hàm để mở Google Maps và chỉ đường
   void _openGoogleMaps(LatLng destination) async {
     final Uri googleMapsUri = Uri.parse(
       'https://www.google.com/maps/dir/?api=1&destination=${destination.latitude},${destination.longitude}',
@@ -85,7 +135,6 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
     }
   }
 
-  // Hàm để hiển thị BottomSheet chọn kiểu bản đồ
   void _showMapStyleSelector() {
     showModalBottomSheet(
       context: context,
@@ -107,7 +156,6 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
     );
   }
 
-  // Hàm để quay lại vị trí hiện tại
   void _goToCurrentPosition() {
     if (_currentPosition != null) {
       _mapController.move(
@@ -123,6 +171,17 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
       appBar: AppBar(
         title: const Text('Bản Đồ Báo Cháy'),
         backgroundColor: Colors.orange,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              setState(() {
+                _isLoading = true; // Hiển thị trạng thái loading
+              });
+              await _loadLocation(); // Tải lại dữ liệu từ API
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -130,8 +189,8 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
         mapController: _mapController,
         options: MapOptions(
           initialCenter: LatLng(
-            _currentPosition!.latitude,
-            _currentPosition!.longitude,
+            _currentPosition?.latitude ?? 21.028511,
+            _currentPosition?.longitude ?? 105.804817,
           ),
           initialZoom: 13.0,
         ),
@@ -141,20 +200,25 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
           ),
           MarkerLayer(
             markers: [
-              Marker(
-                point: LatLng(
-                  _currentPosition!.latitude,
-                  _currentPosition!.longitude,
-                ),
-                width: 40,
-                height: 40,
-                child: SvgPicture.asset(
-                  AssetHelper.icoHomeMap,
+              // Vị trí hiện tại
+              if (_currentPosition != null)
+                Marker(
+                  point: LatLng(
+                    _currentPosition!.latitude,
+                    _currentPosition!.longitude,
+                  ),
                   width: 40,
                   height: 40,
+                  child: SvgPicture.asset(
+                    _isHomeOnFire
+                        ? AssetHelper.icoFire
+                        : AssetHelper.icoHomeMap,
+                    width: 40,
+                    height: 40,
+                  ),
                 ),
-              ),
-              ...fakeFamilyMembers.map((member) => Marker(
+              // Các vị trí từ API
+              ...familyMembers.map((member) => Marker(
                 point: member['position'],
                 width: 40,
                 height: 40,
@@ -193,4 +257,5 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
       ),
     );
   }
+
 }

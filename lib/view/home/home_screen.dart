@@ -44,10 +44,13 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Center(
                   child: GestureDetector(
-                    onTap: () {
-                      homeViewModel.sendNotification();
-                      // Hành động khi nút được bấm
-                      print('Báo cháy button pressed');
+                    onTap: () async {
+                     bool isSend = await homeViewModel.sendNotification();
+                      if(isSend){
+                        showToast(message: 'send_alert_success'.tr(),);
+                      }else{
+                        showToast(message: 'send_alert_failure'.tr(),);
+                      }
                     },
                     child: Container(
                       width: width_200,  // Kích thước chiều rộng của nút

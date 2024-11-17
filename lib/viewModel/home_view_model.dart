@@ -10,10 +10,13 @@ import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
 import 'package:fire_guard/service/api_service/response/user_list_response.dart';
+import 'package:fire_guard/service/api_service/response/user_location_response.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../service/api_service/response/save_location_response.dart';
 
 class HomeViewModel extends ChangeNotifier{
   final ApiServices apiServices = ApiServices();
@@ -21,7 +24,7 @@ class HomeViewModel extends ChangeNotifier{
   HomeModel get model => homeModel;
   final String phoneNumber = '0123456789';
 
-  void sendNotification() async {
+  Future<bool> sendNotification() async {
     SendNotificationRequest request = SendNotificationRequest(
       userId: "user_001",
       message: "Cảnh báo! Phát hiện cháy.",
@@ -34,11 +37,8 @@ class HomeViewModel extends ChangeNotifier{
     print('Message: ${response.message}');
     print('Error: ${response.error}');
     print('Data: ${response.data}');
-    if(response.code != null){
-      showToast(message: 'send_alert_success'.tr(),);
-    }else{
-      showToast(message: 'send_alert_failure'.tr(),);
-    }
+
+    return response.code == 200 || response.code == 201;
     notifyListeners();
   }
 
@@ -123,9 +123,12 @@ class HomeViewModel extends ChangeNotifier{
           notifications.add({
             'incidentId': incident.incidentId,
             'message': incident.message,
+            'title': incident.title,
+            'body': incident.body,
             'timestamp': DateFormat('dd/MM/yyyy HH:mm:ss').format(timestamp.toLocal()),
           });
         }
+        print('Notifications: $notifications');
         return notifications;
       } else {
         return [];
@@ -152,5 +155,53 @@ class HomeViewModel extends ChangeNotifier{
 
 
   }
+
+  Future<BaseResponse<UserLocationResponse>> sendLocation() async {
+    UserLocationRequest request = UserLocationRequest(
+      type: "longitude",
+    );
+
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    // Gọi API và nhận phản hồi
+    final BaseResponse<UserLocationResponse> response =
+    await apiServices.sendLocationUser(request);
+
+    // Ghi log phản hồi
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    // Gửi thông báo cập nhật
+    notifyListeners();
+
+    // Trả về phản hồi
+    return response;
+  }
+
+
+  Future<bool> saveLocation({required String longitude, required String latitude, bool isFire = false}) async {
+    UserLocationRequest request = UserLocationRequest(
+      type: "save",
+      longitude: longitude,
+      latitude: latitude,
+      userID: 7,
+      isFire: isFire
+    );
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    final BaseResponse<SaveLocatonResponse> response =
+    await apiServices.saveLocationUser(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+    return response.code == 200 || response.code == 201;
+    notifyListeners();
+  }
+
 
 }
