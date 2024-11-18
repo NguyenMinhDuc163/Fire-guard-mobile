@@ -85,6 +85,7 @@ class DrawerWidget extends StatelessWidget {
             leading: Icon(Icons.info),
             title: Text('logout'.tr()),
             onTap: () async {
+              LocalStorageHelper.deleteValue('ignoreIntroScreen');
               LocalStorageHelper.deleteValue('userName');
               LocalStorageHelper.deleteValue('email');
 

@@ -106,9 +106,10 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
             ListTile(
               leading: Icon(Icons.settings_remote, color: Colors.orange),
               title: const Text('Trạng thái thiết bị'),
-              subtitle: const Text('Đang hoạt động từ ngày: 10/10/2023'),
+              subtitle: const Text('Đang hoạt động từ ngày: 16/11/2024'),
               trailing: const Icon(Icons.check_circle, color: Colors.green),
               onTap: () {
+                isAlarmOn = true;
                 _showDeviceStatusSheet(context, sensorViewModel);
               },
             ),
@@ -135,7 +136,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
             _buildAlertHistoryItem(
               context,
               'Cảnh báo nhiệt độ cao',
-              'Ngày: 05/10/2024 - 13:00',
+              'Ngày: 18/11/2024 - 13:25',
               Icons.warning,
               Colors.red,
               'fire',
@@ -143,7 +144,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
             _buildAlertHistoryItem(
               context,
               'Cảnh báo khói',
-              'Ngày: 02/10/2024 - 16:20',
+              'Ngày: 18/11/2024 - 13:20',
               Icons.smoke_free,
               Colors.orange,
               'smoke',
@@ -151,7 +152,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
             _buildAlertHistoryItem(
               context,
               'Kiểm tra hệ thống định kỳ',
-              'Ngày: 01/10/2024 - 09:00',
+              'Ngày: 18/11/2024 - 13:30',
               Icons.check_circle_outline,
               Colors.green,
               'system_check',
@@ -267,7 +268,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                       bool isBuzzer = await sensorViewModel.saveDeviceStatus(
                         deviceName: 'buzzer',
                         // status: value ? "active" : "inactive",
-                        status: "active",
+                        status: "inactive",
                       );
 
                       if (isBuzzer) {

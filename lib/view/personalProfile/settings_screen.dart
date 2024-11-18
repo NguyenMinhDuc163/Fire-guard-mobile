@@ -51,18 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(),
 
           // Bật Dark Mode
-          SwitchListTile(
-            secondary: const Icon(Icons.dark_mode, color: Colors.grey),
-            title: const Text('Bật chế độ Dark Mode'),
-            value: isDarkMode,
-            onChanged: (value) {
-              setState(() {
-                isDarkMode = value;
-              });
-              // Thêm logic để bật/tắt Dark Mode (nếu có)
-            },
-          ),
-          const Divider(),
 
           // Đổi mật khẩu
           // Đổi mật khẩu
@@ -126,33 +114,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Chọn ngôn ngữ'),
+          title: Text('select_language'.tr()), // Từ khóa dịch
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               RadioListTile<String>(
-                title: const Text('Tiếng Việt'),
-                value: 'Tiếng Việt',
-                groupValue: currentLanguage,
+                title: Text('vietnamese'.tr()),
+                value: 'vi',
+                groupValue: context.locale.languageCode,
                 onChanged: (value) {
-                  setState(() {
-                    currentLanguage = value!;
-                    context.setLocale(const Locale('vi', 'VN'));
-                    LocalStorageHelper.setValue('languageCode', 'vi');
-                  });
+                  context.setLocale(const Locale('vi', 'VN')); // Cập nhật locale
+                  LocalStorageHelper.setValue('languageCode', 'vi'); // Lưu trạng thái
+                  setState(() {}); // Cập nhật UI ngay lập tức
                   Navigator.of(context).pop();
                 },
               ),
               RadioListTile<String>(
-                title: const Text('English'),
-                value: 'English',
-                groupValue: currentLanguage,
+                title: Text('english'.tr()),
+                value: 'en',
+                groupValue: context.locale.languageCode,
                 onChanged: (value) {
-                  setState(() {
-                    currentLanguage = value!;
-                    context.setLocale(const Locale('en', 'US'));
-                    LocalStorageHelper.setValue('languageCode', 'en');
-                  });
+                  context.setLocale(const Locale('en', 'US'));
+                  LocalStorageHelper.setValue('languageCode', 'en');
+                  setState(() {});
                   Navigator.of(context).pop();
                 },
               ),
@@ -162,4 +146,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
+
+
 }
