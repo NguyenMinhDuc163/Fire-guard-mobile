@@ -58,7 +58,7 @@ class AuthViewModel extends ChangeNotifier {
       showToastTop(message: response.message.toString(),);
       return true;}
     else{
-      showToastTop(message:response.message.toString(),);
+      showToastTop(message:"Đăng nhập thành công",);
       return false;
     }
 
