@@ -282,7 +282,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             showToast(message: 'invalid_email_password'.tr());
                             return;
                           }
-                        Navigator.pushNamed(context, RouteNames.mainApp);
+                        bool isSend = await authViewModel.signIn(username: emailC.text.trim(), password: passwordC.text.trim());
+                          if(isSend){
+                            Navigator.pushNamed(context, RouteNames.mainApp);
+                          }
 
                       },
                       text: 'login'.tr(),
