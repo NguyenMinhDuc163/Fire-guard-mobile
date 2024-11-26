@@ -572,13 +572,13 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_compass:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_compass
-      sha256: be642484f9f6975c1c6edff568281b001f2f1e604de27ecea18d97eebbdef22f
+      sha256: "1b4d7e6c95a675ec8482b5c9c9ccf1ebf0ced3dbec59dce28ad609da953de850"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.0"
+    version: "0.8.1"
   flutter_dotenv:
     dependency: "direct main"
     description:

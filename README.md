@@ -2,7 +2,7 @@
 
 ## Nhóm phát triển
 
-Dự án được phát triển bởi **Nhóm 12** trong môn **IoT và ứng dụng**. Chúng tôi tập trung vào việc xây dựng các giải pháp IoT an toàn và hiệu quả, với mục tiêu ứng dụng công nghệ vào việc phát hiện và ngăn ngừa cháy nổ, giúp tăng cường an toàn cho cộng đồng.
+Chúng tôi tập trung vào việc xây dựng các giải pháp IoT an toàn và hiệu quả, với mục tiêu ứng dụng công nghệ vào việc phát hiện và ngăn ngừa cháy nổ, giúp tăng cường an toàn cho cộng đồng.
 
 ## Giới thiệu
 
