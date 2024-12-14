@@ -24,19 +24,19 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await Geolocator.requestPermission();
 
-  // await Firebase.initializeApp(
-  //   options: FirebaseOptions(
-  //     apiKey: dotenv.env['API_KEY']!,
-  //     appId: dotenv.env['APP_ID']!,
-  //     messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-  //     projectId: dotenv.env['PROJECT_ID']!,
-  //   ),
-  // );
-  // final firebaseService = FirebaseService();
-  // print("Current base URL from Firebase Remote Config: ${firebaseService.getBaseURLServer()}");
-  // await FirebaseAppCheck.instance.activate(
-  //   androidProvider: AndroidProvider.playIntegrity,
-  // );
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: dotenv.env['API_KEY']!,
+      appId: dotenv.env['APP_ID']!,
+      messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+      projectId: dotenv.env['PROJECT_ID']!,
+    ),
+  );
+  final firebaseService = FirebaseService();
+  print("Current base URL from Firebase Remote Config: ${firebaseService.getBaseURLServer()}");
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+  );
   //
   // await Supabase.initialize(
   //   url: dotenv.env['SUPABASE_URL']!,
