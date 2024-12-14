@@ -1,4 +1,5 @@
 import 'package:error_stack/error_stack.dart';
+import 'package:fire_guard/init.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/provider_setup.dart';
-import '../../../init.dart';
 import 'service/service_config//notification_service.dart';
 import 'service/service_config/firebase_service.dart';
 
@@ -37,11 +37,11 @@ void main() async {
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
   );
-  //
-  // await Supabase.initialize(
-  //   url: dotenv.env['SUPABASE_URL']!,
-  //   anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-  // );
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
 
   // Khởi tạo FirebaseService để kích hoạt Remote Config
 
@@ -72,11 +72,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final NotificationService _notificationService = NotificationService();
+    final NotificationService _notificationService = NotificationService();
     // Khởi tạo Notification Service với context
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _notificationService.init(context);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _notificationService.init(context);
+    });
 
     return ScreenUtilInit(
       designSize: const Size(360, 690),
