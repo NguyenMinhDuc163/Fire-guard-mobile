@@ -187,12 +187,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           showToast(message: 'invalid_email_password'.tr());
                           return;
                         }
-                        authViewModel.signUp(
+
+                        bool isRegister = await authViewModel.signUp(
                           firstName: firstName.text.trim(),
                           lastName: lastName.text.trim(),
                           email: emailC.text.trim(),
                           password: passwordC.text.trim(),
                         );
+                        if(isRegister){
+                          Navigator.pushNamed(context, RouteNames.loginScreen);
+                        }
                       },
                       text: 'create_account'.tr(),
                       bgColor: ColorPalette.kPrimary,
