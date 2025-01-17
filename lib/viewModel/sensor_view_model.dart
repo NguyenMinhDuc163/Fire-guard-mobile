@@ -6,6 +6,7 @@ import 'package:fire_guard/service/api_service/request/add_guide_and_news_reques
 import 'package:fire_guard/service/api_service/request/change_password_request.dart';
 import 'package:fire_guard/service/api_service/request/device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
+import 'package:fire_guard/service/api_service/request/forgot_password_request.dart';
 import 'package:fire_guard/service/api_service/request/login_request.dart';
 import 'package:fire_guard/service/api_service/request/register_request.dart';
 import 'package:fire_guard/service/api_service/request/save_device_status_request.dart';
@@ -20,6 +21,7 @@ import 'package:fire_guard/service/api_service/response/change_password_response
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
 
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
+import 'package:fire_guard/service/api_service/response/forgot_password_response.dart';
 import 'package:fire_guard/service/api_service/response/login_response.dart';
 import 'package:fire_guard/service/api_service/response/register_response.dart';
 import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
@@ -293,6 +295,20 @@ class SensorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void sendForgotPassword() async {
+    ForgotPasswordRequest request = ForgotPasswordRequest(
+      email: 'traj10x@gmail.com',
+    );
+    final BaseResponse<ForgotPasswordResponse> response =
+    await apiServices.sendForgotPassword(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
+  }
 
   void sendUserList() async {
     UserLocationRequest request = UserLocationRequest(

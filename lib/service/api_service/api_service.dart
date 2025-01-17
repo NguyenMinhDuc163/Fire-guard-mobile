@@ -4,6 +4,7 @@ import 'package:fire_guard/service/api_service/request/add_guide_and_news_reques
 import 'package:fire_guard/service/api_service/request/change_password_request.dart';
 import 'package:fire_guard/service/api_service/request/device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
+import 'package:fire_guard/service/api_service/request/forgot_password_request.dart';
 import 'package:fire_guard/service/api_service/request/login_request.dart';
 import 'package:fire_guard/service/api_service/request/register_request.dart';
 import 'package:fire_guard/service/api_service/request/save_device_status_request.dart';
@@ -16,6 +17,7 @@ import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/change_password_response.dart';
 import 'package:fire_guard/service/api_service/response/device_status_response.dart';
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
+import 'package:fire_guard/service/api_service/response/forgot_password_response.dart';
 import 'package:fire_guard/service/api_service/response/login_response.dart';
 import 'package:fire_guard/service/api_service/response/register_response.dart';
 import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
@@ -190,6 +192,17 @@ class ApiServices extends BaseApiService {
       fromJson: (json) => RegisterResponse.fromJson(json),
     );
   }
+
+  // forgot password
+  Future<BaseResponse<ForgotPasswordResponse>> sendForgotPassword(ForgotPasswordRequest request) async {
+    return await sendRequest<ForgotPasswordResponse>(
+      'auth/forgot_password',
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => ForgotPasswordResponse.fromJson(json),
+    );
+  }
+
 
   //Lay danh sach User
   Future<BaseResponse<UserListResponse>> sendUserList(
