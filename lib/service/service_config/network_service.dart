@@ -1,3 +1,5 @@
+import 'package:fire_guard/viewModel/LoadingInterceptor.dart';
+import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:fire_guard/service/base_connect.dart';
 
@@ -9,15 +11,21 @@ class NetworkService {
   late Dio dio;
   late BaseConnect baseConnect;
 
+  // Quản lý trạng thái loading
+  final ValueNotifier<bool> isLoading = ValueNotifier(false);
+
   NetworkService._internal() {
     baseConnect = BaseConnect();
     dio = baseConnect.httpClient;
 
-    // Thêm interceptor nếu cần
+    // Thêm interceptor
     dio.interceptors.add(LogInterceptor(
       requestBody: true,
       responseBody: true,
     ));
+
+    // Thêm LoadingInterceptor
+    dio.interceptors.add(LoadingInterceptor(isLoading));
   }
 
   BaseConnect getBaseConnect() => baseConnect;

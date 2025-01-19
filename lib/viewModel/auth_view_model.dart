@@ -22,11 +22,18 @@ class AuthViewModel extends ChangeNotifier {
   final ApiServices apiServices = ApiServices();
   AuthModel authModel = AuthModel();
   AuthModel get model => authModel;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   Future<bool> signIn({required String username, required String password}) async {
     final tokenFCM = LocalStorageHelper.getValue('fcm_token');
     print('đã lấy được Token FCM: $tokenFCM');
-
+    _setLoading(true);
     LoginRequest request = LoginRequest(
       email: username,
       password: password,
@@ -63,8 +70,9 @@ class AuthViewModel extends ChangeNotifier {
         }
       }
     }
-
+    _setLoading(false);
     notifyListeners();
+
     if (response.code == 200 || response.code == 201) {
       showToastTop(
         message: response.message.toString(),
