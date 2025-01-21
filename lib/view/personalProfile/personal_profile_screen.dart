@@ -4,6 +4,7 @@ import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/view/home/widget/drawer_widget.dart';
+import 'package:fire_guard/view/widger/LoadingWidget.dart';
 import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
 import 'package:fire_guard/viewModel/sensor_view_model.dart';
 import 'package:flutter/material.dart';
@@ -66,129 +67,134 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
         ],
       ),
       drawer: const DrawerWidget(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-             Center(
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage(AssetHelper.avatar),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    model.name ?? 'Nguyễn Minh Đức',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    model.email ?? 'ngminhduc1603@gmail.com',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            const ListTile(
-              leading: Icon(Icons.device_hub, color: Colors.orange),
-              title: Text('Thiết bị IoT: Fire Detector 1'),
-              subtitle: Text('Serial: FD123456'),
-            ),
-            const Divider(),
-            ListTile(
-              leading: Icon(Icons.settings_remote, color: Colors.orange),
-              title: const Text('Trạng thái thiết bị'),
-              subtitle: const Text('Đang hoạt động từ ngày: 16/11/2024'),
-              trailing: const Icon(Icons.check_circle, color: Colors.green),
-              onTap: () {
-                isAlarmOn = true;
-                _showDeviceStatusSheet(context, sensorViewModel);
-              },
-            ),
-            const Divider(),
-            const ListTile(
-              leading: Icon(Icons.network_check, color: Colors.orange),
-              title: Text('Kết nối thiết bị'),
-              subtitle: Text('Wi-Fi: Kết nối ổn định'),
-              trailing: Icon(Icons.wifi, color: Colors.green),
-            ),
-            const Divider(),
-            const ListTile(
-              leading: Icon(Icons.date_range, color: Colors.orange),
-              title: Text('Bảo hành thiết bị'),
-              subtitle: Text('Hạn bảo hành đến: 01/01/2025'),
-              trailing: Icon(Icons.verified, color: Colors.green),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Lịch sử cảnh báo gần đây',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            _buildAlertHistoryItem(
-              context,
-              'Cảnh báo nhiệt độ cao',
-              'Ngày: 18/11/2024 - 13:25',
-              Icons.warning,
-              Colors.red,
-              'fire',
-            ),
-            _buildAlertHistoryItem(
-              context,
-              'Cảnh báo khói',
-              'Ngày: 18/11/2024 - 13:20',
-              Icons.smoke_free,
-              Colors.orange,
-              'smoke',
-            ),
-            _buildAlertHistoryItem(
-              context,
-              'Kiểm tra hệ thống định kỳ',
-              'Ngày: 18/11/2024 - 13:30',
-              Icons.check_circle_outline,
-              Colors.green,
-              'system_check',
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView(
               children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Add system check logic
-                    },
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Kiểm tra hệ thống'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                    ),
+                Center(
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: AssetImage(AssetHelper.avatar),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        model.name ?? 'Nguyễn Minh Đức',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        model.email ?? 'ngminhduc1603@gmail.com',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Add report issue logic
-                    },
-                    icon: const Icon(Icons.report_problem),
-                    label: const Text('Báo cáo sự cố'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                const SizedBox(height: 20),
+                const ListTile(
+                  leading: Icon(Icons.device_hub, color: Colors.orange),
+                  title: Text('Thiết bị IoT: Fire Detector 1'),
+                  subtitle: Text('Serial: FD123456'),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: Icon(Icons.settings_remote, color: Colors.orange),
+                  title: const Text('Trạng thái thiết bị'),
+                  subtitle: const Text('Đang hoạt động từ ngày: 16/11/2024'),
+                  trailing: const Icon(Icons.check_circle, color: Colors.green),
+                  onTap: () {
+                    isAlarmOn = true;
+                    _showDeviceStatusSheet(context, sensorViewModel);
+                  },
+                ),
+                const Divider(),
+                const ListTile(
+                  leading: Icon(Icons.network_check, color: Colors.orange),
+                  title: Text('Kết nối thiết bị'),
+                  subtitle: Text('Wi-Fi: Kết nối ổn định'),
+                  trailing: Icon(Icons.wifi, color: Colors.green),
+                ),
+                const Divider(),
+                const ListTile(
+                  leading: Icon(Icons.date_range, color: Colors.orange),
+                  title: Text('Bảo hành thiết bị'),
+                  subtitle: Text('Hạn bảo hành đến: 01/01/2025'),
+                  trailing: Icon(Icons.verified, color: Colors.green),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Lịch sử cảnh báo gần đây',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                _buildAlertHistoryItem(
+                  context,
+                  'Cảnh báo nhiệt độ cao',
+                  'Ngày: 18/11/2024 - 13:25',
+                  Icons.warning,
+                  Colors.red,
+                  'fire',
+                ),
+                _buildAlertHistoryItem(
+                  context,
+                  'Cảnh báo khói',
+                  'Ngày: 18/11/2024 - 13:20',
+                  Icons.smoke_free,
+                  Colors.orange,
+                  'smoke',
+                ),
+                _buildAlertHistoryItem(
+                  context,
+                  'Kiểm tra hệ thống định kỳ',
+                  'Ngày: 18/11/2024 - 13:30',
+                  Icons.check_circle_outline,
+                  Colors.green,
+                  'system_check',
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Add system check logic
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Kiểm tra hệ thống'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                        ),
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Add report issue logic
+                        },
+                        icon: const Icon(Icons.report_problem),
+                        label: const Text('Báo cáo sự cố'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          personalProfileViewModel.isLoading ? const LoadingWidget() : const SizedBox(),
+        ],
       ),
     );
   }

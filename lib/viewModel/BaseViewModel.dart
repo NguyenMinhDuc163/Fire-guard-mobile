@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
 
-class BaseViewModel extends ChangeNotifier {
+abstract class BaseViewModel extends ChangeNotifier {
   bool _isLoading = false;
+  String? _errorMessage;
 
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  Future<T> executeWithLoading<T>(Future<T> Function() action) async {
-    setLoading(true); // Bật trạng thái loading
+  void setError(String? message) {
+    _errorMessage = message;
+    notifyListeners();
+  }
+
+  Future<T> execute<T>(
+      Future<T> Function() action, {
+        Function(dynamic error)? onError,
+      }) async {
+    setLoading(true);
     try {
-      return await action(); // Thực hiện hành động
+      return await action();
+    } catch (e) {
+      setError(e.toString());
+      if (onError != null) {
+        onError(e);
+      }
+      rethrow;
     } finally {
-      setLoading(false); // Tắt trạng thái loading
+      setLoading(false);
     }
   }
 }

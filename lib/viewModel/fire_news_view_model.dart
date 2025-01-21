@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:fire_guard/viewModel/BaseViewModel.dart';
 
-class FireNewsViewModel extends ChangeNotifier {
+class FireNewsViewModel extends BaseViewModel {
 
 }

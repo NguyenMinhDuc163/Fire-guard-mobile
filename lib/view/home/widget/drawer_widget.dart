@@ -15,7 +15,7 @@ class DrawerWidget extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
               color: ColorPalette.colorFFBB35,
             ),
@@ -88,6 +88,7 @@ class DrawerWidget extends StatelessWidget {
               LocalStorageHelper.deleteValue('ignoreIntroScreen');
               LocalStorageHelper.deleteValue('userName');
               LocalStorageHelper.deleteValue('email');
+              LocalStorageHelper.deleteValue('authToken');
 
               // Điều hướng về màn hình đăng nhập và xóa tất cả các route trước đó
               Navigator.pushNamedAndRemoveUntil(

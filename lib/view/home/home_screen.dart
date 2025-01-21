@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/utils/router_names.dart';
+import 'package:fire_guard/view/widger/LoadingWidget.dart';
 import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fire_guard/view/home/widget/drawer_widget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../../init.dart';
@@ -22,7 +24,7 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: ColorPalette.colorFFBB35,
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications),
             onPressed: () {
               Navigator.pushNamed(context, RouteNames.notifications);
             },
@@ -70,7 +72,7 @@ class HomeScreen extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(AssetHelper.icoFireAlarm, width: width_56, height: height_56,),  // Thêm icon báo động
+                          Image.asset(AssetHelper.icoFireAlarm, width: width_56, height: height_56,),
                           const SizedBox(height: 10),
                           Text(
                             'fireAlarm'.tr(),
@@ -150,8 +152,8 @@ class HomeScreen extends StatelessWidget {
                         },
                         child: Container(
                           padding: EdgeInsets.all(16.0),
-                          width: 150,  // Chiều rộng của nút
-                          height: 100, // Chiều cao của nút
+                          width: width_250,  // Chiều rộng của nút
+                          height: height_85, // Chiều cao của nút
                           decoration: BoxDecoration(
                             color: Colors.white,  // Màu nền của nút
                             borderRadius: BorderRadius.circular(20.0),  // Bo góc
@@ -189,9 +191,9 @@ class HomeScreen extends StatelessWidget {
                           print('Xem và Thông báo vị trí đám cháy pressed');
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: height_8),
-                          width: 150,
-                          height: 100,
+                          padding: EdgeInsets.symmetric(vertical: height_8, horizontal: width_16),
+                          width: width_250,
+                          height: height_85,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20.0),
@@ -223,7 +225,8 @@ class HomeScreen extends StatelessWidget {
                 )
               ],
             ),
-          )
+          ),
+          homeViewModel.isLoading ? const LoadingWidget() : const SizedBox(),
         ],
       ),
     );

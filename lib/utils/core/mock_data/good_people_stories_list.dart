@@ -18,7 +18,7 @@ Ngôi nhà xảy ra cháy cao 03 tầng, 01 tum, đám cháy xuất phát tại 
     NewsItem(
       title: 'TẤM GƯƠNG SÁNG TRONG CÔNG TÁC PHÒNG CHÁY CHỮA CHÁY CỦA TRƯỜNG MẦM NON BÌNH MINH"',
       type: 'article',
-      imageUrl: 'http://mnbinhminhgb-hm.edu.vn/upload/29350/fck/hni-hoangmai-mnbinhminh-hoangmai/2024_01_05_11_00_262.jpg',
+      imageUrl: 'https://mnbinhminh.pgdhadong.edu.vn/uploads/mnbinhminh/news/2022_06/z3464597164639_a8407d6f3e84b4f90a1d87a3ad4a6bd5.jpg',
       content: '''Phòng cháy và chữa cháy (PCCC) là một trong những công tác quan trọng nhằm bảo vệ tính mạng, sức khỏe con người, bảo vệ tài sản nhà nước và của nhân dân, góp phần bảo đảm an ninh chính trị và trật tự an toàn xã hội. Việc huy động sức mạnh của toàn dân trong công tác PCCC là yêu cầu nhiệm vụ cấp thiết đặt ra trong tình hình hiện nay.
 
 Trong những năm gần đây tình hình cháy, nổ trong cả nước vẫn còn nhiều diễn biến phức tạp và có xu hướng gia tăng theo tốc độ phát triển về kinh tế - xã hội, đã gây ảnh hưởng không nhỏ đến sự phát triển chung của đất nước cũng như đến môi trường sống và tình hình an ninh trật tự.

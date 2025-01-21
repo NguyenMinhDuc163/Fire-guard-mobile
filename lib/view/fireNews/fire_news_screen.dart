@@ -49,16 +49,16 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
                   minHeight: 50.0,
                   minWidth: 120.0,
                 ),
-                children: const <Widget>[
-                  Text('Tin tức cháy nổ'),
-                  Text('Người tốt việc tốt'),
-                ],
                 isSelected: [isFireNews, !isFireNews],
                 onPressed: (int index) {
                   setState(() {
                     isFireNews = index == 0;
                   });
                 },
+                children: const <Widget>[
+                  Text('Tin tức cháy nổ'),
+                  Text('Người tốt việc tốt'),
+                ],
               ),
             ),
           ),

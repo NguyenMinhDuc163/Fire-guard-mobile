@@ -1,3 +1,4 @@
+import 'package:fire_guard/view/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +15,8 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   List<Map<String, dynamic>> notifications = [];
-  DateTime? startDate;
-  DateTime? endDate;
+  DateTime? startDate = DateTime.now().subtract(const Duration(days: 1));
+  DateTime? endDate = DateTime.now();
 
   @override
   void initState() {
@@ -28,7 +29,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Future<void> _loadNotifications() async {
     if (startDate != null && endDate != null && startDate!.isAfter(endDate!)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.')),
+        const SnackBar(content: Text('Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.')),
       );
       return;
     }
@@ -67,121 +68,128 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final homeViewModel = Provider.of<HomeViewModel>(context);
+    final model = homeViewModel.model;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thông Báo Cảnh Báo'),
         backgroundColor: Colors.orange,
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await _loadNotifications();
-        },
-        child: Column(
-          children: [
-            // Card chứa các bộ lọc tìm kiếm
-            Card(
-              elevation: 4,
-              margin: const EdgeInsets.all(16.0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
+      body: Stack(
+        children: [
+          RefreshIndicator(
+            onRefresh: () async {
+              await _loadNotifications();
+            },
+            child: Column(
+              children: [
+                // Card chứa các bộ lọc tìm kiếm
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(16.0),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _selectDate(context, isStartDate: true),
-                            child: buildDateField(
-                              label: 'Ngày bắt đầu',
-                              date: startDate,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => _selectDate(context, isStartDate: true),
+                                child: buildDateField(
+                                  label: 'Ngày bắt đầu',
+                                  date: startDate,
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => _selectDate(context, isStartDate: false),
+                                child: buildDateField(
+                                  label: 'Ngày kết thúc',
+                                  date: endDate,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _selectDate(context, isStartDate: false),
-                            child: buildDateField(
-                              label: 'Ngày kết thúc',
-                              date: endDate,
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: _loadNotifications,
+                          icon: const Icon(Icons.search),
+                          label: const Text('Tìm kiếm'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            textStyle: const TextStyle(fontSize: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: _loadNotifications,
-                      icon: const Icon(Icons.search),
-                      label: const Text('Tìm kiếm'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        textStyle: const TextStyle(fontSize: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: notifications.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  final notification = notifications[index];
-                  return Dismissible(
-                    key: Key(notification['incidentId'].toString()),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      setState(() {
-                        notifications.removeAt(index);
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Đã xóa thông báo: ${notification['message']}')),
+                Expanded(
+                  child: notifications.isNotEmpty
+                      ? ListView.builder(
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: notifications.length,
+                    itemBuilder: (context, index) {
+                      final notification = notifications[index];
+                      return Dismissible(
+                        key: Key(notification['incidentId'].toString()),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          setState(() {
+                            notifications.removeAt(index);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Đã xóa thông báo: ${notification['message']}')),
+                          );
+                        },
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          elevation: 4.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(Icons.warning, color: Colors.red),
+                            title: Text(
+                              notification['message'],
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              'Thời gian: ${notification['timestamp']}',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                            onTap: () {
+                              // Gọi BottomSheet hiển thị chi tiết thông báo
+                              _showNotificationDetails(context, notification);
+                            },
+                          ),
+                        ),
                       );
                     },
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: const Icon(Icons.delete, color: Colors.white),
-                    ),
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: ListTile(
-                        leading: const Icon(Icons.warning, color: Colors.red),
-                        title: Text(
-                          notification['message'],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          'Thời gian: ${notification['timestamp']}',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        onTap: () {
-                          // Gọi BottomSheet hiển thị chi tiết thông báo
-                          _showNotificationDetails(context, notification);
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
+                  )
+                      : const Center(child: Text('Không có thông báo !!!.')),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          homeViewModel.isLoading ? const LoadingWidget() : const SizedBox(),
+        ],
       ),
     );
   }
@@ -246,7 +254,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Icon(Icons.calendar_today, color: Colors.orange),
           const SizedBox(width: 8),
           Text(
-            date != null ? DateFormat('yyyy-MM-dd').format(date) : label,
+            date != null ? DateFormat('dd/MM/yyyy').format(date) : label,
             style: TextStyle(
               fontSize: 16,
               color: date != null ? Colors.black : Colors.grey,

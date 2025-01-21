@@ -12,7 +12,7 @@ class FamilyManagementScreen extends StatefulWidget {
 
 class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
   List<Map<String, String>> familyMembers = [];
-  bool isLoading = false; // Thêm biến isLoading để kiểm soát trạng thái loading
+  bool isLoading = false;
 
   @override
   void initState() {

@@ -3,6 +3,7 @@ import 'package:fire_guard/service/common/status_api.dart';
 /// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/utils/utils.dart';
+import 'package:fire_guard/view/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
@@ -352,13 +353,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            if (authViewModel.isLoading)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
+            authViewModel.isLoading ? const LoadingWidget() : const SizedBox(),
           ],
         ),
       ),

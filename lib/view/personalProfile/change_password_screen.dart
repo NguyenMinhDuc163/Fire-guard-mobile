@@ -1,4 +1,5 @@
 import 'package:fire_guard/utils/core/common/toast.dart';
+import 'package:fire_guard/view/widger/LoadingWidget.dart';
 import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,117 +69,124 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final personalProfileViewModel = Provider.of<PersonalProfileViewModel>(context);
+    final model = personalProfileViewModel.model;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Đổi mật khẩu'),
         backgroundColor: Colors.orange,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Thay đổi mật khẩu',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Vui lòng nhập thông tin dưới đây để thay đổi mật khẩu của bạn.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Thay đổi mật khẩu',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Vui lòng nhập thông tin dưới đây để thay đổi mật khẩu của bạn.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 24),
 
-              // Mật khẩu cũ
-              TextFormField(
-                controller: _oldPasswordController,
-                obscureText: !_showOldPassword,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: IconButton(
-                    icon: Icon(_showOldPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _showOldPassword = !_showOldPassword;
-                      });
+                  // Mật khẩu cũ
+                  TextFormField(
+                    controller: _oldPasswordController,
+                    obscureText: !_showOldPassword,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        icon: Icon(_showOldPassword ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _showOldPassword = !_showOldPassword;
+                          });
+                        },
+                      ),
+                      labelText: 'Mật khẩu cũ',
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng nhập mật khẩu cũ';
+                      }
+                      return null;
                     },
                   ),
-                  labelText: 'Mật khẩu cũ',
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập mật khẩu cũ';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // Mật khẩu mới
-              TextFormField(
-                controller: _newPasswordController,
-                obscureText: !_showNewPassword,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock_reset),
-                  suffixIcon: IconButton(
-                    icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _showNewPassword = !_showNewPassword;
-                      });
+                  // Mật khẩu mới
+                  TextFormField(
+                    controller: _newPasswordController,
+                    obscureText: !_showNewPassword,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_reset),
+                      suffixIcon: IconButton(
+                        icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _showNewPassword = !_showNewPassword;
+                          });
+                        },
+                      ),
+                      labelText: 'Mật khẩu mới',
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng nhập mật khẩu mới';
+                      }
+                      return null;
                     },
                   ),
-                  labelText: 'Mật khẩu mới',
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập mật khẩu mới';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // Xác nhận mật khẩu mới
-              TextFormField(
-                controller: _confirmPasswordController,
-                obscureText: !_showConfirmPassword,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                    icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _showConfirmPassword = !_showConfirmPassword;
-                      });
+                  // Xác nhận mật khẩu mới
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    obscureText: !_showConfirmPassword,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _showConfirmPassword = !_showConfirmPassword;
+                          });
+                        },
+                      ),
+                      labelText: 'Xác nhận mật khẩu mới',
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng xác nhận mật khẩu mới';
+                      }
+                      return null;
                     },
                   ),
-                  labelText: 'Xác nhận mật khẩu mới',
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng xác nhận mật khẩu mới';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-              // Nút đổi mật khẩu
-              GradientButton(
-                onPressed: _isLoading ? null : _changePassword,
-                isLoading: _isLoading,
-                text: 'Đổi mật khẩu',
-              ),
+                  // Nút đổi mật khẩu
+                  GradientButton(
+                    onPressed: _isLoading ? null : _changePassword,
+                    isLoading: _isLoading,
+                    text: 'Đổi mật khẩu',
+                  ),
 
-            ],
+                ],
+              ),
+            ),
           ),
-        ),
+          personalProfileViewModel.isLoading ? const LoadingWidget() : const SizedBox(),
+        ],
       ),
     );
   }
