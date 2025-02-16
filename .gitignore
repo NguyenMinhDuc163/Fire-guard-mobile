@@ -33,7 +33,6 @@ migrate_working_dir/
 /build/
 node_modules/
 
-
 # Symbolication related
 app.*.symbols
 
@@ -45,3 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/app/build/
+
+# FVM Version Cache
+.fvm/

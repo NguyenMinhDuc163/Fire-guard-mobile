@@ -98,6 +98,7 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/icons/icon_app.png"  # Đường dẫn đến file icon của bạn
+  #flutter pub run flutter_launcher_icons:generate
 # The following section is specific to Flutter packages.
 flutter:
 
