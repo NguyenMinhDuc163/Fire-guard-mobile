@@ -42,7 +42,7 @@ class _SensorDataPageState extends State<SensorDataPage> {
             ElevatedButton(
               onPressed: () {
                 // sensorViewModel.saveDeviceStatus(deviceName: 'buzzer', status: 'active');
-                sensorViewModel.sendForgotPassword();
+                sensorViewModel.fetchFamily();
               },
               child: Text('Gửi Dữ Liệu'),
             ),

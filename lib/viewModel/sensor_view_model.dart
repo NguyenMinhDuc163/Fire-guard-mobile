@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fire_guard/models/sensor_model.dart';
 import 'package:fire_guard/service/api_service/api_service.dart';
+import 'package:fire_guard/service/api_service/request/add_family_request.dart';
 import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
 import 'package:fire_guard/service/api_service/request/change_password_request.dart';
 import 'package:fire_guard/service/api_service/request/device_status_request.dart';
@@ -13,8 +14,10 @@ import 'package:fire_guard/service/api_service/request/save_device_status_reques
 import 'package:fire_guard/service/api_service/request/send_data_sensor_request.dart';
 import 'package:fire_guard/service/api_service/request/send_family_alert_request.dart';
 import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
+import 'package:fire_guard/service/api_service/request/update_info_user_request.dart';
 import 'package:fire_guard/service/api_service/request/upload_sensor_data_request.dart';
 import 'package:fire_guard/service/api_service/request/user_location_request.dart';
+import 'package:fire_guard/service/api_service/response/add_family_response.dart';
 import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/change_password_response.dart';
@@ -29,6 +32,7 @@ import 'package:fire_guard/service/api_service/response/save_location_response.d
 import 'package:fire_guard/service/api_service/response/send_data_sensor_response.dart';
 import 'package:fire_guard/service/api_service/response/send_family_alert_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
+import 'package:fire_guard/service/api_service/response/update_info_user_response.dart';
 import 'package:fire_guard/service/api_service/response/upload_sensor_data_response.dart';
 import 'package:fire_guard/service/api_service/response/user_list_response.dart';
 import 'package:fire_guard/service/api_service/response/user_location_response.dart';
@@ -387,4 +391,59 @@ class SensorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  void updateInfoUser() async {
+    UpdateInfoUserRequest request = UpdateInfoUserRequest(
+        id : 7,
+        email: "update3duser@example.com",
+        phoneNumber: "0987654321",
+        clickSendName: "Updated Name",
+        clickSendKey: "UpdatedKey123"
+    );
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    final BaseResponse<UpdateInfoUserResponse> response =
+    await apiServices.updateInfoUser(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
+  }
+
+
+  void addFamily() async {
+    AddFamilyRequest request = AddFamilyRequest(
+        userId: 11,
+        familyMemberId: 12,
+    );
+    print('JSON request data: ${jsonEncode(request.toJson())}');
+
+    final BaseResponse<AddFamilyResponse> response =
+    await apiServices.addFamily(request);
+    print('Code: ${response.code}');
+    print('Status: ${response.status}');
+    print('Message: ${response.message}');
+    print('Error: ${response.error}');
+    print('Data: ${response.data}');
+
+    notifyListeners();
+  }
+
+  void fetchFamily() async {
+    try {
+      final response = await apiServices.getFamily(
+        userId: 1,
+      );
+
+      print('Code: ${response.code}');
+      print('Status: ${response.status}');
+      print('Message: ${response.message}');
+
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 }

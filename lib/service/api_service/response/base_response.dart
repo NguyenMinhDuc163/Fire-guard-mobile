@@ -19,7 +19,7 @@ class BaseResponse<T> {
       ) =>
       BaseResponse<T>(
         code: json["code"],
-        data: json["data"] != null
+        data: json["data"] != null || json["data"] != {}
             ? List<T>.from(json["data"].map((x) => fromJsonT(x)))
             : [],
         status: json["status"],
