@@ -39,6 +39,11 @@ jobs:
           name: apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
+      - name: Send APK to Telegram
+        run: |
+          curl -F document=@build/app/outputs/flutter-apk/app-release.apk \
+          "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&caption=New Android Build"
+
   build-ios:
     runs-on: macos-latest
 
@@ -69,6 +74,14 @@ jobs:
           name: ipa
           path: build/ios/iphoneos/Runner.app
 
+      - name: Zip IPA file
+        run: zip -r build/ios/Runner.zip build/ios/iphoneos/Runner.app
+
+      - name: Send IPA to Telegram
+        run: |
+          curl -F document=@build/ios/Runner.zip \
+          "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&caption=New iOS Build"
+
   build-web:
     runs-on: ubuntu-latest
 
@@ -95,3 +108,11 @@ jobs:
         with:
           name: web-build
           path: build/web/
+
+      - name: Zip Web Build
+        run: zip -r build/web-build.zip build/web/
+
+      - name: Send Web Build to Telegram
+        run: |
+          curl -F document=@build/web-build.zip \
+          "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&caption=New Web Build"
