@@ -30,27 +30,35 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build Split APKs
+        run: flutter build apk --split-per-abi
 
-      - name: Upload APK
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/*.apk
 
-      - name: Check if APK exists
-        run: ls -lh build/app/outputs/flutter-apk/app-release.apk
+      - name: Check APK size
+        run: ls -lh build/app/outputs/flutter-apk/*.apk
 
       - name: Send APK to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
-               -F "document=@build/app/outputs/flutter-apk/app-release.apk" \
-               -F "caption=✅ New Android Build (APK) uploaded!" \
-               "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          for apk in build/app/outputs/flutter-apk/*.apk; do
+            if [ $(stat -c%s "$apk") -gt 50000000 ]; then
+              curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                   -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                   -d "text=📥 APK is too large. Upload it here: https://drive.google.com/YOUR_FILE_LINK"
+            else
+              curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+                   -F "document=@$apk" \
+                   -F "caption=✅ New Android Build (APK) uploaded!" \
+                   "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+            fi
+          done
 
   build-ios:
     runs-on: macos-latest
@@ -76,16 +84,10 @@ jobs:
       - name: Build IPA
         run: flutter build ios --release --no-codesign
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: ipa
-          path: build/ios/iphoneos/Runner.app
-
       - name: Zip IPA file
         run: zip -r build/ios/Runner.zip build/ios/iphoneos/Runner.app
 
-      - name: Check if IPA Zip exists
+      - name: Check IPA size
         run: ls -lh build/ios/Runner.zip
 
       - name: Send IPA to Telegram
@@ -93,10 +95,16 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
-               -F "document=@build/ios/Runner.zip" \
-               -F "caption=✅ New iOS Build (IPA) uploaded!" \
-               "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          if [ $(stat -c%s "build/ios/Runner.zip") -gt 50000000 ]; then
+            curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                 -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -d "text=📥 iOS Build is too large. Upload it here: https://drive.google.com/YOUR_FILE_LINK"
+          else
+            curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -F "document=@build/ios/Runner.zip" \
+                 -F "caption=✅ New iOS Build (IPA) uploaded!" \
+                 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          fi
 
   build-web:
     runs-on: ubuntu-latest
@@ -119,16 +127,10 @@ jobs:
       - name: Build Web
         run: flutter build web --release
 
-      - name: Upload Web Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: build/web/
-
       - name: Zip Web Build
         run: zip -r build/web-build.zip build/web/
 
-      - name: Check if Web Zip exists
+      - name: Check Web Build size
         run: ls -lh build/web-build.zip
 
       - name: Send Web Build to Telegram
@@ -136,7 +138,13 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
-               -F "document=@build/web-build.zip" \
-               -F "caption=✅ New Web Build uploaded!" \
-               "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          if [ $(stat -c%s "build/web-build.zip") -gt 50000000 ]; then
+            curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                 -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -d "text=📥 Web Build is too large. Upload it here: https://drive.google.com/YOUR_FILE_LINK"
+          else
+            curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -F "document=@build/web-build.zip" \
+                 -F "caption=✅ New Web Build uploaded!" \
+                 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          fi
