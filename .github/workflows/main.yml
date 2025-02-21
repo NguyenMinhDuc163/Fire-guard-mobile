@@ -39,13 +39,18 @@ jobs:
           name: apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
+      - name: Check if APK exists
+        run: ls -lh build/app/outputs/flutter-apk/app-release.apk
+
       - name: Send APK to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          curl -F "document=@build/app/outputs/flutter-apk/app-release.apk" \
-          "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument?chat_id=${TELEGRAM_CHAT_ID}&caption=New Android Build"
+          curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+               -F "document=@build/app/outputs/flutter-apk/app-release.apk" \
+               -F "caption=✅ New Android Build (APK) uploaded!" \
+               "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
 
   build-ios:
     runs-on: macos-latest
@@ -80,13 +85,18 @@ jobs:
       - name: Zip IPA file
         run: zip -r build/ios/Runner.zip build/ios/iphoneos/Runner.app
 
+      - name: Check if IPA Zip exists
+        run: ls -lh build/ios/Runner.zip
+
       - name: Send IPA to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          curl -F "document=@build/ios/Runner.zip" \
-          "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument?chat_id=${TELEGRAM_CHAT_ID}&caption=New iOS Build"
+          curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+               -F "document=@build/ios/Runner.zip" \
+               -F "caption=✅ New iOS Build (IPA) uploaded!" \
+               "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
 
   build-web:
     runs-on: ubuntu-latest
@@ -118,10 +128,15 @@ jobs:
       - name: Zip Web Build
         run: zip -r build/web-build.zip build/web/
 
+      - name: Check if Web Zip exists
+        run: ls -lh build/web-build.zip
+
       - name: Send Web Build to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          curl -F "document=@build/web-build.zip" \
-          "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument?chat_id=${TELEGRAM_CHAT_ID}&caption=New Web Build"
+          curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+               -F "document=@build/web-build.zip" \
+               -F "caption=✅ New Web Build uploaded!" \
+               "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
