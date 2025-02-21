@@ -16,13 +16,13 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Cập nhật phiên bản Flutter
+          flutter-version: '3.24.3'
 
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'  # Sử dụng bản phân phối Temurin
+          distribution: 'temurin'
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
@@ -41,7 +41,7 @@ jobs:
 
       - name: Send APK to Telegram
         run: |
-          curl -F document=@build/app/outputs/flutter-apk/app-release.apk \
+          curl -F "document=@build/app/outputs/flutter-apk/app-release.apk" \
           "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&caption=New Android Build"
 
   build-ios:
@@ -54,7 +54,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Cập nhật phiên bản Flutter
+          flutter-version: '3.24.3'
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
@@ -79,7 +79,7 @@ jobs:
 
       - name: Send IPA to Telegram
         run: |
-          curl -F document=@build/ios/Runner.zip \
+          curl -F "document=@build/ios/Runner.zip" \
           "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&caption=New iOS Build"
 
   build-web:
@@ -92,7 +92,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Cập nhật phiên bản Flutter
+          flutter-version: '3.24.3'
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
@@ -114,5 +114,5 @@ jobs:
 
       - name: Send Web Build to Telegram
         run: |
-          curl -F document=@build/web-build.zip \
+          curl -F "document=@build/web-build.zip" \
           "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&caption=New Web Build"
