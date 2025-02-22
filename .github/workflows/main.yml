@@ -16,13 +16,13 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Cập nhật phiên bản Flutter
+          flutter-version: '3.24.3'
 
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'  # Sử dụng bản phân phối Temurin
+          distribution: 'temurin'
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
@@ -30,14 +30,40 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build Split APKs
+        run: flutter build apk --split-per-abi
 
-      - name: Upload APK
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/*.apk
+
+      - name: Check APK size
+        run: ls -lh build/app/outputs/flutter-apk/*.apk
+
+      - name: Send APK to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+          for apk in build/app/outputs/flutter-apk/*.apk; do
+            APK_SIZE=$(du -h "$apk" | cut -f1)
+            APK_NAME=$(basename "$apk")
+
+            if [ $(stat -c%s "$apk") -gt 50000000 ]; then
+              curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                   -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                   -d "text=🚀 *Android Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: $APK_NAME\n📦 Size: $APK_SIZE\n⚠️ File too large, download from Google Drive: https://drive.google.com/YOUR_FILE_LINK" \
+                   -d "parse_mode=Markdown"
+            else
+              curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+                   -F "document=@$apk" \
+                   -F "caption=🚀 *Android Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: $APK_NAME\n📦 Size: $APK_SIZE" \
+                   "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+            fi
+          done
 
   build-ios:
     runs-on: macos-latest
@@ -49,7 +75,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Cập nhật phiên bản Flutter
+          flutter-version: '3.24.3'
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
@@ -63,11 +89,31 @@ jobs:
       - name: Build IPA
         run: flutter build ios --release --no-codesign
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: ipa
-          path: build/ios/iphoneos/Runner.app
+      - name: Zip IPA file
+        run: zip -r build/ios/Runner.zip build/ios/iphoneos/Runner.app
+
+      - name: Check IPA size
+        run: ls -lh build/ios/Runner.zip
+
+      - name: Send IPA to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+          IPA_SIZE=$(du -h build/ios/Runner.zip | cut -f1)
+
+          if [ $(stat -c%s "build/ios/Runner.zip") -gt 50000000 ]; then
+            curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                 -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -d "text=🚀 *iOS Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: Runner.zip\n📦 Size: $IPA_SIZE\n⚠️ File too large, download from Google Drive: https://drive.google.com/YOUR_FILE_LINK" \
+                 -d "parse_mode=Markdown"
+          else
+            curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -F "document=@build/ios/Runner.zip" \
+                 -F "caption=🚀 *iOS Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: Runner.zip\n📦 Size: $IPA_SIZE" \
+                 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          fi
 
   build-web:
     runs-on: ubuntu-latest
@@ -79,7 +125,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Cập nhật phiên bản Flutter
+          flutter-version: '3.24.3'
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
@@ -90,8 +136,28 @@ jobs:
       - name: Build Web
         run: flutter build web --release
 
-      - name: Upload Web Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: build/web/
+      - name: Zip Web Build
+        run: zip -r build/web-build.zip build/web/
+
+      - name: Check Web Build size
+        run: ls -lh build/web-build.zip
+
+      - name: Send Web Build to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+          WEB_SIZE=$(du -h build/web-build.zip | cut -f1)
+
+          if [ $(stat -c%s "build/web-build.zip") -gt 50000000 ]; then
+            curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                 -d "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -d "text=🚀 *Web Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: Web.zip\n📦 Size: $WEB_SIZE\n⚠️ File too large, download from Google Drive: https://drive.google.com/YOUR_FILE_LINK" \
+                 -d "parse_mode=Markdown"
+          else
+            curl -F "chat_id=${TELEGRAM_CHAT_ID}" \
+                 -F "document=@build/web-build.zip" \
+                 -F "caption=🚀 *Web Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: Web.zip\n📦 Size: $WEB_SIZE" \
+                 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          fi
