@@ -11,7 +11,7 @@ class RegisterRequest {
     required this.username,
     required this.email,
     required this.password,
-    required this.tokenFcm,
+     this.tokenFcm,
      this.phoneNumber,
      this.clickSendName,
      this.clickSendKey,
@@ -20,7 +20,7 @@ class RegisterRequest {
   final String username;
   final String email;
   final String password;
-  final String tokenFcm;
+  final String? tokenFcm;
   final String? phoneNumber;
   final String? clickSendName;
   final String? clickSendKey;

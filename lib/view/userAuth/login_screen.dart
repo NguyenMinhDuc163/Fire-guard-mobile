@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
     final authViewModel = Provider.of<AuthViewModel>(context);
-    final model = authViewModel.model;
+    final model = authViewModel.model; 
 
     void _showApiConfigSheet() {
       showModalBottomSheet(
