@@ -1,0 +1,118 @@
+name: Flutter Build
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  FLUTTER_VERSION: ${{ secrets.FLUTTER_VERSION }}
+  JAVA_VERSION: ${{ secrets.JAVA_VERSION }}
+  GOOGLE_DRIVE_URL: ${{ secrets.GOOGLE_DRIVE_URL }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  APP_NAME: ${{ secrets.APP_NAME }}
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Split APKs
+        run: flutter build apk --split-per-abi
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: build/app/outputs/flutter-apk/*.apk
+
+      - name: Check APK size
+        run: ls -lh build/app/outputs/flutter-apk/*.apk
+
+      - name: Send APK to Telegram
+        run: |
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+          for apk in build/app/outputs/flutter-apk/*.apk; do
+            APK_SIZE=$(du -h "$apk" | cut -f1)
+            APK_NAME=$(basename "$apk")
+
+            if [ $(stat -c%s "$apk") -gt 50000000 ]; then
+              curl -X POST "https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+                   -d "chat_id=${{ env.TELEGRAM_CHAT_ID }}" \
+                   -d "text=🚀 *Android Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: $APK_NAME\n📦 Size: $APK_SIZE\n⚠️ File too large, download from Google Drive: ${{ env.GOOGLE_DRIVE_URL }}" \
+                   -d "parse_mode=Markdown"
+            else
+              curl -F "chat_id=${{ env.TELEGRAM_CHAT_ID }}" \
+                   -F "document=@$apk" \
+                   -F "caption=🚀 *Android Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: $APK_NAME\n📦 Size: $APK_SIZE" \
+                   "https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendDocument"
+            fi
+          done
+
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Set up CocoaPods
+        run: pod install --project-directory=ios
+
+      - name: Build IPA
+        run: flutter build ios --release --no-codesign
+
+      - name: Zip IPA file
+        run: zip -r build/ios/${{ env.APP_NAME }}.zip build/ios/iphoneos/${{ env.APP_NAME }}.app
+
+      - name: Check IPA size
+        run: ls -lh build/ios/${{ env.APP_NAME }}.zip
+
+      - name: Send IPA to Telegram
+        run: |
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+          IPA_SIZE=$(du -h build/ios/${{ env.APP_NAME }}.zip | cut -f1)
+
+          if [ $(stat -c%s "build/ios/${{ env.APP_NAME }}.zip") -gt 50000000 ]; then
+            curl -X POST "https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+                 -d "chat_id=${{ env.TELEGRAM_CHAT_ID }}" \
+                 -d "text=🚀 *iOS Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: ${{ env.APP_NAME }}.zip\n📦 Size: $IPA_SIZE\n⚠️ File too large, download from Google Drive: ${{ env.GOOGLE_DRIVE_URL }}" \
+                 -d "parse_mode=Markdown"
+          else
+            curl -F "chat_id=${{ env.TELEGRAM_CHAT_ID }}" \
+                 -F "document=@build/ios/${{ env.APP_NAME }}.zip" \
+                 -F "caption=🚀 *iOS Build Completed*\n📅 Date: $TIMESTAMP\n📂 File: ${{ env.APP_NAME }}.zip\n📦 Size: $IPA_SIZE" \
+                 "https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendDocument"
+          fi
