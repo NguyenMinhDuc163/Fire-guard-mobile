@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/service/common/status_api.dart';
+import 'package:flutter/foundation.dart';
+
 /// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/utils/utils.dart';
@@ -19,6 +21,7 @@ import 'widget/primary_text_button_widget.dart';
 import 'widget/primary_text_form_field_widget.dart';
 import 'widget/secondary_button_widget.dart';
 import 'widget/terms_and_privacyText_widget.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -31,14 +34,16 @@ class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController passwordC;
   late TextEditingController apiUrlController;
   late TextEditingController apiPortController;
+
   /// final authService = AuthWithFirebase(); // Firebase Authentication Service
   bool isVietnamese = true;
 
   @override
   void initState() {
     super.initState();
-    emailC = TextEditingController();
-    passwordC = TextEditingController();
+    // Chỉ gán giá trị mặc định trong môi trường debug
+    emailC = TextEditingController(text: kDebugMode ? 'traj10x@gmail.com' : '');
+    passwordC = TextEditingController(text: kDebugMode ? '123456' : '');
     apiUrlController = TextEditingController(text: StatusApi.BASE_API_URL);
     apiPortController = TextEditingController(text: "3000");
     // Kiểm tra ngôn ngữ đã lưu trong Hive
@@ -60,9 +65,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void redirectSelectPreferencesScreen() async {
     // màn hình này chỉ xuất hiện trong lần khởi động đầu tiên
-    final ignoreSelectPreferencesScreen = LocalStorageHelper.getValue('ignoreSelectPreferencesScreen') as bool?;
+    final ignoreSelectPreferencesScreen =
+        LocalStorageHelper.getValue('ignoreSelectPreferencesScreen') as bool?;
     await Future.delayed(const Duration(milliseconds: 1000));
-    if (ignoreSelectPreferencesScreen != null && ignoreSelectPreferencesScreen) {
+    if (ignoreSelectPreferencesScreen != null &&
+        ignoreSelectPreferencesScreen) {
       Navigator.of(context).pushNamed(RouteNames.mainApp);
       // Navigator.of(context).pushNamed(IntroScreen.routeName);
     } else {
@@ -74,15 +81,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
     final authViewModel = Provider.of<AuthViewModel>(context);
-    final model = authViewModel.model; 
+    final model = authViewModel.model;
 
     void _showApiConfigSheet() {
       showModalBottomSheet(
         context: context,
-        isScrollControlled: true, // Cho phép `BottomSheet` mở toàn màn hình nếu cần.
+        isScrollControlled:
+            true, // Cho phép `BottomSheet` mở toàn màn hình nếu cần.
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -122,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         setState(() {
                           StatusApi.BASE_API_URL =
-                          "${apiUrlController.text}:${apiPortController.text}/api/v1/";
+                              "${apiUrlController.text}:${apiPortController.text}/api/v1/";
                         });
                         Navigator.pop(context);
                       },
@@ -146,7 +152,8 @@ class _LoginScreenState extends State<LoginScreen> {
           elevation: 0,
           automaticallyImplyLeading: false,
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Đẩy 2 nút ra 2 bên
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween, // Đẩy 2 nút ra 2 bên
             children: [
               // Nút Config ở bên trái
               GestureDetector(
@@ -160,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Icon(Icons.settings, color: Colors.white),
                 ),
               ),
-      
+
               // Nút Chuyển Ngôn Ngữ ở bên phải
               GestureDetector(
                 onTap: () {
@@ -179,20 +186,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.all(8),
                   child: isVietnamese
                       ? const IconLanguageWidget(
-                      name: "VN", path: AssetHelper.icoVN)
+                          name: "VN", path: AssetHelper.icoVN)
                       : const IconLanguageWidget(
-                      name: "EN", path: AssetHelper.icoAmerica),
+                          name: "EN", path: AssetHelper.icoAmerica),
                 ),
               ),
             ],
           ),
-        )
-        ,
+        ),
         body: Stack(
           children: [
             SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: height_4, vertical: height_24),
+                padding: EdgeInsets.symmetric(
+                    horizontal: height_4, vertical: height_24),
                 child: Column(
                   children: [
                     Text(
@@ -201,7 +208,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                      ).copyWith(color: ColorPalette.kGrayscaleDark100, fontSize: 20),
+                      ).copyWith(
+                          color: ColorPalette.kGrayscaleDark100, fontSize: 20),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -264,10 +272,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           PrimaryTextButtonWidget(
                             onPressed: () {
-                              Navigator.pushNamed(context, RouteNames.forgotPasswordScreen);
+                              Navigator.pushNamed(
+                                  context, RouteNames.forgotPasswordScreen);
                             },
                             title: 'forgot_password'.tr(),
-                            textStyle: const TextStyle(color: Colors.blueAccent),
+                            textStyle:
+                                const TextStyle(color: Colors.blueAccent),
                           ),
                         ],
                       ),
@@ -279,17 +289,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           elevation: 0,
                           onTap: () async {
                             // TODO login
-                            print('----------------- ${StatusApi.BASE_API_URL}');
+                            print(
+                                '----------------- ${StatusApi.BASE_API_URL}');
 
-                            if(emailC.text.trim().isEmpty || passwordC.text.trim().isEmpty || !Utils.isValidEmail(emailC.text.trim())){
+                            if (emailC.text.trim().isEmpty ||
+                                passwordC.text.trim().isEmpty ||
+                                !Utils.isValidEmail(emailC.text.trim())) {
                               showToast(message: 'invalid_email_password'.tr());
                               return;
                             }
-                            bool isSend = await authViewModel.signIn(username: emailC.text.trim(), password: passwordC.text.trim());
-                            if(isSend){
+                            bool isSend = await authViewModel.signIn(
+                                username: emailC.text.trim(),
+                                password: passwordC.text.trim());
+                            if (isSend) {
                               Navigator.pushNamed(context, RouteNames.mainApp);
                             }
-
                           },
                           text: 'login'.tr(),
                           bgColor: ColorPalette.kPrimary,
@@ -306,7 +320,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             title: 'dont_have_account'.tr(),
                             subtitle: 'create_here'.tr(),
                             onTab: () {
-                              Navigator.pushNamed(context, RouteNames.signUpScreen);
+                              Navigator.pushNamed(
+                                  context, RouteNames.signUpScreen);
                             },
                             subtitleTextStyle: TextStyle(
                               fontSize: 14,
@@ -348,7 +363,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
                   ],
                 ),
               ),

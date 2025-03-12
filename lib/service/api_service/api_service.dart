@@ -1,49 +1,12 @@
+import 'package:fire_guard/service/init.dart';
+import 'package:fire_guard/service/common/url_static.dart';
 
-import 'package:fire_guard/service/api_service/BaseApiService.dart';
-import 'package:fire_guard/service/api_service/request/add_family_request.dart';
-import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
-import 'package:fire_guard/service/api_service/request/change_password_request.dart';
-import 'package:fire_guard/service/api_service/request/device_status_request.dart';
-import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
-import 'package:fire_guard/service/api_service/request/forgot_password_request.dart';
-import 'package:fire_guard/service/api_service/request/login_request.dart';
-import 'package:fire_guard/service/api_service/request/register_request.dart';
-import 'package:fire_guard/service/api_service/request/save_device_status_request.dart';
-import 'package:fire_guard/service/api_service/request/send_family_alert_request.dart';
-import 'package:fire_guard/service/api_service/request/send_notification_request.dart';
-import 'package:fire_guard/service/api_service/request/update_info_user_request.dart';
-import 'package:fire_guard/service/api_service/request/upload_sensor_data_request.dart';
-import 'package:fire_guard/service/api_service/request/user_location_request.dart';
-import 'package:fire_guard/service/api_service/response/add_family_response.dart';
-import 'package:fire_guard/service/api_service/response/add_guide_and_news_response.dart';
-import 'package:fire_guard/service/api_service/response/base_response.dart';
-import 'package:fire_guard/service/api_service/response/change_password_response.dart';
-import 'package:fire_guard/service/api_service/response/device_status_response.dart';
-import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
-import 'package:fire_guard/service/api_service/response/forgot_password_response.dart';
-import 'package:fire_guard/service/api_service/response/get_family_response.dart';
-import 'package:fire_guard/service/api_service/response/login_response.dart';
-import 'package:fire_guard/service/api_service/response/register_response.dart';
-import 'package:fire_guard/service/api_service/response/save_device_status_response.dart';
-import 'package:fire_guard/service/api_service/response/save_location_response.dart';
-import 'package:fire_guard/service/api_service/response/send_family_alert_response.dart';
-import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
-import 'package:fire_guard/service/api_service/response/update_info_user_response.dart';
-import 'package:fire_guard/service/api_service/response/upload_sensor_data_response.dart';
-import 'package:fire_guard/service/api_service/response/user_list_response.dart';
-import 'package:fire_guard/service/api_service/response/user_location_response.dart';
-
-import 'request/send_data_sensor_request.dart';
-import 'response/guide_and_news_response.dart';
-import 'response/HistoryResponse.dart';
-import 'response/guide_and_news_response.dart';
-import 'response/send_data_sensor_response.dart';
 
 class ApiServices extends BaseApiService {
   // Phương thức gửi dữ liệu cảm biến
   Future<BaseResponse<SendDataSensorResponse>> sendSensorData(SendDataSensorRequest request) async {
     return await sendRequest<SendDataSensorResponse>(
-      'sensors/data',
+      UrlStatic.API_SENSORS_DATA,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => SendDataSensorResponse.fromJson(json),
@@ -54,7 +17,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<UploadSensorDataResponse>> uploadSensorData(
       UploadSensorDataRequest request) async {
     return await sendRequest<UploadSensorDataResponse>(
-      'data/save',
+      UrlStatic.API_SAVE_DATA,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => UploadSensorDataResponse.fromJson(json),
@@ -65,7 +28,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<SendNotificationResponse>> sendNotification(
       SendNotificationRequest request) async {
     return await sendRequest<SendNotificationResponse>(
-      'notifications/send',
+      UrlStatic.API_SEND_NOTIFICATIONS,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => SendNotificationResponse.fromJson(json),
@@ -76,7 +39,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<SendFamilyAlertResponse>> sendFamilyAlert(
       SendFamilyAlertRequest request) async {
     return await sendRequest<SendFamilyAlertResponse>(
-      'notifications/family',
+      UrlStatic.API_FAMILY_NOTIFICATIONS,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => SendFamilyAlertResponse.fromJson(json),
@@ -88,7 +51,7 @@ class ApiServices extends BaseApiService {
       List<SaveDeviceStatusRequest> request) async {
     final data = saveDeviceStatusRequestToJson(request);
     return await sendRequest<SaveDeviceStatusResponse>(
-      'iot/status/save',
+      UrlStatic.API_SAVE_IOT_STATUS,
       method: 'POST',
       data: data,
       fromJson: (json) => SaveDeviceStatusResponse.fromJson(json),
@@ -99,7 +62,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<FireEmergencyResponse>> sendFireEmergency(
       FireEmergencyRequest request) async {
     return await sendRequest<FireEmergencyResponse>(
-      'emergency/call',
+      UrlStatic.API_EMERGENCY_CALL,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => FireEmergencyResponse.fromJson(json),
@@ -111,7 +74,7 @@ class ApiServices extends BaseApiService {
       List<AddGuideAndNewsRequest> request) async {
     final data = addGuideAndNewsRequestToJson(request);
     return await sendRequest<AddGuideAndNewsResponse>(
-      'guides_and_news/add',
+      UrlStatic.API_ADD_GUIDES_AND_NEWS,
       method: 'POST',
       data: data,
       fromJson: (json) => AddGuideAndNewsResponse.fromJson(json),
@@ -121,7 +84,7 @@ class ApiServices extends BaseApiService {
   // Kiểm Tra Trạng Thái Hệ Thống IoT
   Future<BaseResponse<DeviceStatusResponse>> getDeviceStatus() async {
     return await sendRequest<DeviceStatusResponse>(
-      'iot/status',
+      UrlStatic.API_IOT_STATUS,
       method: 'GET',
       fromJson: (json) => DeviceStatusResponse.fromJson(json),
     );
@@ -147,7 +110,7 @@ class ApiServices extends BaseApiService {
     }
 
     return await sendRequest<HistoryResponse>(
-      'history',
+      UrlStatic.API_HISTORY,
       method: 'GET',
       data: queryParams, // Truyền queryParams vào đây
       fromJson: (json) => HistoryResponse.fromJson(json),
@@ -168,7 +131,7 @@ class ApiServices extends BaseApiService {
     };
 
     return await sendRequest<GuideAndNewsResponse>(
-      'guides_and_news',
+      UrlStatic.API_GUIDES_AND_NEWS,
       method: 'GET',
       data: queryParams,
       fromJson: (json) => GuideAndNewsResponse.fromJson(json),
@@ -179,7 +142,7 @@ class ApiServices extends BaseApiService {
   // api login
   Future<BaseResponse<LoginResponse>> sendLogin(LoginRequest request) async {
     return await sendRequest<LoginResponse>(
-      'auth/login',
+      UrlStatic.API_LOGIN,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => LoginResponse.fromJson(json),
@@ -191,7 +154,7 @@ class ApiServices extends BaseApiService {
 
   Future<BaseResponse<RegisterResponse>> sendRegister(RegisterRequest request) async {
     return await sendRequest<RegisterResponse>(
-      'auth/register',
+      UrlStatic.API_REGISTER,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => RegisterResponse.fromJson(json),
@@ -201,7 +164,7 @@ class ApiServices extends BaseApiService {
   // forgot password
   Future<BaseResponse<ForgotPasswordResponse>> sendForgotPassword(ForgotPasswordRequest request) async {
     return await sendRequest<ForgotPasswordResponse>(
-      'auth/forgot_password',
+      UrlStatic.API_FORGOT_PASSWORD,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => ForgotPasswordResponse.fromJson(json),
@@ -213,7 +176,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<UserListResponse>> sendUserList(
       UserLocationRequest request) async {
     return await sendRequest<UserListResponse>(
-      '/user_location',
+      UrlStatic.API_USER_LOCATION,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => UserListResponse.fromJson(json),
@@ -224,7 +187,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<UserLocationResponse>> sendLocationUser(
       UserLocationRequest request) async {
     return await sendRequest<UserLocationResponse>(
-      '/user_location',
+      UrlStatic.API_USER_LOCATION,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => UserLocationResponse.fromJson(json),
@@ -235,7 +198,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<SaveLocationResponse>> saveLocationUser(
       UserLocationRequest request) async {
     return await sendRequest<SaveLocationResponse>(
-      '/user_location',
+      UrlStatic.API_USER_LOCATION,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => SaveLocationResponse.fromJson(json),
@@ -248,7 +211,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<ChangePasswordResponse>> changePassword(
       ChangePasswordRequest request) async {
     return await sendRequest<ChangePasswordResponse>(
-      '/auth/change_password',
+      UrlStatic.API_CHANGE_PASSWORD,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => ChangePasswordResponse.fromJson(json),
@@ -259,7 +222,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<UpdateInfoUserResponse>> updateInfoUser(
       UpdateInfoUserRequest request) async {
     return await sendRequest<UpdateInfoUserResponse>(
-      '/auth/update',
+      UrlStatic.API_UPDATE_AUTH,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => UpdateInfoUserResponse.fromJson(json),
@@ -270,7 +233,7 @@ class ApiServices extends BaseApiService {
   Future<BaseResponse<AddFamilyResponse>> addFamily(
       AddFamilyRequest request) async {
     return await sendRequest<AddFamilyResponse>(
-      '/family/add',
+      UrlStatic.API_ADD_FAMILY,
       method: 'POST',
       data: request.toJson(),
       fromJson: (json) => AddFamilyResponse.fromJson(json),
@@ -291,7 +254,7 @@ class ApiServices extends BaseApiService {
 
 
     return await sendRequest<GetFamilyResponse>(
-      'family/list',
+      UrlStatic.API_FAMILY_LIST,
       method: 'GET',
       data: queryParams, // Truyền queryParams vào đây
       fromJson: (json) => GetFamilyResponse.fromJson(json),

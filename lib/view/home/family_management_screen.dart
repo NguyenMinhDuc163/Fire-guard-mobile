@@ -1,4 +1,4 @@
-import 'package:fire_guard/viewModel/home_view_model.dart';
+import 'package:fire_guard/viewModel/family_manager_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,98 +11,94 @@ class FamilyManagementScreen extends StatefulWidget {
 }
 
 class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
-  List<Map<String, String>> familyMembers = [];
-  bool isLoading = false;
-
   @override
   void initState() {
     super.initState();
+    // Giả sử userId = 1, trong thực tế nên lấy từ authentication
     Future.delayed(Duration.zero, () {
-      _loadData();
+      context.read<FamilyManagerViewModel>().fetchFamily(1);
     });
   }
 
-  Future<void> _loadData() async {
-    setState(() {
-      isLoading = true; // Bắt đầu loading
-    });
+  void _showAddMemberBottomSheet() {
+    final TextEditingController controller = TextEditingController();
 
-    try {
-      final fetchedUsers = await Provider.of<HomeViewModel>(context, listen: false).sendUserList();
-      setState(() {
-        familyMembers = fetchedUsers.map<Map<String, String>>((user) => {
-          'name': user.username,
-          'contact': user.email,
-          'status': 'Đang hoạt động',
-        }).toList();
-      });
-    } catch (e) {
-      print('Lỗi khi tải dữ liệu từ API: $e');
-    } finally {
-      setState(() {
-        isLoading = false; // Kết thúc loading
-      });
-    }
-  }
-
-  void _addFamilyMember() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (context) {
-        String name = '';
-        String contact = '';
-        return AlertDialog(
-          title: const Text('Thêm Người Thân'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: const InputDecoration(labelText: 'Tên người thân'),
-                onChanged: (value) {
-                  name = value;
-                },
-              ),
-              TextField(
-                decoration: const InputDecoration(labelText: 'Số điện thoại hoặc username'),
-                onChanged: (value) {
-                  contact = value;
-                },
-              ),
-            ],
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Hủy'),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Thêm Thành Viên',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    labelText: 'ID Thành viên',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onSubmitted: (value) {
+                    if (value.isNotEmpty) {
+                      // Giả sử userId = 1
+                      context.read<FamilyManagerViewModel>().addFamily(
+                        1,
+                        int.parse(value),
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Hủy'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Kiểm tra giá trị và gọi API khi ấn nút "Thêm"
+                        String value = controller.text;
+                        if (value.isNotEmpty) {
+                          // Giả sử userId = 1
+                          context.read<FamilyManagerViewModel>().addFamily(
+                            1,
+                            int.parse(value),
+                          );
+                          Navigator.pop(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                      ),
+                      child: const Text('Thêm'),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (name.isNotEmpty && contact.isNotEmpty) {
-                  setState(() {
-                    familyMembers.add({
-                      'name': name,
-                      'contact': contact,
-                      'status': 'Đang hoạt động',
-                    });
-                  });
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Thêm'),
-            ),
-          ],
+          ),
         );
       },
     );
   }
 
-  void _deleteFamilyMember(int index) {
-    setState(() {
-      familyMembers.removeAt(index);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,63 +107,84 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
         title: const Text('Quản Lý Người Thân'),
         backgroundColor: Colors.orange,
       ),
-      body: isLoading // Kiểm tra trạng thái loading
-          ? Center(child: CircularProgressIndicator()) // Hiển thị loading nếu isLoading = true
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: RefreshIndicator(
-          onRefresh: _loadData,
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: familyMembers.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        title: Text(familyMembers[index]['name']!),
-                        subtitle: Text('Liên hệ: ${familyMembers[index]['contact']}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              familyMembers[index]['status']!,
-                              style: TextStyle(
-                                color: familyMembers[index]['status'] == 'Đang hoạt động'
-                                    ? Colors.green
-                                    : Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                _deleteFamilyMember(index);
-                              },
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          // Logic khi ấn vào người thân (nếu cần)
-                        },
+      body: Consumer<FamilyManagerViewModel>(
+        builder: (context, viewModel, child) {
+          if (viewModel.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (viewModel.familyMembers.isEmpty) {
+            return const Center(
+              child: Text(
+                'Chưa có thành viên nào trong danh sách',
+                style: TextStyle(fontSize: 16),
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => viewModel.fetchFamily(1),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: viewModel.familyMembers.length,
+              itemBuilder: (context, index) {
+                final member = viewModel.familyMembers[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: Colors.orange,
+                      child: Icon(Icons.person, color: Colors.white),
+                    ),
+                    title: Text(
+                      member.username ?? 'Chưa có tên',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: _addFamilyMember,
-                icon: const Icon(Icons.add),
-                label: const Text('Thêm Người Thân'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                ),
-              ),
-            ],
-          ),
-        ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (member.phoneNumber != null)
+                          Text('SĐT: ${member.phoneNumber}'),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            'Hoạt động',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        // TODO: Thêm logic xóa thành viên
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddMemberBottomSheet,
+        backgroundColor: Colors.orange,
+        child: const Icon(Icons.add),
       ),
     );
   }
