@@ -33,17 +33,14 @@ class AuthViewModel extends BaseViewModel {
         for (var item in response.data!) {
           if (item.key == 'token'){
             LocalStorageHelper.setValue("authToken", item.value);
-            print("da luu token: ${LocalStorageHelper.getValue('authToken')}");
           }
 
           if (item.key == 'user' && item.value is Map<String, dynamic>) {
             Map<String, dynamic> userMap = item.value as Map<String, dynamic>;
-            String username = userMap['username'] ?? 'Nguyễn Minh Đức';
-            String email = userMap['email'] ?? 'ngminhduc1603@gmail.com';
-            int id = userMap['id'] ?? 1;
-            LocalStorageHelper.setValue("userName", username);
-            LocalStorageHelper.setValue("email", email);
-            LocalStorageHelper.setValue("userId", id);
+            LocalStorageHelper.setValue("userName", userMap['username']);
+            LocalStorageHelper.setValue("email", userMap['email']);
+            LocalStorageHelper.setValue("userId", userMap['id']);
+            LocalStorageHelper.setValue("isAdmin", userMap["is_admin"]);
 
             break; // Dừng vòng lặp khi tìm thấy user
           }

@@ -1,3 +1,4 @@
+import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:fire_guard/viewModel/family_manager_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
     super.initState();
     // Giả sử userId = 1, trong thực tế nên lấy từ authentication
     Future.delayed(Duration.zero, () {
-      context.read<FamilyManagerViewModel>().fetchFamily(1);
+      context.read<FamilyManagerViewModel>().fetchFamily(LocalStorageHelper.getValue('userId'));
     });
   }
 
@@ -55,9 +56,11 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
                     if (value.isNotEmpty) {
                       // Giả sử userId = 1
                       context.read<FamilyManagerViewModel>().addFamily(
-                        1,
-                        int.parse(value),
+                        userId: LocalStorageHelper.getValue('userId'),
+                        familyMemberId:  int.parse(value),
                       );
+                      context.read<FamilyManagerViewModel>().fetchFamily(LocalStorageHelper.getValue('userId'));
+
                       Navigator.pop(context);
                     }
                   },
@@ -78,9 +81,10 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
                         if (value.isNotEmpty) {
                           // Giả sử userId = 1
                           context.read<FamilyManagerViewModel>().addFamily(
-                            1,
-                            int.parse(value),
+                            userId: LocalStorageHelper.getValue('userId'),
+                            familyMemberId:  int.parse(value),
                           );
+                          context.read<FamilyManagerViewModel>().fetchFamily(LocalStorageHelper.getValue('userId'));
                           Navigator.pop(context);
                         }
                       },
@@ -102,6 +106,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // final familyViewModel = Provider.of<FamilyManagerViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quản Lý Người Thân'),
@@ -123,7 +128,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
           }
 
           return RefreshIndicator(
-            onRefresh: () => viewModel.fetchFamily(1),
+            onRefresh: () => viewModel.fetchFamily(LocalStorageHelper.getValue('userId')),
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: viewModel.familyMembers.length,
@@ -171,7 +176,11 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                        // TODO: Thêm logic xóa thành viên
+                        context.read<FamilyManagerViewModel>().deleteFamily(
+                          userId: LocalStorageHelper.getValue('userId'),
+                          familyMemberId: member.familyMemberId,
+                        );
+                        viewModel.fetchFamily(LocalStorageHelper.getValue('userId'));
                       },
                     ),
                   ),

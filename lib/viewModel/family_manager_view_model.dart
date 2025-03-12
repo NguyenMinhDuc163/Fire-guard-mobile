@@ -25,7 +25,7 @@ class FamilyManagerViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> addFamily(int userId, int familyMemberId) async {
+  Future<void> addFamily({required int userId, required int familyMemberId}) async {
     try {
       setLoading(true);
       AddFamilyRequest request = AddFamilyRequest(
@@ -46,6 +46,26 @@ class FamilyManagerViewModel extends BaseViewModel {
     }
   }
 
+  Future<void> deleteFamily({required int userId, required int familyMemberId}) async {
+    try {
+      setLoading(true);
+      AddFamilyRequest request = AddFamilyRequest( // dung chung
+        userId: userId,
+        familyMemberId: familyMemberId,
+      );
+
+      final response = await apiServices.deleteFamily(request);
+
+      if (response.status == true) {
+        // Refresh danh sách sau khi thêm thành công
+        await fetchFamily(userId);
+      }
+    } catch (e) {
+      print('Error delete family member: $e');
+    } finally {
+      setLoading(false);
+    }
+  }
   void setLoading(bool value) {
     isLoading = value;
     notifyListeners();

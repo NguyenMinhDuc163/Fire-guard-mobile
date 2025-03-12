@@ -1,6 +1,8 @@
 import 'package:fire_guard/service/init.dart';
 import 'package:fire_guard/service/common/url_static.dart';
 
+import 'response/delete_family_response.dart';
+
 
 class ApiServices extends BaseApiService {
   // Phương thức gửi dữ liệu cảm biến
@@ -240,7 +242,15 @@ class ApiServices extends BaseApiService {
     );
   }
 
-
+  Future<BaseResponse<DeleteFamilyResponse>> deleteFamily(
+      AddFamilyRequest request) async {
+    return await sendRequest<DeleteFamilyResponse>(
+      UrlStatic.API_DELETE_FAMILY,
+      method: 'POST',
+      data: request.toJson(),
+      fromJson: (json) => DeleteFamilyResponse.fromJson(json),
+    );
+  }
   // api lấy lịch sử cảnh báo
   Future<BaseResponse<GetFamilyResponse>> getFamily({
     int? userId,

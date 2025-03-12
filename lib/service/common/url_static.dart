@@ -16,5 +16,6 @@ class UrlStatic{
   static const String API_CHANGE_PASSWORD = 'auth/change_password';
   static const String API_UPDATE_AUTH = 'auth/update';
   static const String API_ADD_FAMILY = 'family/add';
+  static const String API_DELETE_FAMILY = 'family/delete';
   static const String API_FAMILY_LIST = 'family/list';
 }
