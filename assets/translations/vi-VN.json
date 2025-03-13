@@ -86,7 +86,18 @@
   "about": "Giới thiệu",
   "personal_info_iot_system": "Thông tin cá nhân & Hệ thống IoT",
   "fire_safety_skills_escape": "Kỹ năng PCCC & Thoát hiểm",
-  "fire_news": "Tin tức cháy nổ",
+  "fire_news": {
+    "title": "Tin tức cháy nổ",
+    "fire_news": "Tin tức cháy nổ",
+    "good_people": "Người tốt việc tốt",
+    "error_occurred": "Đã xảy ra lỗi",
+    "try_again": "Thử lại",
+    "no_data": "Không có dữ liệu",
+    "article": "Bài viết",
+    "video": "Video",
+    "source": "Nguồn",
+    "read_more": "Xem thêm"
+  },
   "setting": "Cài đặt",
   "logout": "Đăng xuất",
 
@@ -103,6 +114,28 @@
     "manage_family": "Quản Lý Người Thân",
     "no_members": "Chưa có thành viên nào trong danh sách",
     "": "Hoạt động"
-  }
+  },
 
+  "settings": {
+    "title": "Cài đặt",
+    "change_language": "Thay đổi ngôn ngữ",
+    "change_password": "Đổi mật khẩu",
+    "change_email": "Thay đổi email",
+    "change_phone": "Thay đổi số điện thoại",
+    "enter_new_email": "Nhập email mới",
+    "enter_new_phone": "Nhập số điện thoại mới",
+    "save": "Lưu",
+    "clicksend": {
+      "title": "Cài đặt ClickSend",
+      "subtitle": "Cấu hình thông tin xác thực API ClickSend",
+      "name": "Tên đăng nhập ClickSend",
+      "key": "Khóa API ClickSend",
+      "enter_name": "Nhập tên đăng nhập ClickSend",
+      "enter_key": "Nhập khóa API ClickSend",
+      "name_required": "Vui lòng nhập tên đăng nhập ClickSend",
+      "key_required": "Vui lòng nhập khóa API ClickSend",
+      "update_success": "Cập nhật cài đặt ClickSend thành công",
+      "update_failed": "Cập nhật cài đặt ClickSend thất bại"
+    }
+  }
 }

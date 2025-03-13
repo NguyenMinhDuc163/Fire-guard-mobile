@@ -13,7 +13,7 @@
   "password": "Password",
   "forgot_password": "Forgot Password?",
   "login": "Login",
-  "dont_have_account": "Don’t have an account?",
+  "dont_have_account": "Don't have an account?",
   "create_here": " Create here",
   "or_sign_in_with": "Or Sign In with",
   "continue_with_google": "Continue with Google",
@@ -88,7 +88,18 @@
   "about": "About",
   "personal_info_iot_system": "Personal Information & IoT System",
   "fire_safety_skills_escape": "Fire Safety Skills & Escape",
-  "fire_news": "Fire News",
+  "fire_news": {
+    "title": "Fire News",
+    "fire_news": "Fire News",
+    "good_people": "Good People",
+    "error_occurred": "An error occurred",
+    "try_again": "Try Again",
+    "no_data": "No data available",
+    "article": "Article",
+    "video": "Video",
+    "source": "Source",
+    "read_more": "Read more"
+  },
   "setting": "Setting",
   "logout": "Logout",
   "error": {
@@ -104,6 +115,28 @@
     "manage_family": "Manage Family",
     "no_members": "No members in the list",
     "activity": "Activity"
-  }
+  },
 
+  "settings": {
+    "title": "Settings",
+    "change_language": "Change Language",
+    "change_password": "Change Password",
+    "change_email": "Change Email",
+    "change_phone": "Change Phone",
+    "enter_new_email": "Enter new email",
+    "enter_new_phone": "Enter new phone number",
+    "save": "Save",
+    "clicksend": {
+      "title": "ClickSend Settings",
+      "subtitle": "Configure your ClickSend API credentials",
+      "name": "ClickSend Username",
+      "key": "ClickSend API Key",
+      "enter_name": "Enter your ClickSend username",
+      "enter_key": "Enter your ClickSend API key",
+      "name_required": "Please enter your ClickSend username",
+      "key_required": "Please enter your ClickSend API key",
+      "update_success": "ClickSend settings updated successfully",
+      "update_failed": "Failed to update ClickSend settings"
+    }
+  }
 }

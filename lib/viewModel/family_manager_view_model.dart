@@ -47,10 +47,12 @@ class FamilyManagerViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> deleteFamily({required int userId, required int familyMemberId}) async {
+  Future<void> deleteFamily(
+      {required int userId, required int familyMemberId}) async {
     try {
       setLoading(true);
-      DeleteFamilyRequest request = DeleteFamilyRequest( // dung chung
+      DeleteFamilyRequest request = DeleteFamilyRequest(
+        // dung chung
         ownerID: userId,
         familyMemberId: familyMemberId,
       );
@@ -67,6 +69,7 @@ class FamilyManagerViewModel extends BaseViewModel {
       setLoading(false);
     }
   }
+
   void setLoading(bool value) {
     isLoading = value;
     notifyListeners();
