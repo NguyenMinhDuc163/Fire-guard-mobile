@@ -78,8 +78,6 @@
   "wait_before_next_alert": "Vui lòng đợi 5 phút trước khi gửi thông báo cứu hỏa tiếp theo, hoặc có thể gọi điện trực tiếp.",
   "call_now": "Gọi ngay",
   "cancel": "Huỷ",
-  "connection_error": "Lỗi kết nối",
-  "connection_timeout": "Kết nối đến máy chủ quá thời gian, vui lòng thử lại sau.",
   "ok": "OK",
 
   "registered_location": "Vị trí đã đăng ký",
@@ -90,5 +88,21 @@
   "fire_safety_skills_escape": "Kỹ năng PCCC & Thoát hiểm",
   "fire_news": "Tin tức cháy nổ",
   "setting": "Cài đặt",
-  "logout": "Đăng xuất"
+  "logout": "Đăng xuất",
+
+  "error": {
+    "error_server": "Lỗi máy chủ, vui lòng thử lại sau",
+    "connection_error": "Lỗi kết nối",
+    "connection_timeout": "Kết nối đến máy chủ quá thời gian, vui lòng thử lại sau."
+  },
+
+  "family_manager": {
+    "add_member": "Thêm Thành Viên",
+    "member_email": "Email của Thành viên",
+    "confirm": "Xác nhận",
+    "manage_family": "Quản Lý Người Thân",
+    "no_members": "Chưa có thành viên nào trong danh sách",
+    "": "Hoạt động"
+  }
+
 }

@@ -36,6 +36,7 @@ import 'package:fire_guard/service/api_service/response/update_info_user_respons
 import 'package:fire_guard/service/api_service/response/upload_sensor_data_response.dart';
 import 'package:fire_guard/service/api_service/response/user_list_response.dart';
 import 'package:fire_guard/service/api_service/response/user_location_response.dart';
+import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/cupertino.dart';
 
 
@@ -84,7 +85,7 @@ class SensorViewModel extends ChangeNotifier {
 
   void sendNotification() async {
     SendNotificationRequest request = SendNotificationRequest(
-      userId: "user_001",
+      familyMemberId: LocalStorageHelper.getValue('userId'),
       message: "Cảnh báo! Phát hiện cháy.",
       timestamp: DateTime.now().toUtc(),
     );
@@ -416,8 +417,8 @@ class SensorViewModel extends ChangeNotifier {
 
   void addFamily() async {
     AddFamilyRequest request = AddFamilyRequest(
-        userId: 11,
-        familyMemberId: 12,
+      ownerID: 11,
+        email: "abc@gmail.com",
     );
     print('JSON request data: ${jsonEncode(request.toJson())}');
 

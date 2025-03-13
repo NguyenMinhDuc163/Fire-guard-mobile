@@ -33,24 +33,33 @@ abstract class BaseApiService {
         default:
           response = await dio.get(url, queryParameters: data);
       }
-
-      return BaseResponse.fromJson(
-        response.data,
-            (json) => fromJson(json),
-      );
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
-        DialogAlert.showTimeoutDialog('connection_error'.tr(), 'connection_timeout'.tr());
+    final baseResponse = BaseResponse.fromJson(
+      response.data,
+          (json) => fromJson(json),
+    );
+      if(baseResponse.code != 200 && baseResponse.code != 201){
+        DialogAlert.showTimeoutDialog('notification'.tr(), baseResponse.message.toString());
       }
+      return baseResponse;
+    } on DioException catch (e) {
+
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        DialogAlert.showTimeoutDialog('error.connection_error'.tr(), 'error.connection_timeout'.tr());
+      }else{
+        DialogAlert.showTimeoutDialog('error.connection_error'.tr(), 'error.error_server'.tr());
+      }
+
       if (e.response != null) {
         return BaseResponse.fromJson(
           e.response!.data,
               (json) => fromJson(json),
         );
       } else {
+        DialogAlert.showTimeoutDialog('error.connection_error'.tr(), 'error.error_server'.tr());
         return BaseResponse<T>(error: 'DioError: ${e.message}');
       }
     } catch (e) {
+      DialogAlert.showTimeoutDialog('error.connection_error'.tr(), 'error.error_server'.tr());
       return BaseResponse<T>(error: 'Unexpected Error: $e');
     }
   }

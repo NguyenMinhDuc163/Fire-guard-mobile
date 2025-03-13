@@ -1,6 +1,7 @@
 import 'package:fire_guard/service/init.dart';
 import 'package:fire_guard/service/common/url_static.dart';
 
+import 'request/delete_family_request.dart';
 import 'response/delete_family_response.dart';
 
 
@@ -243,7 +244,7 @@ class ApiServices extends BaseApiService {
   }
 
   Future<BaseResponse<DeleteFamilyResponse>> deleteFamily(
-      AddFamilyRequest request) async {
+      DeleteFamilyRequest request) async {
     return await sendRequest<DeleteFamilyResponse>(
       UrlStatic.API_DELETE_FAMILY,
       method: 'POST',

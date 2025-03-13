@@ -8,22 +8,22 @@ String addFamilyRequestToJson(AddFamilyRequest data) =>
 
 class AddFamilyRequest {
   AddFamilyRequest({
-    required this.userId,
-    required this.familyMemberId,
+     required this.ownerID,
+     required this.email,
   });
 
-  final int userId;
-  final int familyMemberId;
+  final int ownerID;
+  final String email;
 
 
   factory AddFamilyRequest.fromJson(Map<String, dynamic> json) =>
       AddFamilyRequest(
-        userId: json["user_id"],
-        familyMemberId: json["family_member_id"],
+        ownerID: json["user_id"],
+        email: json["email"],
       );
 
   Map<String, dynamic> toJson() => {
-    "user_id": userId,
-    "family_member_id": familyMemberId,
+    "user_id": ownerID,
+    "email": email,
   };
 }

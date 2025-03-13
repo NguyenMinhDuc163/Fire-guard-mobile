@@ -79,8 +79,7 @@
   "wait_before_next_alert": "Please wait 5 minutes before sending the next fire alert, or you may call directly.",
   "call_now": "Call Now",
   "cancel": "Cancel",
-  "connection_error": "Connection Error",
-  "connection_timeout": "Connection to server timed out, please try again.",
+
   "ok": "OK",
 
   "registered_location": "Registered Location",
@@ -91,7 +90,20 @@
   "fire_safety_skills_escape": "Fire Safety Skills & Escape",
   "fire_news": "Fire News",
   "setting": "Setting",
-  "logout": "Logout"
+  "logout": "Logout",
+  "error": {
+    "error_server": "Server error, please try again later",
+    "connection_error": "Connection Error",
+    "connection_timeout": "Connection to server timed out, please try again."
+  },
 
+  "family_manager": {
+    "add_member": "Add Member",
+    "member_email": "Member's Email",
+    "confirm": "Confirm",
+    "manage_family": "Manage Family",
+    "no_members": "No members in the list",
+    "activity": "Activity"
+  }
 
 }

@@ -8,18 +8,18 @@ String sendNotificationRequestToJson(SendNotificationRequest data) =>
 
 class SendNotificationRequest {
   SendNotificationRequest({
-    this.userId,
+    required this.familyMemberId,
     this.message,
     this.timestamp,
   });
 
-  final String? userId;
+  final int familyMemberId;
   final String? message;
   final DateTime? timestamp;
 
   factory SendNotificationRequest.fromJson(Map<String, dynamic> json) =>
       SendNotificationRequest(
-        userId: json["user_id"],
+        familyMemberId: json["familyMemberId"],
         message: json["message"],
         timestamp: json["timestamp"] == null
             ? null
@@ -27,7 +27,7 @@ class SendNotificationRequest {
       );
 
   Map<String, dynamic> toJson() => {
-    "user_id": userId,
+    "familyMemberId": familyMemberId,
     "message": message,
     "timestamp": timestamp?.toIso8601String(),
   };

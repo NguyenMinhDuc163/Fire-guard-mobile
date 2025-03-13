@@ -27,7 +27,7 @@ class HomeViewModel extends BaseViewModel {
   Future<bool> sendNotification() async {
     return await execute(() async {
       SendNotificationRequest request = SendNotificationRequest(
-        userId: "user_001",
+        familyMemberId: LocalStorageHelper.getValue('userId'),
         message: "Cảnh báo! Phát hiện cháy.",
         timestamp: DateTime.now().toUtc(),
       );
