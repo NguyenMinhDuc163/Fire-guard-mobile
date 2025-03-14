@@ -6,7 +6,7 @@ import 'package:fire_guard/view/home/register_coordinates_screen.dart';
 import 'package:fire_guard/view/personalProfile/personal_profile_screen.dart';
 import 'package:fire_guard/view/personalProfile/settings_screen.dart';
 import 'package:fire_guard/viewModel/fire_news_view_model.dart';
-import 'package:fire_guard/viewModel/fire_safety_skill_view_model.dart';
+import 'package:fire_guard/viewModel/fire_safety_skills_view_model.dart';
 import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
 import 'package:flutter/material.dart';
@@ -56,8 +56,8 @@ MaterialPageRoute<dynamic>? generateRoutes(RouteSettings settings) {
     case RouteNames.fireSafetySkillsScreen:
       return MaterialPageRoute(
         settings: settings,
-        builder: (context) => ChangeNotifierProvider<FireSafetySkillViewModel>(
-          create: (_) => FireSafetySkillViewModel(),
+        builder: (context) => ChangeNotifierProvider<FireSafetySkillsViewModel>(
+          create: (_) => FireSafetySkillsViewModel(),
           child: const FireSafetySkillsScreen(),
         ),
       );

@@ -1,3 +1,4 @@
+import 'package:fire_guard/viewModel/fire_safety_skills_view_model.dart';
 import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
 import 'package:fire_guard/viewModel/sensor_view_model.dart';
@@ -15,6 +16,7 @@ class ProviderSetup {
       ChangeNotifierProvider(create: (_) => HomeViewModel()),
       ChangeNotifierProvider(create: (_) => PersonalProfileViewModel()),
       ChangeNotifierProvider(create: (_) => FamilyManagerViewModel()),
+      ChangeNotifierProvider(create: (_) => FireSafetySkillsViewModel()),
       ChangeNotifierProvider(create: (_) => SettingViewModel()),
       // Thêm các Provider khác ở đây
     ];

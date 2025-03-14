@@ -4,7 +4,7 @@ import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
 import 'package:fire_guard/view/fireNews/fire_news_screen.dart';
 import 'package:fire_guard/view/fireSafetySkills/fire_safety_skills_screen.dart';
 import 'package:fire_guard/viewModel/fire_news_view_model.dart';
-import 'package:fire_guard/viewModel/fire_safety_skill_view_model.dart';
+import 'package:fire_guard/viewModel/fire_safety_skills_view_model.dart';
 import 'package:fire_guard/viewModel/home_view_model.dart';
 import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +41,8 @@ class _MainAppState extends State<MainApp> {
       create: (_) => FireNewsViewModel(),
       child: const FireNewsScreen(),
     ),
-    ChangeNotifierProvider<FireSafetySkillViewModel>(
-      create: (_) => FireSafetySkillViewModel(),
+    ChangeNotifierProvider<FireSafetySkillsViewModel>(
+      create: (_) => FireSafetySkillsViewModel(),
       child: const FireSafetySkillsScreen(),
     ),
     ChangeNotifierProvider<PersonalProfileViewModel>(

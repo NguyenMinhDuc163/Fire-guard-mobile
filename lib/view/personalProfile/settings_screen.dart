@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart'; // Thư viện đổi ngôn ngữ
 import 'package:provider/provider.dart';
 import 'package:fire_guard/viewModel/setting_view_model.dart';
+import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'settings_detail_screen.dart'; // Import màn hình chi tiết
 import 'click_send_settings_screen.dart'; // Import màn hình cài đặt ClickSend
 
@@ -59,6 +60,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     );
   }
@@ -109,6 +114,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _showMessage(message, color);
   }
 
+  Widget _buildSettingCard({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    String? subtitle,
+    Color? iconColor,
+  }) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: (iconColor ?? Colors.blue).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: iconColor ?? Colors.blue,
+            size: 24,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 14,
+                ),
+              )
+            : null,
+        trailing: const Icon(
+          Icons.chevron_right,
+          color: Colors.grey,
+        ),
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
@@ -116,7 +173,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('settings.title'.tr()),
-          backgroundColor: Colors.orange,
+          backgroundColor: ColorPalette.colorFFBB35,
+          elevation: 0,
         ),
         body: Consumer<SettingViewModel>(
           builder: (context, viewModel, child) {
@@ -128,92 +186,95 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
             }
 
-            return ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                // Thay đổi ngôn ngữ
-                ListTile(
-                  leading: const Icon(Icons.language, color: Colors.blue),
-                  title: Text('settings.change_language'.tr()),
-                  subtitle: Text(isVietnamese ? 'Tiếng Việt' : 'English'),
-                  onTap: _changeLanguage,
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    ColorPalette.colorFFBB35.withOpacity(0.1),
+                    Colors.white,
+                  ],
                 ),
-                const Divider(),
-
-                // Đổi mật khẩu
-                ListTile(
-                  leading: const Icon(Icons.lock, color: Colors.red),
-                  title: Text('settings.change_password'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ChangePasswordScreen()),
-                    );
-                  },
-                ),
-
-                const Divider(),
-
-                // Thay đổi email
-                ListTile(
-                  leading: const Icon(Icons.email, color: Colors.purple),
-                  title: Text('settings.change_email'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SettingsDetailScreen(
-                          title: 'settings.change_email'.tr(),
-                          hintText: 'settings.enter_new_email'.tr(),
-                          inputType: TextInputType.emailAddress,
-                          onSave: (value) => _handleUpdateEmail(context, value),
+              ),
+              child: ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  _buildSettingCard(
+                    icon: Icons.language,
+                    title: 'settings.change_language'.tr(),
+                    subtitle: isVietnamese ? 'Tiếng Việt' : 'English',
+                    onTap: _changeLanguage,
+                    iconColor: Colors.blue,
+                  ),
+                  _buildSettingCard(
+                    icon: Icons.lock,
+                    title: 'settings.change_password'.tr(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ChangePasswordScreen()),
+                      );
+                    },
+                    iconColor: Colors.red,
+                  ),
+                  _buildSettingCard(
+                    icon: Icons.email,
+                    title: 'settings.change_email'.tr(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SettingsDetailScreen(
+                            title: 'settings.change_email'.tr(),
+                            hintText: 'settings.enter_new_email'.tr(),
+                            inputType: TextInputType.emailAddress,
+                            onSave: (value) =>
+                                _handleUpdateEmail(context, value),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                const Divider(),
-
-                // Thay đổi số điện thoại
-                ListTile(
-                  leading: const Icon(Icons.phone, color: Colors.green),
-                  title: Text('settings.change_phone'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SettingsDetailScreen(
-                          title: 'settings.change_phone'.tr(),
-                          hintText: 'settings.enter_new_phone'.tr(),
-                          inputType: TextInputType.phone,
-                          onSave: (value) => _handleUpdatePhone(context, value),
+                      );
+                    },
+                    iconColor: Colors.purple,
+                  ),
+                  _buildSettingCard(
+                    icon: Icons.phone,
+                    title: 'settings.change_phone'.tr(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SettingsDetailScreen(
+                            title: 'settings.change_phone'.tr(),
+                            hintText: 'settings.enter_new_phone'.tr(),
+                            inputType: TextInputType.phone,
+                            onSave: (value) =>
+                                _handleUpdatePhone(context, value),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                const Divider(),
-
-                // Cài đặt ClickSend
-                ListTile(
-                  leading: const Icon(Icons.notifications_active,
-                      color: Colors.indigo),
-                  title: Text('settings.clicksend.title'.tr()),
-
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ClickSendSettingsScreen(
-                          onSave: (name, key) =>
-                              _handleUpdateClickSend(context, name, key),
+                      );
+                    },
+                    iconColor: Colors.green,
+                  ),
+                  _buildSettingCard(
+                    icon: Icons.notifications_active,
+                    title: 'settings.clicksend.title'.tr(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ClickSendSettingsScreen(
+                            onSave: (name, key) =>
+                                _handleUpdateClickSend(context, name, key),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
+                      );
+                    },
+                    iconColor: Colors.indigo,
+                  ),
+                ],
+              ),
             );
           },
         ),

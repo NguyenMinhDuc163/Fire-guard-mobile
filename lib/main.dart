@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'providers/provider_setup.dart';
 import 'service/service_config//notification_service.dart';
 import 'service/service_config/firebase_service.dart';
+import 'viewModel/fire_safety_skills_view_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,8 @@ void main() async {
     ),
   );
   final firebaseService = FirebaseService();
-  print("Current base URL from Firebase Remote Config: ${firebaseService.getBaseURLServer()}");
+  print(
+      "Current base URL from Firebase Remote Config: ${firebaseService.getBaseURLServer()}");
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
   );
@@ -66,7 +68,6 @@ void main() async {
   );
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -81,7 +82,6 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       minTextAdapt: true,
-
       builder: (context, child) {
         return MaterialApp(
           title: 'Fire Guard',

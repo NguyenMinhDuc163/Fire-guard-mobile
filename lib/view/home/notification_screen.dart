@@ -3,8 +3,9 @@ import 'package:fire_guard/view/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
+import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import '../../viewModel/home_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -30,9 +31,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Future<void> _loadNotifications() async {
     if (startDate != null && endDate != null && startDate!.isAfter(endDate!)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text('Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.')),
+        SnackBar(
+          content: Text('notification.date_error'.tr()),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -77,8 +79,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final model = homeViewModel.model;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thông Báo Cảnh Báo'),
-        backgroundColor: Colors.orange,
+        title: Text(
+          'notification.title'.tr(),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: ColorPalette.colorFFBB35,
+        elevation: 0,
       ),
       body: Stack(
         children: [
@@ -88,63 +98,62 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             },
             child: Column(
               children: [
-                Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.all(16.0),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () =>
-                                    _selectDate(context, isStartDate: true),
-                                child: buildDateField(
-                                  label: 'Ngày bắt đầu',
-                                  date: startDate,
-                                ),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () =>
+                                  _selectDate(context, isStartDate: true),
+                              child: buildDateField(
+                                label: 'notification.start_date'.tr(),
+                                date: startDate,
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () =>
-                                    _selectDate(context, isStartDate: false),
-                                child: buildDateField(
-                                  label: 'Ngày kết thúc',
-                                  date: endDate,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: _loadNotifications,
-                          icon: const Icon(Icons.search),
-                          label: const Text('Tìm kiếm'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            textStyle: const TextStyle(fontSize: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () =>
+                                  _selectDate(context, isStartDate: false),
+                              child: buildDateField(
+                                label: 'notification.end_date'.tr(),
+                                date: endDate,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadNotifications,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorPalette.colorFFBB35,
+                          minimumSize: const Size(double.infinity, 48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 2,
                         ),
-                      ],
-                    ),
+                        child: Text(
+                          'notification.search'.tr(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
                   child: notifications.isNotEmpty
                       ? ListView.builder(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16),
                           itemCount: notifications.length,
                           itemBuilder: (context, index) {
                             final notification = notifications[index];
@@ -166,56 +175,77 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                      content: Text(
-                                          'Đã xóa thông báo: $formattedMessage')),
+                                    content: Text(
+                                      'notification.delete_success'
+                                          .tr(args: [formattedMessage]),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
                                 );
                               },
                               background: Container(
                                 color: Colors.red,
                                 alignment: Alignment.centerRight,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
+                                padding: const EdgeInsets.only(right: 20),
                                 child: const Icon(Icons.delete,
                                     color: Colors.white),
                               ),
-                              child: Card(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                elevation: 4.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    border: Border.all(
-                                      color: errorColor.withOpacity(0.5),
-                                      width: 1,
-                                    ),
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.grey.shade200,
+                                    width: 1.5,
                                   ),
-                                  child: ListTile(
-                                    leading: Icon(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade200,
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: errorColor.withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
                                       errorIcon,
                                       color: errorColor,
-                                      size: 28,
+                                      size: 24,
                                     ),
-                                    title: Text(
-                                      formattedMessage,
+                                  ),
+                                  title: Text(
+                                    formattedMessage,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: errorColor,
+                                    ),
+                                  ),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Text(
+                                      '${'notification.time'.tr()}: ${notification['timestamp']}',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: errorColor,
+                                        fontSize: 13,
+                                        color: Colors.grey[600],
                                       ),
                                     ),
-                                    subtitle: Text(
-                                      'Thời gian: ${notification['timestamp']}',
-                                      style:
-                                          const TextStyle(color: Colors.grey),
-                                    ),
-                                    onTap: () {
-                                      _showNotificationDetails(
-                                          context, notification);
-                                    },
                                   ),
+                                  onTap: () {
+                                    _showNotificationDetails(
+                                        context, notification);
+                                  },
                                 ),
                               ),
                             );
@@ -227,14 +257,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             children: [
                               Icon(
                                 Icons.notifications_none,
-                                size: 64,
+                                size: 48,
                                 color: Colors.grey[400],
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Không có thông báo nào',
+                                'notification.no_notifications'.tr(),
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   color: Colors.grey[600],
                                 ),
                               ),
@@ -260,11 +290,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
         return Container(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,15 +304,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   Icon(
                     ErrorConstants.getErrorIcon(errorMessage),
                     color: errorColor,
-                    size: 32,
+                    size: 24,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       formattedMessage,
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                         color: errorColor,
                       ),
                     ),
@@ -291,27 +321,30 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Thời gian: ${notification['timestamp']}',
-                style: const TextStyle(
-                  color: Colors.grey,
+                '${'notification.time'.tr()}: ${notification['timestamp']}',
+                style: TextStyle(
                   fontSize: 14,
+                  color: Colors.grey[600],
                 ),
               ),
               const SizedBox(height: 20),
-              Center(
+              SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: errorColor,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 12),
+                    minimumSize: const Size(double.infinity, 40),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Đóng',
-                    style: TextStyle(fontSize: 16),
+                  child: Text(
+                    'notification.close'.tr(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -324,19 +357,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget buildDateField({required String label, DateTime? date}) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300, width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(Icons.calendar_today, color: Colors.orange),
-          const SizedBox(width: 8),
+          Icon(Icons.calendar_today, color: ColorPalette.colorFFBB35, size: 22),
+          const SizedBox(width: 12),
           Text(
             date != null ? DateFormat('dd/MM/yyyy').format(date) : label,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               color: date != null ? Colors.black : Colors.grey,
             ),
           ),
