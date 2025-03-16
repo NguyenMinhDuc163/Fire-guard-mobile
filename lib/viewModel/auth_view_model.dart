@@ -32,7 +32,9 @@ class AuthViewModel extends BaseViewModel {
       if (response.code != null) {
         for (var item in response.data!) {
           if (item.key == 'token'){
+            LocalStorageHelper.deleteValue("authToken");
             LocalStorageHelper.setValue("authToken", item.value);
+            print("da luu token ${item.value}");
           }
 
           if (item.key == 'user' && item.value is Map<String, dynamic>) {

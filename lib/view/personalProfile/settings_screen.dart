@@ -75,8 +75,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
 
     final message = success
-        ? 'Email đã được cập nhật thành công'
-        : viewModel.error ?? 'Có lỗi xảy ra khi cập nhật email';
+        ? 'settings_email_update_success'.tr()
+        : viewModel.error ?? 'settings_email_update_failed'.tr();
     final color = success ? Colors.green : Colors.red;
 
     _showMessage(message, color);
@@ -89,8 +89,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
 
     final message = success
-        ? 'Số điện thoại đã được cập nhật thành công'
-        : viewModel.error ?? 'Có lỗi xảy ra khi cập nhật số điện thoại';
+        ? 'settings_phone_update_success'.tr()
+        : viewModel.error ?? 'settings_phone_update_failed'.tr();
     final color = success ? Colors.green : Colors.red;
 
     _showMessage(message, color);
@@ -107,8 +107,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
 
     final message = success
-        ? 'Thông tin ClickSend đã được cập nhật thành công'
-        : viewModel.error ?? 'Có lỗi xảy ra khi cập nhật thông tin ClickSend';
+        ? 'settings_clicksend_update_success'.tr()
+        : viewModel.error ?? 'settings_clicksend_update_failed'.tr();
     final color = success ? Colors.green : Colors.red;
 
     _showMessage(message, color);
@@ -172,7 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       key: _scaffoldKey,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('settings.title'.tr()),
+          title: Text('settings_title'.tr()),
           backgroundColor: ColorPalette.colorFFBB35,
           elevation: 0,
         ),
@@ -202,14 +202,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   _buildSettingCard(
                     icon: Icons.language,
-                    title: 'settings.change_language'.tr(),
+                    title: 'settings_change_language'.tr(),
                     subtitle: isVietnamese ? 'Tiếng Việt' : 'English',
                     onTap: _changeLanguage,
                     iconColor: Colors.blue,
                   ),
                   _buildSettingCard(
                     icon: Icons.lock,
-                    title: 'settings.change_password'.tr(),
+                    title: 'settings_change_password'.tr(),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -221,14 +221,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingCard(
                     icon: Icons.email,
-                    title: 'settings.change_email'.tr(),
+                    title: 'settings_change_email'.tr(),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SettingsDetailScreen(
-                            title: 'settings.change_email'.tr(),
-                            hintText: 'settings.enter_new_email'.tr(),
+                            title: 'settings_change_email'.tr(),
+                            hintText: 'settings_enter_new_email'.tr(),
                             inputType: TextInputType.emailAddress,
                             onSave: (value) =>
                                 _handleUpdateEmail(context, value),
@@ -240,14 +240,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingCard(
                     icon: Icons.phone,
-                    title: 'settings.change_phone'.tr(),
+                    title: 'settings_change_phone'.tr(),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SettingsDetailScreen(
-                            title: 'settings.change_phone'.tr(),
-                            hintText: 'settings.enter_new_phone'.tr(),
+                            title: 'settings_change_phone'.tr(),
+                            hintText: 'settings_enter_new_phone'.tr(),
                             inputType: TextInputType.phone,
                             onSave: (value) =>
                                 _handleUpdatePhone(context, value),
@@ -259,7 +259,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingCard(
                     icon: Icons.notifications_active,
-                    title: 'settings.clicksend.title'.tr(),
+                    title: 'settings_clicksend_title'.tr(),
                     onTap: () {
                       Navigator.push(
                         context,

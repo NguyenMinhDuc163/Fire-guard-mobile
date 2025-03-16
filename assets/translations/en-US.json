@@ -177,6 +177,10 @@
   "settings_clicksend_key_required": "Please enter your ClickSend API key",
   "settings_clicksend_update_success": "ClickSend settings updated successfully",
   "settings_clicksend_update_failed": "Failed to update ClickSend settings",
+  "settings_email_update_success": "Email has been updated successfully",
+  "settings_email_update_failed": "An error occurred while updating email",
+  "settings_phone_update_success": "Phone number has been updated successfully",
+  "settings_phone_update_failed": "An error occurred while updating phone number",
 
   "fire_safety_skills_fire_safety": "Fire Safety Skills",
   "fire_safety_skills_escape": "Escape Skills",

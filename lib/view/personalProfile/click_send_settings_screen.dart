@@ -113,7 +113,7 @@ class _ClickSendSettingsScreenState extends State<ClickSendSettingsScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('settings.clicksend.title'.tr()),
+          title: Text('settings_clicksend_title'.tr()),
           backgroundColor: ColorPalette.colorFFBB35,
           elevation: 0,
           leading: IconButton(
@@ -142,25 +142,33 @@ class _ClickSendSettingsScreenState extends State<ClickSendSettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    'settings_clicksend_subtitle'.tr(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   _buildInputField(
-                    label: 'settings.clicksend.name'.tr(),
-                    hint: 'settings.clicksend.enter_name'.tr(),
+                    label: 'settings_clicksend_name'.tr(),
+                    hint: 'settings_clicksend_enter_name'.tr(),
                     controller: _nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'settings.clicksend.name_required'.tr();
+                        return 'settings_clicksend_name_required'.tr();
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 24),
                   _buildInputField(
-                    label: 'settings.clicksend.key'.tr(),
-                    hint: 'settings.clicksend.enter_key'.tr(),
+                    label: 'settings_clicksend_key'.tr(),
+                    hint: 'settings_clicksend_enter_key'.tr(),
                     controller: _keyController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'settings.clicksend.key_required'.tr();
+                        return 'settings_clicksend_key_required'.tr();
                       }
                       return null;
                     },
@@ -188,7 +196,7 @@ class _ClickSendSettingsScreenState extends State<ClickSendSettingsScreen> {
                         ),
                       ),
                       child: Text(
-                        'settings.save'.tr(),
+                        'settings_save'.tr(),
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
