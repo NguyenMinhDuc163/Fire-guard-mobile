@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'viewModel/sensor_view_model.dart';
+import 'screens/profile_screen/providers/sensor_view_model.dart';
 
 void main() {
   runApp(

@@ -1,4 +1,4 @@
-import 'package:fire_guard/models/user_model.dart';
+import 'package:fire_guard/screens/authen_screen/models/user_model.dart';
 
 class RegisterResponse {
   final UserModel user;

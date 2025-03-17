@@ -1,12 +1,12 @@
-import 'package:fire_guard/viewModel/fire_safety_skills_view_model.dart';
-import 'package:fire_guard/viewModel/home_view_model.dart';
-import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
-import 'package:fire_guard/viewModel/sensor_view_model.dart';
-import 'package:fire_guard/viewModel/setting_view_model.dart';
+import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
+import 'package:fire_guard/screens/family_manager_screen/providers/family_manager_view_model.dart';
+import 'package:fire_guard/screens/fire_safety_skills_screen/providers/fire_safety_skills_view_model.dart';
+import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
+import 'package:fire_guard/screens/profile_screen/providers/persional_profile_view_model.dart';
+import 'package:fire_guard/screens/profile_screen/providers/sensor_view_model.dart';
+import 'package:fire_guard/screens/setting_screen/providers/setting_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:fire_guard/viewModel/auth_view_model.dart';
-import 'package:fire_guard/viewModel/family_manager_view_model.dart';
 
 class ProviderSetup {
   static List<SingleChildWidget> getProviders() {

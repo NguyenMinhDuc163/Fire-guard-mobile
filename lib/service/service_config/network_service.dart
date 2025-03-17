@@ -1,4 +1,4 @@
-import 'package:fire_guard/viewModel/LoadingInterceptor.dart';
+import 'package:fire_guard/providers/LoadingInterceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:fire_guard/service/base_connect.dart';

@@ -1,20 +1,27 @@
-import 'package:fire_guard/view/fireNews/fire_news_screen.dart';
-import 'package:fire_guard/view/home/family_management_screen.dart';
-import 'package:fire_guard/view/home/fire_alert_map_screen.dart';
-import 'package:fire_guard/view/home/notification_screen.dart';
-import 'package:fire_guard/view/home/register_coordinates_screen.dart';
-import 'package:fire_guard/view/personalProfile/personal_profile_screen.dart';
-import 'package:fire_guard/view/personalProfile/settings_screen.dart';
-import 'package:fire_guard/viewModel/fire_news_view_model.dart';
-import 'package:fire_guard/viewModel/fire_safety_skills_view_model.dart';
-import 'package:fire_guard/viewModel/home_view_model.dart';
-import 'package:fire_guard/viewModel/personal_profile_view_model.dart';
+import 'package:fire_guard/screens/authen_screen/view/forgot_password_screen.dart';
+import 'package:fire_guard/screens/authen_screen/view/intro_screen.dart';
+import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
+import 'package:fire_guard/screens/authen_screen/view/seslect_preferences_screen.dart';
+import 'package:fire_guard/screens/authen_screen/view/sign_up_screen.dart';
+import 'package:fire_guard/screens/authen_screen/view/splash_screen.dart';
+import 'package:fire_guard/screens/fire_map_screen/views/register_coordinates_screen.dart';
+import 'package:fire_guard/screens/fire_news_screen/views/fire_news_screen.dart';
+import 'package:fire_guard/screens/family_manager_screen/views/family_management_screen.dart';
+import 'package:fire_guard/screens/fire_map_screen/views/fire_alert_map_screen.dart';
+import 'package:fire_guard/screens/fire_news_screen/providers/fire_news_view_model.dart';
+import 'package:fire_guard/screens/fire_safety_skills_screen/providers/fire_safety_skills_view_model.dart';
+import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
+import 'package:fire_guard/screens/home_screen/views/home_screen.dart';
+import 'package:fire_guard/screens/home_screen/views/notification_screen.dart';
+import 'package:fire_guard/screens/profile_screen/providers/persional_profile_view_model.dart';
+import 'package:fire_guard/screens/profile_screen/views/personal_profile_screen.dart';
+import 'package:fire_guard/screens/setting_screen/views/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fire_guard/init.dart';
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:provider/provider.dart';
 
-import '../view/fireSafetySkills/fire_safety_skills_screen.dart';
+import '../screens/fire_safety_skills_screen/views/fire_safety_skills_screen.dart';
 
 final Map<String, WidgetBuilder> routes = {
   // noi tong hop ca routes
