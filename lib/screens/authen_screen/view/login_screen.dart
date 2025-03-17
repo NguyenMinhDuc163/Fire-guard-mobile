@@ -10,6 +10,7 @@ import 'package:fire_guard/screens/authen_screen/widget/primary_text_form_field_
 import 'package:fire_guard/screens/authen_screen/widget/secondary_button_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/terms_and_privacyText_widget.dart';
 import 'package:fire_guard/service/common/status_api.dart';
+import 'package:fire_guard/service/service_config/network_service.dart';
 import 'package:flutter/foundation.dart';
 
 /// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
@@ -44,8 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // Chỉ gán giá trị mặc định trong môi trường debug
     emailC = TextEditingController(text: kDebugMode ? 'traj10x@gmail.com' : '');
     passwordC = TextEditingController(text: kDebugMode ? '123456' : '');
-    apiUrlController = TextEditingController(text: StatusApi.BASE_API_URL);
-    apiPortController = TextEditingController(text: "3000");
+    apiUrlController = TextEditingController(text: "");
+    apiPortController = TextEditingController(text: "");
     // Kiểm tra ngôn ngữ đã lưu trong Hive
     String? savedLocale = LocalStorageHelper.getValue('languageCode');
     if (savedLocale != null) {
@@ -127,8 +128,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          StatusApi.BASE_API_URL =
-                              "${apiUrlController.text}:${apiPortController.text}/api/v1/";
+                          NetworkService.instance.updateBaseUrl("${apiUrlController.text.trim()}:${apiPortController.text.trim()}/api/v1/");
+                          StatusApi.BASE_API_URL = "${apiUrlController.text}:${apiPortController.text}/api/v1/";
                         });
                         Navigator.pop(context);
                       },

@@ -10,6 +10,7 @@ import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/forgot_password_response.dart';
 import 'package:fire_guard/service/api_service/response/login_response.dart';
 import 'package:fire_guard/service/api_service/response/register_response.dart';
+import 'package:fire_guard/service/service_config/network_service.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 
@@ -33,7 +34,8 @@ class AuthViewModel extends BaseViewModel {
         for (var item in response.data!) {
           if (item.key == 'token'){
             await LocalStorageHelper.setValue("authToken", item.value);
-            print("da luu token ${LocalStorageHelper.getValue("authToken")}");
+            String newToken = LocalStorageHelper.getValue("authToken");
+            NetworkService.instance.updateAuthToken(newToken);
           }
 
           if (item.key == 'user' && item.value is Map<String, dynamic>) {

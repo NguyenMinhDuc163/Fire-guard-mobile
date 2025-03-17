@@ -40,10 +40,10 @@ void main() async {
     androidProvider: AndroidProvider.playIntegrity,
   );
 
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-  );
+  // await Supabase.initialize(
+  //   url: dotenv.env['SUPABASE_URL']!,
+  //   anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  // );
 
   // Khởi tạo FirebaseService để kích hoạt Remote Config
 

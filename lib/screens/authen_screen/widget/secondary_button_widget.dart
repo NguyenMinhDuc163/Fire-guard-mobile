@@ -64,7 +64,7 @@ class _SecondaryButtonWidgetState extends State<SecondaryButtonWidget>
           ),
         ),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 17),
+          padding:  EdgeInsets.symmetric(horizontal: width_40  , vertical: height_12),
           height: widget.height,
           alignment: Alignment.center,
           width: widget.width,

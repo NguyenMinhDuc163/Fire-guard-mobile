@@ -26,7 +26,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void initState() {
     super.initState();
     emailC = TextEditingController();
-    Provider.of<AuthViewModel>(context, listen: false).generateCaptcha();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AuthViewModel>(context, listen: false).generateCaptcha();
+    });
   }
 
   @override
@@ -52,7 +54,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: SizedBox(
-                  width: 327,
+                  width: double.infinity,
                   child: Column(
                     children: [
                       Text(
@@ -99,7 +101,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ],
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
+                        padding: EdgeInsets.only(top: 20.h, bottom: 20.h, left: width_16),
                         child: Row(
                           children: [
                             Expanded(
@@ -107,7 +109,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 borderRadius: BorderRadius.circular(24),
                                 hintText: 'auth.security_code'.tr(),
                                 controller: securityCodeController,
-                                width: 327,
+                                width: double.infinity,
                                 height: 52,
                               ),
                             ),

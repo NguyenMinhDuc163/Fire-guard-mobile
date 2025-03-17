@@ -10,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
-
 import 'providers/provider_setup.dart';
 import 'screens/authen_screen/view/splash_screen.dart';
 import 'service/service_config/notification_service.dart';

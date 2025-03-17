@@ -32,7 +32,14 @@ class NetworkService {
 
   // Phương thức cập nhật URL cho Dio
   void updateBaseUrl(String newBaseUrl) {
-    dio.options.baseUrl = newBaseUrl;
+    // dio.options.baseUrl = newBaseUrl;
+    baseConnect.updateURL(newBaseUrl);
     print('--Dio baseUrl updated to: $newBaseUrl--');
   }
+
+  void updateAuthToken(String newToken) {
+    baseConnect.updateToken(newToken);
+  }
+
+
 }

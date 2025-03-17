@@ -78,6 +78,7 @@ double width_800 = 800.w;
 double height_2 = 2.h;
 double height_4 = 4.h;
 double height_8 = 8.h;
+double height_12 = 12.h;
 double height_16 = 16.h;
 double height_20 = 20.h;
 double height_24 = 24.h;
