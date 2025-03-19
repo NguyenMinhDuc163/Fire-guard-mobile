@@ -1,4 +1,4 @@
-package com.example.fire_guard
+package com.nguyenduc.fire_guard
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
