@@ -20,6 +20,7 @@ class _ClickSendSettingsScreenState extends State<ClickSendSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _keyController = TextEditingController();
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -28,16 +29,14 @@ class _ClickSendSettingsScreenState extends State<ClickSendSettingsScreen> {
   }
 
   void _loadExistingData() {
-    final name = LocalStorageHelper.getValue('clickSendName');
-    final key = LocalStorageHelper.getValue('clickSendKey');
-
-    if (name != null) _nameController.text = name;
-    if (key != null) _keyController.text = key;
+    _clearData();
   }
 
   void _clearData() {
     _nameController.clear();
     _keyController.clear();
+    LocalStorageHelper.deleteValue('clickSendName');
+    LocalStorageHelper.deleteValue('clickSendKey');
   }
 
   @override
@@ -69,7 +68,7 @@ class _ClickSendSettingsScreenState extends State<ClickSendSettingsScreen> {
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
-          obscureText: isPassword,
+          obscureText: isPassword && !_isPasswordVisible,
           decoration: InputDecoration(
             hintText: hint,
             filled: true,
@@ -97,6 +96,21 @@ class _ClickSendSettingsScreenState extends State<ClickSendSettingsScreen> {
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            suffixIcon: isPassword
+                ? IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: Colors.grey[600],
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  )
+                : null,
           ),
           validator: validator,
         ),
