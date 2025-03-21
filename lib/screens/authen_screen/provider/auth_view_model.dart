@@ -13,6 +13,8 @@ import 'package:fire_guard/service/api_service/response/register_response.dart';
 import 'package:fire_guard/service/service_config/network_service.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../providers/BaseViewModel.dart';
 
@@ -20,6 +22,9 @@ class AuthViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
   AuthModel authModel = AuthModel();
   AuthModel get model => authModel;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
 
   Future<bool> signIn({required String username, required String password}) async {
     return await execute(() async{
@@ -77,11 +82,6 @@ class AuthViewModel extends BaseViewModel {
       RegisterRequest request = RegisterRequest(
           username: '$firstName $lastName', email: email, password: password, tokenFcm: tokenFCM);
       final BaseResponse<RegisterResponse> response = await apiServices.sendRegister(request);
-      print('Code: ${response.code}');
-      print('Status: ${response.status}');
-      print('Message: ${response.message}');
-      print('Error: ${response.error}');
-      print('Data: ${response.data}');
 
       notifyListeners();
       if (response.code == 200 || response.code == 201) {
@@ -99,7 +99,6 @@ class AuthViewModel extends BaseViewModel {
 
   }
 
-
   Future<bool> sendForgotPassword({required String email}) async {
 
     return await execute(() async{
@@ -108,11 +107,6 @@ class AuthViewModel extends BaseViewModel {
       );
       final BaseResponse<ForgotPasswordResponse> response =
           await apiServices.sendForgotPassword(request);
-      print('Code: ${response.code}');
-      print('Status: ${response.status}');
-      print('Message: ${response.message}');
-      print('Error: ${response.error}');
-      print('Data: ${response.data}');
 
       notifyListeners();
       if (response.code == 200 || response.code == 201) {
@@ -130,6 +124,90 @@ class AuthViewModel extends BaseViewModel {
 
   }
 
+
+  Future<bool> signInWithGoogle() async {
+
+    return await execute(() async {
+
+      try {
+        // Bắt đầu quá trình đăng nhập Google
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+        if (googleUser == null) {
+          return false;
+        }
+
+        // Lấy thông tin xác thực từ request
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+        // Tạo credential cho Firebase
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Đăng nhập vào Firebase với credential
+        final UserCredential authResult = await _auth.signInWithCredential(credential);
+        User? _user = authResult.user;
+
+
+        bool? isLoginSUCC = await checkLoginGoogle(_user!);
+
+        notifyListeners();
+
+        return isLoginSUCC ?? false;
+      } catch (error) {
+        print('LỖI ĐĂNG NHẬP GOOGLE: $error');
+        showToast(message: "Đăng nhập thất bại: $error");
+        return false;
+      }
+    });
+
+  }
+
+
+  Future<bool?> checkLoginGoogle(User user) async {
+    bool isSend = await signIn(
+        username: user.email!.trim(),
+        password: user.uid.trim());
+
+    if(isSend) return true;
+
+    bool isSavaData = await signUp(
+        firstName: user.displayName!.split(' ')[0],
+        lastName: user.displayName!.split(' ')[1],
+        email: user.email!.trim(),
+        password: user.uid.trim());
+    LocalStorageHelper.setValue("userName", "${user.displayName}");
+    LocalStorageHelper.setValue("email", user.email);
+    print("=====> ${authModel.email}");
+    LocalStorageHelper.setValue("userId", 99);
+    LocalStorageHelper.setValue("isAdmin", 0);
+    return isSavaData ;
+  }
+
+  Future<void> signOut() async {
+    return await execute(() async {;
+
+      try {
+        await _auth.signOut();
+        await _googleSignIn.signOut();
+
+        // Xóa thông tin đã lưu
+        await LocalStorageHelper.deleteValue("googleUID");
+        await LocalStorageHelper.deleteValue("googleEmail");
+        await LocalStorageHelper.deleteValue("googleDisplayName");
+        await LocalStorageHelper.deleteValue("googlePhotoURL");
+        await LocalStorageHelper.deleteValue("googleToken");
+
+        showToastTop(message: "Đã đăng xuất thành công");
+        print('Đăng xuất thành công');
+      } catch (error) {
+        print('LỖI ĐĂNG XUẤT: $error');
+        showToast(message: "Đăng xuất thất bại: $error");
+      }
+    });
+  }
 
   void generateCaptcha() {
     const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -159,4 +237,7 @@ class AuthViewModel extends BaseViewModel {
     chars.shuffle();
     return chars.join('');
   }
+
+
+
 }

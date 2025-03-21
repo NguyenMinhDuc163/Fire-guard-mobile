@@ -1,6 +1,7 @@
 class AuthModel{
   String username;
   String password;
+  String? email;
   String tokenFcm;
   String captchaText;
 

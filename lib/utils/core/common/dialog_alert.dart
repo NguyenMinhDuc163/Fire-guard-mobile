@@ -3,7 +3,7 @@ import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
 import 'package:flutter/material.dart';
 
 class DialogAlert{
-  static showTimeoutDialog(String tile, String content) {
+  static showTimeoutDialog({required String tile, required String content}) {
     showDialog(
       context: NavigationService.navigatorKey.currentContext!,
       builder: (context) => AlertDialog(

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -102,7 +103,7 @@ class DrawerWidget extends StatelessWidget {
             const Divider(height: 1),
             _buildDrawerItem(
               icon: Icons.logout,
-              title: 'logout'.tr(),
+              title: 'drawer.logout'.tr(),
               textColor: Colors.red,
               iconColor: Colors.red,
               onTap: () async {
@@ -110,7 +111,8 @@ class DrawerWidget extends StatelessWidget {
                 LocalStorageHelper.deleteValue('userName');
                 LocalStorageHelper.deleteValue('email');
                 LocalStorageHelper.deleteValue('authToken');
-
+                AuthViewModel authViewModel = AuthViewModel();
+                authViewModel.signOut();
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   RouteNames.loginScreen,

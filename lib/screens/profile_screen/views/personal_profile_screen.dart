@@ -557,7 +557,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
               Colors.blue,
             ),
             _buildSensorItem(
-              'Còi báo động',
+              'profile_screen.alarm_siren'.tr(),
               isAlarmOn,
               (value) async {
                 if (_isWaitingForResponse) {

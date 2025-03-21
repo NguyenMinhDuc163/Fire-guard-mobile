@@ -1,97 +1,183 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import '../../../init.dart';
+// import 'package:fire_guard/providers/BaseViewModel.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:fire_guard/utils/core/common/toast.dart';
+// import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 //
-// class FirebaseAuthService {
-//   final FirebaseAuth _auth = FirebaseAuth.instance; // instance of firebase auth
+// class AuthProvider extends BaseViewModel {
+//   final FirebaseAuth _auth = FirebaseAuth.instance;
+//   final GoogleSignIn _googleSignIn = GoogleSignIn();
 //
-//   Future<User?> signUpWithEmailAndPassWord(
-//       {required String email,
-//       required String password,
-//       String? userName = 'nguyen duc',
-//       String? phoneNum = '0123456'}
+//   User? _user;
+//   bool _isLoading = false;
+//   String? _errorMessage;
 //
-//       ) async {
-//     try {
-//       print('email: $email, password: $password, userName: $userName, phoneNum: $phoneNum');
+//   // Getters
+//   User? get user => _user;
+//   bool get isLoading => _isLoading;
+//   bool get isLoggedIn => _user != null;
+//   String? get errorMessage => _errorMessage;
 //
-//       UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-//       await FirebaseFirestore.instance.collection('users').doc(credential.user?.uid).set({
-//         'email': email,
-//         'password': password,
-//         'userName': userName,
-//         'phoneNum': phoneNum,
-//       });
-//
-//       return credential.user;
-//     } on FirebaseAuthException catch (e) {
-//       if (e.code == 'email-already-in-use') {
-//         showToast(message: 'The email address is already in use.');
-//       } else {
-//         showToast(message: 'An error occurred: ${e.code}');
-//       }
-//     }
-//     return null;
+//   AuthProvider() {
+//     // Theo dõi thay đổi trạng thái đăng nhập
+//     _auth.authStateChanges().listen((User? user) {
+//       _user = user;
+//       notifyListeners();
+//     });
 //   }
 //
-//   Future<User?> signInWithEmailAndPassWord({required String email, required String password}) async {
-//     try {
-//       UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
-//       print('---------------${credential.user?.uid}-----------------');
-//       return credential.user;
-//     } on FirebaseAuthException catch (e) {
-//       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-//         showToast(message: 'Invalid email or password.');
-//       } else {
-//         showToast(message: 'An error occurred: ${e.code}');
+//   // Đăng nhập với Google
+//   Future<User?> signInWithGoogle() async {
+//     return await execute(() async {
+//       _setLoading(true);
+//       _clearError();
+//
+//       try {
+//         // Bắt đầu quá trình đăng nhập Google
+//         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+//
+//         if (googleUser == null) {
+//           // Người dùng hủy đăng nhập
+//           _setLoading(false);
+//           return null;
+//         }
+//
+//         // Lấy thông tin xác thực từ request
+//         final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+//
+//         // Tạo credential cho Firebase
+//         final AuthCredential credential = GoogleAuthProvider.credential(
+//           accessToken: googleAuth.accessToken,
+//           idToken: googleAuth.idToken,
+//         );
+//
+//         // Đăng nhập vào Firebase với credential
+//         final UserCredential authResult = await _auth.signInWithCredential(credential);
+//         _user = authResult.user;
+//
+//         // In ra thông tin người dùng
+//         print('---------- THÔNG TIN NGƯỜI DÙNG GOOGLE ----------');
+//         print('UID: ${_user?.uid}');
+//         print('Email: ${_user?.email}');
+//         print('Display Name: ${_user?.displayName}');
+//         print('Photo URL: ${_user?.photoURL}');
+//         print('Email Verified: ${_user?.emailVerified}');
+//         print('Phone Number: ${_user?.phoneNumber}');
+//         print('Provider ID: ${_user!.providerData.isNotEmpty ? _user?.providerData[0].providerId : "null"}');
+//
+//         // Lấy token từ Firebase
+//         String? token = await _user?.getIdToken();
+//         print('Token: ${token?.substring(0, 50)}... (đã cắt bớt)');
+//
+//         // Lưu thông tin vào LocalStorage
+//         if (_user != null) {
+//           await LocalStorageHelper.setValue("googleUID", _user!.uid);
+//           await LocalStorageHelper.setValue("googleEmail", _user!.email ?? "");
+//           await LocalStorageHelper.setValue("googleDisplayName", _user!.displayName ?? "");
+//           await LocalStorageHelper.setValue("googlePhotoURL", _user!.photoURL ?? "");
+//
+//           // Lưu token nếu cần sử dụng sau này
+//           if (token != null) {
+//             await LocalStorageHelper.setValue("googleToken", token);
+//           }
+//
+//           // Hiển thị thông báo thành công
+//           showToastTop(message: "Đăng nhập Google thành công: ${_user!.displayName}");
+//         }
+//
+//         print('---------- KẾT THÚC THÔNG TIN ----------');
+//
+//         _setLoading(false);
+//         notifyListeners();
+//
+//         return _user;
+//       } catch (error) {
+//         print('LỖI ĐĂNG NHẬP GOOGLE: $error');
+//         _setError(error.toString());
+//         showToast(message: "Đăng nhập thất bại: $error");
+//         _setLoading(false);
+//         return null;
 //       }
-//       return null;
-//     }
+//     });
 //   }
 //
-//   Future<void> getDataAllFromFirestore() async {
-//     try {
-//       QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('users').get();
-//       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-//       documents.forEach((document) {
-//         print('User data: ${document.data()}');
-//       });
-//     } catch (e) {
-//       print('Error getting data from Firestore: $e');
-//     }
+//   // Đăng xuất
+//   Future<void> signOut() async {
+//     return await execute(() async {
+//       _setLoading(true);
+//
+//       try {
+//         print('Đang đăng xuất...');
+//         await _auth.signOut();
+//         await _googleSignIn.signOut();
+//         _user = null;
+//
+//         // Xóa thông tin đã lưu
+//         await LocalStorageHelper.deleteValue("googleUID");
+//         await LocalStorageHelper.deleteValue("googleEmail");
+//         await LocalStorageHelper.deleteValue("googleDisplayName");
+//         await LocalStorageHelper.deleteValue("googlePhotoURL");
+//         await LocalStorageHelper.deleteValue("googleToken");
+//
+//         showToastTop(message: "Đã đăng xuất thành công");
+//         print('Đăng xuất thành công');
+//       } catch (error) {
+//         print('LỖI ĐĂNG XUẤT: $error');
+//         _setError(error.toString());
+//         showToast(message: "Đăng xuất thất bại: $error");
+//       } finally {
+//         _setLoading(false);
+//       }
+//     });
 //   }
 //
-//   Future<void> getDataById(String documentId) async {
-//     try {
-//       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection('users').doc(documentId).get();
+//   // Kiểm tra đăng nhập hiện tại
+//   Future<User?> getCurrentUser() async {
+//     _user = _auth.currentUser;
 //
-//       if (documentSnapshot.exists) {
-//         UserModel user = UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>, documentSnapshot.id);
-//         print('----------${user}');
-//       } else {
-//         /**/
-//         print('Document with ID $documentId does not exist.');
-//       }
-//     } catch (e) {
-//       print('Error getting data from Firestore: $e');
+//     if (_user != null) {
+//       print('---------- THÔNG TIN NGƯỜI DÙNG HIỆN TẠI ----------');
+//       print('UID: ${_user?.uid}');
+//       print('Email: ${_user?.email}');
+//       print('Display Name: ${_user?.displayName}');
+//       print('---------- KẾT THÚC THÔNG TIN ----------');
+//     } else {
+//       print('Không có người dùng đăng nhập');
 //     }
+//
+//     return _user;
 //   }
 //
-//   Future<UserModel> getDataCurrentUser() async {
-//     try {
-//       String? userId = FirebaseAuth.instance.currentUser?.uid; // Lấy userID của người dùng đã đăng nhập
-//       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-//
-//       if (documentSnapshot.exists) {
-//         UserModel user = UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>, documentSnapshot.id);
-//         print('----------${user}');
-//         return user;
-//       } else {
-//         /**/
-//         print('Document with ID $userId does not exist.');
-//       }
-//     } catch (e) {
-//       print('Error getting data from Firestore: $e');
+//   // Lấy thông tin người dùng dưới dạng Map
+//   Map<String, dynamic> getUserInfo() {
+//     if (_user == null) {
+//       return {};
 //     }
-//     return UserModel();
+//
+//     return {
+//       'uid': _user!.uid,
+//       'email': _user!.email,
+//       'displayName': _user!.displayName,
+//       'photoURL': _user!.photoURL,
+//       'emailVerified': _user!.emailVerified,
+//       'phoneNumber': _user!.phoneNumber,
+//       'providerId': _user!.providerData.isNotEmpty ? _user!.providerData[0].providerId : null,
+//     };
+//   }
+//
+//   // Helpers
+//   void _setLoading(bool loading) {
+//     _isLoading = loading;
+//     notifyListeners();
+//   }
+//
+//   void _setError(String error) {
+//     _errorMessage = error;
+//     notifyListeners();
+//   }
+//
+//   void _clearError() {
+//     _errorMessage = null;
+//     notifyListeners();
 //   }
 // }

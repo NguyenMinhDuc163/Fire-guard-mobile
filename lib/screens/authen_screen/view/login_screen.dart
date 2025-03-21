@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
+import 'package:fire_guard/screens/authen_screen/provider/auth_with_firebase.dart';
 import 'package:fire_guard/screens/authen_screen/widget/custom_rich_text_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/dividerR_row_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/icon_language_widget.dart';
@@ -85,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final authViewModel = Provider.of<AuthViewModel>(context);
     final model = authViewModel.model;
 
+
     void _showApiConfigSheet() {
       showModalBottomSheet(
         context: context,
@@ -108,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                      Text(
                       "auth.configuration".tr(),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -344,7 +346,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 56,
                             textColor: ColorPalette.kGrayscaleDark100,
                             width: 300,
-                            onTap: () {},
+                            onTap: () async {
+                              bool isLogin = await authViewModel.signInWithGoogle();
+                              if (isLogin) {
+                                Navigator.pushNamed(context, RouteNames.mainApp);
+                              }
+                              // await authViewModel.signOut();
+                            },
                             borderRadius: 24,
                             bgColor: ColorPalette.kBackground.withOpacity(0.3),
                             text: 'auth.continue_with_google'.tr(),

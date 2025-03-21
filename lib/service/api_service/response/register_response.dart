@@ -1,6 +1,7 @@
 import 'package:fire_guard/screens/authen_screen/models/user_model.dart';
+import 'package:fire_guard/service/api_service/response/base_response.dart';
 
-class RegisterResponse {
+class RegisterResponse extends BaseResponse{
   final UserModel user;
 
   RegisterResponse({required this.user});

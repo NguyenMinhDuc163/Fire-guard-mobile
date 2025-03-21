@@ -71,17 +71,18 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
   }
 
   Future<void> _saveCoordinates() async {
+
     if (_selectedPosition != null) {
       setState(() {
         _isLoading = true;
       });
-
       try {
+
         final bool isSave = await Provider.of<FireMapViewModel>(context, listen: false)
             .saveLocation(
           longitude: _selectedPosition!.longitude.toString(),
           latitude: _selectedPosition!.latitude.toString(),
-          // isFire: true,
+          isFire: true,
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -91,6 +92,7 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
           ),
         );
       } catch (e) {
+        print('Error saving location: $e');
         ScaffoldMessenger.of(context).showSnackBar(
            SnackBar(content: Text('location.save_error'.tr())),
         );
@@ -128,7 +130,7 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
               children: [
                 TileLayer(
                   urlTemplate:
-                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: ['a', 'b', 'c'],
                 ),
                 if (_selectedPosition != null)

@@ -2,17 +2,22 @@
   "project_info": {
     "project_number": "820644781130",
     "project_id": "fire-guard-5a3b2",
-    "storage_bucket": "fire-guard-5a3b2.appspot.com"
+    "storage_bucket": "fire-guard-5a3b2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:820644781130:android:9d14e6065076e7c8af1ab3",
         "android_client_info": {
-          "package_name": "com.nguyenduc.fire_guard"
+          "package_name": "com.example.fire_guard"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "820644781130-s3oguibh5h77o0rq3kfvtbv61vjpf2eq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBg5XhnyjjzUYLTIdkZxmML0ZaPeDLS6pE"
@@ -20,7 +25,41 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820644781130-s3oguibh5h77o0rq3kfvtbv61vjpf2eq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820644781130:android:a08da5aa3408d69eaf1ab3",
+        "android_client_info": {
+          "package_name": "com.nguyenduc.fire_guard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820644781130-s3oguibh5h77o0rq3kfvtbv61vjpf2eq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg5XhnyjjzUYLTIdkZxmML0ZaPeDLS6pE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820644781130-s3oguibh5h77o0rq3kfvtbv61vjpf2eq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

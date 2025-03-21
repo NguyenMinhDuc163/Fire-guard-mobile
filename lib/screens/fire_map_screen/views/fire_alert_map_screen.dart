@@ -25,7 +25,7 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
   String _selectedMapStyle = "World Street Map";
 
   final Map<String, String> _mapStyles = {
-    "OpenStreetMap": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "OpenStreetMap": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     "World Street Map":
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
     "World Imagery":

@@ -236,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           SecondaryButtonWidget(
                             height: 56,
                             textColor: ColorPalette.kGrayscaleDark100,
-                            width: 260,
+                            width: 300,
                             onTap: () {},
                             borderRadius: 24,
                             bgColor: ColorPalette.kBackground.withOpacity(0.3),
