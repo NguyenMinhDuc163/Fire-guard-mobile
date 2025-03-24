@@ -266,9 +266,11 @@ class SensorViewModel extends ChangeNotifier {
   }
 
   void sendLogin() async {
+    final tokenFCM = LocalStorageHelper.getValue('fcm_token');
     LoginRequest request = LoginRequest(
       email: 'testuser@example.com',
       password: 'password123',
+      fcmToken: tokenFCM,
     );
     final BaseResponse<LoginResponse> response =
     await apiServices.sendLogin(request);

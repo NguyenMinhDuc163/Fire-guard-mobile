@@ -28,10 +28,11 @@ class AuthViewModel extends BaseViewModel {
 
   Future<bool> signIn({required String username, required String password}) async {
     return await execute(() async{
-
+      final tokenFCM = LocalStorageHelper.getValue('fcm_token');
       LoginRequest request = LoginRequest(
         email: username,
         password: password,
+        fcmToken: tokenFCM ?? "",
       );
       final BaseResponse<LoginResponse> response = await apiServices.sendLogin(request);
 

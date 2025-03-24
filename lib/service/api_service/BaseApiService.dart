@@ -5,6 +5,7 @@ import 'package:fire_guard/service/base_connect.dart';
 import 'package:fire_guard/service/service_config/network_service.dart';
 import 'package:fire_guard/utils/core/common/dialog_alert.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
+import 'package:fire_guard/utils/core/constants/constants.dart';
 import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -40,8 +41,8 @@ abstract class BaseApiService {
     );
 
       if(baseResponse.code != 200 && baseResponse.code != 201){
-        print("=============> 1 ${baseResponse.message}  ${baseResponse.message.runtimeType}");
-        DialogAlert.showTimeoutDialog(tile: 'home_screen.notification'.tr(), content: baseResponse.message ?? "");
+        print('Error: ${baseResponse.message}');
+        DialogAlert.showTimeoutDialog(tile: 'home_screen.notification'.tr(), content: Constants.getErrorMessage(baseResponse.message.toString()) ?? "");
       }
       return baseResponse;
 

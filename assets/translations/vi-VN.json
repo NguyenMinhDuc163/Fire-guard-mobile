@@ -78,6 +78,10 @@
     "cancel": "Huỷ",
     "ok": "OK"
   },
+
+  "errors_message": {
+    "no_relatives_found": "Không tìm thấy người thân trong danh sách, vui lòng chọn tính năng \"Quản lý người thân\" để thêm người thân"
+  },
   "fire_news": {
     "title": "Tin tức cháy nổ",
     "fire_news": "Tin tức cháy nổ",

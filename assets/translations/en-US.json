@@ -76,6 +76,9 @@
     "cancel": "Cancel",
     "ok": "OK"
   },
+  "errors_message": {
+    "no_relatives_found": "No relatives found in your list. Please go to \"Manage Relatives\" feature to add relatives"
+  },
   "fire_news": {
     "title": "Fire News",
     "fire_news": "Fire News",
