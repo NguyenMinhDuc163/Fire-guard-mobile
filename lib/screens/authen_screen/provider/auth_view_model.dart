@@ -50,7 +50,7 @@ class AuthViewModel extends BaseViewModel {
             LocalStorageHelper.setValue("email", userMap['email']);
             LocalStorageHelper.setValue("userId", userMap['id']);
             LocalStorageHelper.setValue("isAdmin", userMap["is_admin"]);
-
+            LocalStorageHelper.setValue("alertPhone", userMap["alert_phone"]);
             break; // Dừng vòng lặp khi tìm thấy user
           }
         }

@@ -5,6 +5,7 @@ import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
 import 'package:fire_guard/screens/profile_screen/providers/persional_profile_view_model.dart';
 import 'package:fire_guard/screens/profile_screen/providers/sensor_view_model.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
+import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
@@ -177,18 +178,9 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
     final model = personalProfileViewModel.model;
 
     return Scaffold(
-      appBar: AppBar(
-        title:  Text('profile_screen.personal_info_iot'.tr()),
-        backgroundColor: ColorPalette.colorFFBB35,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, RouteNames.notifications);
-            },
-          ),
-        ],
-      ),
+
+      appBar: AppBarWidget(title: 'profile_screen.personal_info_iot'.tr(), route: RouteNames.notifications),
+
       drawer: const DrawerWidget(),
       body: Stack(
         children: [

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
+import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
@@ -18,18 +19,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: ColorPalette.backgroundScaffoldColor,
-      appBar: AppBar(
-        title: const Text('Fire Guard'),
-        backgroundColor: ColorPalette.colorFFBB35,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, RouteNames.notifications);
-            },
-          ),
-        ],
-      ),
+      appBar: AppBarWidget(title: 'home_screen.app_title'.tr(), route: RouteNames.notifications),
       drawer: const DrawerWidget(),
       body: Stack(
         children: [
@@ -132,7 +122,7 @@ class HomeScreen extends StatelessWidget {
                                       children: [
                                         ElevatedButton(
                                           onPressed:  homeViewModel.directCall,
-                                          child: Text('call_now'.tr()),
+                                          child: Text('home_screen.call_now'.tr()),
                                         ),
                                         ElevatedButton(
                                           onPressed: () {

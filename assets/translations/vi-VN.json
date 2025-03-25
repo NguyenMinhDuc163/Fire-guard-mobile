@@ -119,7 +119,11 @@
     "location_example": "Hà Nội",
     "fire_detected": "Phát hiện cháy lớn.",
     "contact_example": "+84916562796",
-    "home": "Trang chủ"
+    "home": "Trang chủ",
+    "fireNews": "Tin tức",
+    "fireSafetySkills": "Cẩm nang",
+    "personalProfile": "Hồ sơ cá nhân",
+    "app_title": "Fire Guard",
   },
 
   "notification": {

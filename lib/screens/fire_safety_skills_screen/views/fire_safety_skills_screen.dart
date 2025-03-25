@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/fire_safety_skills_screen/models/skill_item.dart';
+import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/router_names.dart';
@@ -32,18 +33,7 @@ class _FireSafetySkillsScreenState extends State<FireSafetySkillsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('fire_safety_skills.fire_safety_skills_escape'.tr()),
-        backgroundColor: ColorPalette.colorFFBB35,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, RouteNames.notifications);
-            },
-          ),
-        ],
-      ),
+      appBar: AppBarWidget(title: 'fire_safety_skills.fire_safety_skills_escape'.tr(), route: RouteNames.notifications),
       drawer: const DrawerWidget(),
       body: Column(
         children: [

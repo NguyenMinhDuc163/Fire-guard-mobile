@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
@@ -29,18 +30,8 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('fire_news.title'.tr()),
-        backgroundColor: ColorPalette.colorFFBB35,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, RouteNames.notifications);
-            },
-          ),
-        ],
-      ),
+
+      appBar: AppBarWidget(title: 'fire_news.title'.tr(), route: RouteNames.notifications),
       drawer: const DrawerWidget(),
       body: Consumer<FireNewsViewModel>(
         builder: (context, viewModel, child) {

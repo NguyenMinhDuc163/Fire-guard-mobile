@@ -3,6 +3,7 @@ class UserModel {
   final String username;
   final String email;
   final String? isAdmin;
+  final String? alertPhone;
   final String? createdAt;
 
   UserModel({
@@ -10,6 +11,7 @@ class UserModel {
     required this.username,
     required this.email,
     required this.isAdmin,
+    required this.alertPhone,
     this.createdAt,
   });
 
@@ -21,6 +23,7 @@ class UserModel {
       email: json['email'] as String,
       isAdmin: json['is_admin'] as String?,
       createdAt: json['created_at'] as String?,
+      alertPhone: json['alert_phone'] as String?,
     );
   }
 
@@ -32,6 +35,7 @@ class UserModel {
       'email': email,
       'created_at': createdAt,
       'is_admin': isAdmin,
+      'alert_phone': alertPhone,
     };
   }
 

@@ -22,7 +22,7 @@ class HomeViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
   HomeModel homeModel = HomeModel();
   HomeModel get model => homeModel;
-  final String phoneNumber = '0123456789';
+  final String phoneNumber = LocalStorageHelper.getValue("alertPhone");
 
   Future<bool> sendNotification() async {
     return await execute(() async {
@@ -33,11 +33,6 @@ class HomeViewModel extends BaseViewModel {
       );
       final BaseResponse<SendNotificationResponse> response =
           await apiServices.sendNotification(request);
-      print('Code: ${response.code}');
-      print('Status: ${response.status}');
-      print('Message: ${response.message}');
-      print('Error: ${response.error}');
-      print('Data: ${response.data}');
       notifyListeners();
       return response.code == 200 || response.code == 201;
     });
@@ -49,15 +44,11 @@ class HomeViewModel extends BaseViewModel {
         location: 'home_screen.location_example'.tr(),
         incidentDetails: 'home_screen.fire_detected'.tr(),
         phoneNumber: 'home_screen.contact_example'.tr(),
+        familyMemberId: LocalStorageHelper.getValue('userId'),
         timestamp: DateTime.now().toUtc(),
       );
       final BaseResponse<FireEmergencyResponse> response =
           await apiServices.sendFireEmergency(request);
-      print('Code: ${response.code}');
-      print('Status: ${response.status}');
-      print('Message: ${response.message}');
-      print('Error: ${response.error}');
-      print('Data: ${response.data}');
       notifyListeners();
       return response.code;
     });

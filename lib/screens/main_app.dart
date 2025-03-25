@@ -71,19 +71,19 @@ class _MainAppState extends State<MainApp> {
         items: [
           BottomNavigationBarItem(
             icon: SvgPicture.asset(AssetHelper.icoHome),
-            label: 'home'.tr(),
+            label: 'home_screen.home'.tr(),
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(AssetHelper.quizzes),
-            label: 'fireNews'.tr(),
+            label: 'home_screen.fireNews'.tr(),
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(AssetHelper.leaderboard),
-            label: 'fireSafetySkills'.tr(),
+            label: 'home_screen.fireSafetySkills'.tr(),
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(AssetHelper.friends),
-            label: 'personalProfile'.tr(),
+            label: 'home_screen.personalProfile'.tr(),
           ),
         ],
         selectedItemColor: Colors.orange,  // Màu sắc khi item được chọn

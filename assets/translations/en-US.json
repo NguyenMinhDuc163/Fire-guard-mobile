@@ -116,7 +116,11 @@
     "location_example": "Hanoi",
     "fire_detected": "Large fire detected.",
     "contact_example": "+84916562796",
-    "home": "Home"
+    "home": "Home",
+    "fireNews": "Fire News",
+    "fireSafetySkills": "Fire Safety ",
+    "personalProfile": "Profile",
+    "app_title": "Fire Guard",
   },
   "notification": {
     "title": "Fire Alert Notification",
