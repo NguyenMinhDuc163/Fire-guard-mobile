@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
+import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
 import 'package:fire_guard/screens/authen_screen/widget/custom_rich_text_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/dividerR_row_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/password_text_field_widget.dart';
@@ -7,7 +8,6 @@ import 'package:fire_guard/screens/authen_screen/widget/primary_button_widget.da
 import 'package:fire_guard/screens/authen_screen/widget/primary_text_form_field_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/secondary_button_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/terms_and_privacyText_widget.dart';
-import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/utils/utils.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ import '../../../init.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
-
+  static const String routeName = '/sign_up_screen';
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
@@ -198,7 +198,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               password: passwordC.text.trim(),
                             );
                             if(isRegister){
-                              Navigator.pushNamed(context, RouteNames.loginScreen);
+                              Navigator.pushNamed(context, LoginScreen.routeName);
                             }
                           },
                           text: 'auth.create_account'.tr(),
@@ -213,7 +213,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           title: 'auth.already_have_account'.tr(),
                           subtitle: 'auth.login'.tr(),
                           onTab: () {
-                            Navigator.pushNamed(context, RouteNames.loginScreen);
+                            Navigator.pushNamed(context, LoginScreen.routeName);
                           },
                           subtitleTextStyle: const TextStyle(
                             fontSize: 14,

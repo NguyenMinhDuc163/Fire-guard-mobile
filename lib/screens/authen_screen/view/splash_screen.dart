@@ -1,10 +1,11 @@
-import 'package:fire_guard/utils/router_names.dart';
+import 'package:fire_guard/screens/authen_screen/view/intro_screen.dart';
+import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../init.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-
+  static const String routeName = '/splash_screen';
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
@@ -21,13 +22,13 @@ class _SplashScreenState extends State<SplashScreen> {
     final ignoreIntroScreen = LocalStorageHelper.getValue('ignoreIntroScreen') as bool?;
     await Future.delayed(const Duration(milliseconds: 1000));
     if(ignoreIntroScreen != null && ignoreIntroScreen){
-      Navigator.of(context).pushNamed(RouteNames.loginScreen);
+      Navigator.of(context).pushNamed(LoginScreen.routeName);
       // Navigator.of(context).pushNamed(IntroScreen.routeName);
 
     }
     else{
       LocalStorageHelper.setValue('ignoreIntroScreen', true);
-      Navigator.of(context).pushNamed(RouteNames.introScreen);
+      Navigator.of(context).pushNamed(IntroScreen.routeName);
     }
     // Navigator.of(context).pushNamed(RouteNames.introScreen);
   }

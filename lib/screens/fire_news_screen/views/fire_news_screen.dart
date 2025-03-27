@@ -1,19 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:fire_guard/screens/widger/app_bar_widget.dart';
-import 'package:fire_guard/utils/core/common/drawer_widget.dart';
-import 'package:fire_guard/utils/core/constants/color_constants.dart';
-import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
-import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/screens/fire_news_screen/providers/fire_news_view_model.dart';
-import 'package:fire_guard/service/api_service/response/guide_and_news_response.dart';
 import 'package:fire_guard/screens/fire_news_screen/views/news_detail_screen.dart';
+import 'package:fire_guard/screens/home_screen/views/notification_screen.dart';
+import 'package:fire_guard/screens/widger/app_bar_widget.dart';
+import 'package:fire_guard/service/api_service/response/guide_and_news_response.dart';
+import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FireNewsScreen extends StatefulWidget {
   const FireNewsScreen({super.key});
   static const String routeName = '/fireNewsScreen';
-
   @override
   State<FireNewsScreen> createState() => _FireNewsScreenState();
 }
@@ -31,7 +28,8 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: AppBarWidget(title: 'fire_news.title'.tr(), route: RouteNames.notifications),
+
+      appBar: AppBarWidget(title: 'fire_news.title'.tr(), route: NotificationsScreen.routeName),
       drawer: const DrawerWidget(),
       body: Consumer<FireNewsViewModel>(
         builder: (context, viewModel, child) {

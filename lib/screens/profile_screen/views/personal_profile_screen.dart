@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
+import 'package:fire_guard/screens/home_screen/views/notification_screen.dart';
 import 'package:fire_guard/screens/profile_screen/providers/persional_profile_view_model.dart';
 import 'package:fire_guard/screens/profile_screen/providers/sensor_view_model.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
@@ -10,7 +11,6 @@ import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
-import 'package:fire_guard/utils/router_names.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +19,6 @@ import 'package:url_launcher/url_launcher.dart';
 class PersonalProfileScreen extends StatefulWidget {
   const PersonalProfileScreen({super.key});
   static const String routeName = '/personalProfileScreen';
-
   @override
   State<PersonalProfileScreen> createState() => _PersonalProfileScreenState();
 }
@@ -179,7 +178,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
 
     return Scaffold(
 
-      appBar: AppBarWidget(title: 'profile_screen.personal_info_iot'.tr(), route: RouteNames.notifications),
+      appBar: AppBarWidget(title: 'profile_screen.personal_info_iot'.tr(), route: NotificationsScreen.routeName),
 
       drawer: const DrawerWidget(),
       body: Stack(
@@ -694,7 +693,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
             padding: const EdgeInsets.only(top: 8.0),
             child: TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, RouteNames.notifications);
+                Navigator.pushNamed(context, NotificationsScreen.routeName);
               },
               child:  Text('profile_screen.view_more'.tr()),
             ),

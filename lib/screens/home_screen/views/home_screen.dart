@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/screens/fire_map_screen/views/fire_alert_map_screen.dart';
+import 'package:fire_guard/screens/home_screen/views/notification_screen.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
-import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: ColorPalette.backgroundScaffoldColor,
-      appBar: AppBarWidget(title: 'home_screen.app_title'.tr(), route: RouteNames.notifications),
+      appBar: AppBarWidget(title: 'home_screen.app_title'.tr(), route: NotificationsScreen.routeName),
       drawer: const DrawerWidget(),
       body: Stack(
         children: [
@@ -176,7 +177,7 @@ class HomeScreen extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           // Hành động khi nhấn vào nút Thông báo vị trí đám cháy
-                          Navigator.pushNamed(context, RouteNames.fireAlertMapScreen);
+                          Navigator.pushNamed(context, FireAlertMapScreen.routeName);
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: height_8, horizontal: width_16),

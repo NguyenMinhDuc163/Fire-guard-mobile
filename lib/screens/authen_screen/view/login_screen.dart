@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
 import 'package:fire_guard/screens/authen_screen/provider/auth_with_firebase.dart';
+import 'package:fire_guard/screens/authen_screen/view/forgot_password_screen.dart';
+import 'package:fire_guard/screens/authen_screen/view/seslect_preferences_screen.dart';
 import 'package:fire_guard/screens/authen_screen/widget/custom_rich_text_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/dividerR_row_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/icon_language_widget.dart';
@@ -15,7 +17,6 @@ import 'package:fire_guard/service/service_config/network_service.dart';
 import 'package:flutter/foundation.dart';
 
 /// import 'package:fire_guard/service/auth_services/auth_with_firebase.dart'; // Firebase Authentication
-import 'package:fire_guard/utils/router_names.dart';
 import 'package:fire_guard/utils/utils.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,11 @@ import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
 import '../../../init.dart';
+import 'sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
+  static const String routeName = '/login_screen';
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -72,11 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
     await Future.delayed(const Duration(milliseconds: 1000));
     if (ignoreSelectPreferencesScreen != null &&
         ignoreSelectPreferencesScreen) {
-      Navigator.of(context).pushNamed(RouteNames.mainApp);
+      Navigator.of(context).pushNamed(MainApp.routeName);
       // Navigator.of(context).pushNamed(IntroScreen.routeName);
     } else {
       LocalStorageHelper.setValue('ignoreSelectPreferencesScreen', true);
-      Navigator.of(context).pushNamed(RouteNames.selectPreferencesScreen);
+      Navigator.of(context).pushNamed(SelectPreferencesScreen.routeName);
     }
     // Navigator.of(context).pushNamed(RouteNames.introScreen);
   }
@@ -276,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           PrimaryTextButtonWidget(
                             onPressed: () {
                               Navigator.pushNamed(
-                                  context, RouteNames.forgotPasswordScreen);
+                                  context, ForgotPasswordScreen.routeName);
                             },
                             title: 'auth.forgot_password'.tr(),
                             textStyle:
@@ -305,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 username: emailC.text.trim(),
                                 password: passwordC.text.trim());
                             if (isSend) {
-                              Navigator.pushNamed(context, RouteNames.mainApp);
+                              Navigator.pushNamed(context, MainApp.routeName);
                             }
                           },
                           text: 'auth.login'.tr(),
@@ -324,7 +326,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             subtitle: 'auth.create_here'.tr(),
                             onTab: () {
                               Navigator.pushNamed(
-                                  context, RouteNames.signUpScreen);
+                                  context, SignUpScreen.routeName);
                             },
                             subtitleTextStyle: TextStyle(
                               fontSize: 14,
@@ -349,7 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onTap: () async {
                               bool isLogin = await authViewModel.signInWithGoogle();
                               if (isLogin) {
-                                Navigator.pushNamed(context, RouteNames.mainApp);
+                                Navigator.pushNamed(context, MainApp.routeName);
                               }
                               // await authViewModel.signOut();
                             },

@@ -1,5 +1,4 @@
 import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
-import 'package:fire_guard/screens/authen_screen/provider/auth_with_firebase.dart';
 import 'package:fire_guard/screens/family_manager_screen/providers/family_manager_view_model.dart';
 import 'package:fire_guard/screens/fire_map_screen/providers/fire_map_view_model.dart';
 import 'package:fire_guard/screens/fire_safety_skills_screen/providers/fire_safety_skills_view_model.dart';

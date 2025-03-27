@@ -3,14 +3,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../init.dart';
-import 'package:fire_guard/utils/router_names.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 enum UserType { teacher, student }
 
 class SelectPreferencesScreen extends StatefulWidget {
   const SelectPreferencesScreen({super.key});
-
+  static const String routeName = '/select_preferences_screen';
   @override
   State<SelectPreferencesScreen> createState() => _SelectPreferencesScreenState();
 }
@@ -125,7 +124,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> with 
                       child: PrimaryButton(
                         onTap: () {
                           scaleController.forward();
-                          Navigator.pushNamed(context, RouteNames.mainApp);
+                          Navigator.pushNamed(context, MainApp.routeName);
                         },
                         text: scaleController.isAnimating || scaleController.isCompleted ? '' : 'Continue',
                       ),

@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
-import 'package:fire_guard/utils/router_names.dart';
+import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
+import 'package:fire_guard/screens/family_manager_screen/views/family_management_screen.dart';
+import 'package:fire_guard/screens/fire_map_screen/views/register_coordinates_screen.dart';
+import 'package:fire_guard/screens/setting_screen/views/settings_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
@@ -70,21 +73,21 @@ class DrawerWidget extends StatelessWidget {
               title: 'drawer.registered_location'.tr(),
               onTap: () {
                 Navigator.pushNamed(
-                    context, RouteNames.registerCoordinatesScreen);
+                    context, RegisterCoordinatesScreen.routeName);
               },
             ),
             _buildDrawerItem(
               icon: Icons.family_restroom,
               title: 'drawer.manage_family_members'.tr(),
               onTap: () {
-                Navigator.pushNamed(context, RouteNames.familyManagementScreen);
+                Navigator.pushNamed(context, FamilyManagementScreen.routeName);
               },
             ),
             _buildDrawerItem(
               icon: Icons.settings,
               title: 'drawer.setting'.tr(),
               onTap: () {
-                Navigator.pushNamed(context, RouteNames.settings);
+                Navigator.pushNamed(context, SettingsScreen.routeName);
               },
             ),
             _buildDrawerItem(
@@ -115,7 +118,7 @@ class DrawerWidget extends StatelessWidget {
                 authViewModel.signOut();
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  RouteNames.loginScreen,
+                  LoginScreen.routeName,
                   (Route<dynamic> route) => false,
                 );
               },

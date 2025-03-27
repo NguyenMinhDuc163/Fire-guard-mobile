@@ -14,6 +14,7 @@ import '../../../init.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
+  static const String routeName = '/forgot_password_screen';
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }

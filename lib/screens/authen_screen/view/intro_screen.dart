@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
 import 'package:fire_guard/screens/authen_screen/widget/button_intro_widget.dart';
 import 'package:fire_guard/utils/core/constants/textstyle_ext.dart';
 import 'package:flutter/material.dart';
 import '../../../init.dart';
-import 'package:fire_guard/utils/router_names.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -12,6 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
+  static const String routeName = '/intro_screen';
   @override
   State<IntroScreen> createState() => _IntroScreenState();
 }
@@ -166,7 +167,7 @@ class _IntroScreenState extends State<IntroScreen> {
                                     duration: const Duration(milliseconds: 200),
                                     curve: Curves.easeInSine);
                               } else {
-                                Navigator.of(context).pushNamed(RouteNames.loginScreen);
+                                Navigator.of(context).pushNamed(LoginScreen.routeName);
                               }
                             },
                             opacity: ColorPalette.blue,
@@ -178,7 +179,7 @@ class _IntroScreenState extends State<IntroScreen> {
               ),
             ),
             _buildSkipButton(onPressed: () {
-              Navigator.of(context).pushNamed(RouteNames.loginScreen);
+              Navigator.of(context).pushNamed(LoginScreen.routeName);
             }),
           ],
 

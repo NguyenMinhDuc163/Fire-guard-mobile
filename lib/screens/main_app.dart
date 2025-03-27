@@ -17,7 +17,7 @@ import 'profile_screen/views/personal_profile_screen.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
-
+  static const String routeName = '/main_app';
   @override
   State<MainApp> createState() => _MainAppState();
 }
