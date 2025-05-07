@@ -3,6 +3,7 @@ class HistoryResponse {
   final String message;
   final String title;
   final String body;
+  final String imageUrl;
   final DateTime timestamp;
 
   HistoryResponse({
@@ -10,6 +11,7 @@ class HistoryResponse {
     required this.message,
     required this.title,
     required this.body,
+    required this.imageUrl,
     required this.timestamp,
   });
 
@@ -19,6 +21,7 @@ class HistoryResponse {
       message: json['message'] as String,
       title: json['title'] as String,
       body: json['body'] as String,
+      imageUrl: json['image_url'] as String,
       timestamp: DateTime.parse(json['timestamp']),
     );
   }
@@ -27,6 +30,7 @@ class HistoryResponse {
     "incident_id": incidentId,
     "message": message,
     "body": body,
+    "image_url": imageUrl,
     "title": title,
     "timestamp": timestamp.toIso8601String(),
   };

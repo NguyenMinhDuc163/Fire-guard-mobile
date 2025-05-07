@@ -19,14 +19,14 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       title: Text(title),
       backgroundColor: ColorPalette.colorFFBB35,
       actions: [
-        Badge(
-          label: Text(number ?? 'n'),
-          child: IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, route);
-            },
-          ),
+
+        IconButton(
+          icon: Badge.count(
+              count: int.parse(number ?? '0'),
+              child: const Icon(Icons.notifications)),
+          onPressed: () {
+            Navigator.pushNamed(context, route);
+          },
         ),
       ],
     );

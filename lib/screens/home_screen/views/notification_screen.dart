@@ -1,3 +1,4 @@
+import 'package:fire_guard/service/common/status_api.dart';
 import 'package:fire_guard/utils/core/constants/error_constants.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
@@ -281,79 +282,209 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  void _showNotificationDetails(
-      BuildContext context, Map<String, dynamic> notification) {
-    final errorMessage = notification['message'] as String;
-    final errorColor = ErrorConstants.getErrorColor(errorMessage);
-    final formattedMessage = ErrorConstants.getErrorMessage(errorMessage);
+    void _showNotificationDetails(
+        BuildContext context, Map<String, dynamic> notification) {
+      final errorMessage = notification['message'] as String;
+      final errorColor = ErrorConstants.getErrorColor(errorMessage);
+      final formattedMessage = ErrorConstants.getErrorMessage(errorMessage);
+      final imageUrl = notification['imageUrl'] as String?;
+      final baseUrl = StatusApi.URL; // Thay thế bằng server URL thực tế của bạn
+      final fullImageUrl = imageUrl != null && imageUrl.isNotEmpty
+          ? "$baseUrl$imageUrl"
+          : null;
+      print("====> fullImageUrl  ${fullImageUrl}");
 
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    ErrorConstants.getErrorIcon(errorMessage),
-                    color: errorColor,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      formattedMessage,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: errorColor,
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true, // Để bottom sheet có thể mở rộng lên cao hơn
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (context) {
+          return DraggableScrollableSheet(
+            initialChildSize: 0.6, // Ban đầu chiếm 60% màn hình
+            minChildSize: 0.3, // Tối thiểu 30% màn hình
+            maxChildSize: 0.9, // Tối đa 90% màn hình
+            expand: false,
+            builder: (context, scrollController) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Thanh kéo nhỏ ở trên cùng
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      // Tiêu đề thông báo
+                      Row(
+                        children: [
+                          Icon(
+                            ErrorConstants.getErrorIcon(errorMessage),
+                            color: errorColor,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              formattedMessage,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: errorColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Thời gian
+                      Text(
+                        '${'notification.time'.tr()}: ${notification['timestamp']}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Hiển thị nội dung chi tiết nếu có
+                      if (notification['body'] != null && notification['body'].isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'notification.details'.tr(),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                notification['body'],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      // Hiển thị hình ảnh nếu có
+                      if (fullImageUrl != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'notification.image'.tr(),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                fullImageUrl,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    height: 200,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                            : null,
+                                        color: errorColor,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 200,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.image_not_supported,
+                                          color: Colors.grey[400],
+                                          size: 40,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'notification.image_error'.tr(),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      const SizedBox(height: 20),
+                      // Nút đóng
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: errorColor,
+                            minimumSize: const Size(double.infinity, 40),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'notification.close'.tr(),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '${'notification.time'.tr()}: ${notification['timestamp']}',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
                 ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: errorColor,
-                    minimumSize: const Size(double.infinity, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'notification.close'.tr(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+              );
+            },
+          );
+        },
+      );
+    }
 
   Widget buildDateField({required String label, DateTime? date}) {
     return Container(

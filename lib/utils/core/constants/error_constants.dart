@@ -5,7 +5,7 @@ class ErrorConstants {
     400: 'Yêu cầu không hợp lệ. Vui lòng kiểm tra lại thông tin.',
     401: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
     403: 'Bạn không có quyền truy cập tài nguyên này.',
-    404: 'Không tìm thấy thông tin yêu cầu.',
+    404: 'Gửi thông báo thành công',
     500: 'Lỗi máy chủ. Vui lòng thử lại sau.',
     503: 'Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.',
   };
@@ -33,7 +33,7 @@ class ErrorConstants {
       final code = errorMessage.split('status code ')[1].split(',')[0];
       return errorMessages[int.parse(code)] ?? 'Đã xảy ra lỗi không xác định.';
     }
-    return 'Đã xảy ra lỗi không xác định.';
+    return 'Không gửi được yêu cầu.';
   }
 
   static IconData getErrorIcon(String errorMessage) {

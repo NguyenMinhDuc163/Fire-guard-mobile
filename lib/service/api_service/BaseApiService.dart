@@ -42,13 +42,13 @@ abstract class BaseApiService {
 
       if(baseResponse.code != 200 && baseResponse.code != 201){
         print('Error: ${baseResponse.message}');
-        DialogAlert.showTimeoutDialog(tile: 'home_screen.notification'.tr(), content: Constants.getErrorMessage(baseResponse.message.toString()) ?? "");
+        DialogAlert.showTimeoutDialog(tile: 'Thông báo', content: Constants.getErrorMessage(baseResponse.message.toString()) ?? "");
       }
       return baseResponse;
 
     } catch (e) {
 
-      DialogAlert.showTimeoutDialog(tile:'error.connection_error'.tr(),content: 'error.error_server'.tr());
+      DialogAlert.showTimeoutDialog(tile:'Lỗi kết nối',content: 'Lỗi máy chủ, vui lòng thử lại sau');
 
       return BaseResponse<T>(error: 'Unexpected Error: $e');
     }

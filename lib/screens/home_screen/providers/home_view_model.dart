@@ -118,6 +118,7 @@ class HomeViewModel extends BaseViewModel {
               'message': incident.message,
               'title': incident.title,
               'body': incident.body,
+              'imageUrl': incident.imageUrl,
               'timestamp': DateFormat('dd/MM/yyyy HH:mm:ss').format(timestamp.toLocal()),
             });
           }

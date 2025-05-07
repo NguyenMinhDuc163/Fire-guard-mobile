@@ -131,7 +131,10 @@
     "time": "Time",
     "delete_success": "Notification deleted: {message}",
     "date_error": "Start date must be earlier than or equal to the end date",
-    "close": "Close"
+    "close": "Close",
+    "details": "Details",
+    "image": "Image",
+    "image_error": "Unable to load image"
   },
 
   "profile_screen": {

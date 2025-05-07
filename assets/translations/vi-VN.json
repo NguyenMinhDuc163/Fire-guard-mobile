@@ -135,7 +135,10 @@
     "time": "Thời gian",
     "delete_success": "Đã xóa thông báo: {message}",
     "date_error": "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc",
-    "close": "Đóng"
+    "close": "Đóng",
+    "details": "Chi tiết",
+    "image": "Hình ảnh",
+    "image_error": "Không thể tải hình ảnh"
   },
 
 
