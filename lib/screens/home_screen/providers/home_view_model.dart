@@ -86,8 +86,10 @@ class HomeViewModel extends BaseViewModel {
     return await execute(() async {
       try {
         // Chuyển đổi startDate và endDate thành chuỗi với định dạng yyyy-MM-dd
-        final String formattedStartDate = DateFormat('yyyy-MM-dd').format(startDate);
-        final String formattedEndDate = DateFormat('yyyy-MM-dd').format(endDate);
+        final String formattedStartDate =
+            DateFormat('yyyy-MM-dd').format(startDate);
+        final String formattedEndDate =
+            DateFormat('yyyy-MM-dd').format(endDate);
 
         final response = await apiServices.getHistory(
           // Truyền các giá trị đã chuẩn hóa vào API
@@ -119,7 +121,8 @@ class HomeViewModel extends BaseViewModel {
               'title': incident.title,
               'body': incident.body,
               'imageUrl': incident.imageUrl,
-              'timestamp': DateFormat('dd/MM/yyyy HH:mm:ss').format(timestamp.toLocal()),
+              'timestamp':
+                  DateFormat('dd/MM/yyyy HH:mm:ss').format(timestamp.toLocal()),
             });
           }
           print('Notifications: $notifications');
@@ -139,7 +142,8 @@ class HomeViewModel extends BaseViewModel {
       UserLocationRequest request = UserLocationRequest(
         type: "all",
       );
-      final BaseResponse<UserListResponse> response = await apiServices.sendUserList(request);
+      final BaseResponse<UserListResponse> response =
+          await apiServices.sendUserList(request);
       print('Code: ${response.code}');
       print('Status: ${response.status}');
       print('Message: ${response.message}');
@@ -150,9 +154,4 @@ class HomeViewModel extends BaseViewModel {
       return data;
     });
   }
-
-
-
-
-
 }

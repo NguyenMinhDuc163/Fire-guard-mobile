@@ -152,11 +152,11 @@ class AuthViewModel extends BaseViewModel {
         User? _user = authResult.user;
 
 
-        bool? isLoginSUCC = await checkLoginGoogle(_user!);
+        // bool? isLoginSUCC = await checkLoginGoogle(_user!);
 
         notifyListeners();
-
-        return isLoginSUCC ?? false;
+        return true;
+        // return isLoginSUCC ?? false;
       } catch (error) {
         print('LỖI ĐĂNG NHẬP GOOGLE: $error');
         showToast(message: "Đăng nhập thất bại: $error");

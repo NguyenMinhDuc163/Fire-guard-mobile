@@ -116,6 +116,7 @@ class DrawerWidget extends StatelessWidget {
                 LocalStorageHelper.deleteValue('authToken');
                 AuthViewModel authViewModel = AuthViewModel();
                 authViewModel.signOut();
+
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   LoginScreen.routeName,

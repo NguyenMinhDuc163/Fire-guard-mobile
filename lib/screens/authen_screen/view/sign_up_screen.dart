@@ -224,29 +224,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ],
                     ),
                     const SizedBox(height: 30),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: DividerRowWidget(title: 'auth.or_sign_up_with'.tr()),
-                          ),
-                          const SizedBox(height: 24),
-                          SecondaryButtonWidget(
-                            height: 56,
-                            textColor: ColorPalette.kGrayscaleDark100,
-                            width: 300,
-                            onTap: () {},
-                            borderRadius: 24,
-                            bgColor: ColorPalette.kBackground.withOpacity(0.3),
-                            text: 'auth.continue_with_google'.tr(),
-                            icons: AssetHelper.kGoogleIcon,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 23),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 40),
+                    //   child: Column(
+                    //     children: [
+                    //       Padding(
+                    //         padding: const EdgeInsets.symmetric(horizontal: 15),
+                    //         child: DividerRowWidget(title: 'auth.or_sign_up_with'.tr()),
+                    //       ),
+                    //       const SizedBox(height: 24),
+                    //       SecondaryButtonWidget(
+                    //         height: 56,
+                    //         textColor: ColorPalette.kGrayscaleDark100,
+                    //         width: 300,
+                    //         onTap: () {},
+                    //         borderRadius: 24,
+                    //         bgColor: ColorPalette.kBackground.withOpacity(0.3),
+                    //         text: 'auth.continue_with_google'.tr(),
+                    //         icons: AssetHelper.kGoogleIcon,
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 23),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: TermsAndPrivacyTextWidget(
