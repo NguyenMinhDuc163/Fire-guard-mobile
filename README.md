@@ -53,6 +53,34 @@ Dự án này là hệ thống phát hiện cháy và khí gas dựa trên nền
 - **Google Maps API**: Tích hợp bản đồ và định vị GPS.
 - **News API**: Tích hợp tin tức về các vụ cháy.
 
+
+## Demo Sản Phẩm
+
+<table>
+<tr>
+<td width="20%" style="padding-right: 10px;">
+<img src="image\home.jpg" alt="Home Screen" width="100%">
+<br><em>Trang chủ</em>
+</td>
+<td width="20%" style="padding-right: 10px;">
+<img src="image\feature.jpg" alt="Các chức năng" width="100%">
+<br><em>Các chức năng</em>
+</td>
+<td width="20%" style="padding: 0 10px;">
+<img src="image\news.jpg" alt="Tin tức mới" width="100%">
+<br><em>Tin tức mới</em>
+</td>
+<td width="20%" style="padding-left: 10px;">
+<img src="image\skill.jpg" alt="Kỹ năng phòng cháy chữa cháy" width="100%">
+<br><em>Kỹ năng phòng cháy chữa cháy</em>
+</td>
+<td width="20%" style="padding-left: 10px;">
+<img src="image\info.jpg" alt="Quản lý thiết bị" width="100%">
+<br><em>Quản lý thiết bị</em>
+</td>
+</tr>
+</table>
+
 ## Cài đặt
 
 1. **Phần cứng**:
@@ -72,9 +100,14 @@ Dự án này là hệ thống phát hiện cháy và khí gas dựa trên nền
 2. Mở ứng dụng Flutter trên điện thoại để theo dõi trạng thái của các cảm biến.
 3. Khi có phát hiện cháy hoặc rò rỉ khí, bạn sẽ nhận được thông báo ngay lập tức trên ứng dụng.
 
-## Tải ứng dụng
+## Tải Ứng Dụng
+Bạn có thể tải ứng dụng từ Google Play Store:
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+<a href="https://play.google.com/store/apps/details?id=com.nguyenduc.fire_guard">
+<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" width="200" style="object-fit: contain;">
+</a>
+</div>
 
-Bạn có thể tải ứng dụng tại link sau: [Fire Guard Mobile](https://github.com/NguyenMinhDuc163?tab=packages&repo_name=Fire-guard-mobile)
 
 ## Đóng góp
 

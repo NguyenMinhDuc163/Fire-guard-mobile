@@ -37,7 +37,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.nguyenduc.fire_guard"
     compileSdkVersion 34
-    ndkVersion flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
