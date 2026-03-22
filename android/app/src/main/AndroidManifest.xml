@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.nguyenduc.fire_alarm_app">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Các quyền cần thiết -->
     <uses-feature

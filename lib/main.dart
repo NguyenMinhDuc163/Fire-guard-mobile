@@ -24,14 +24,21 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await Geolocator.requestPermission();
 
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: dotenv.env['API_KEY']!,
-      appId: dotenv.env['APP_ID']!,
-      messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-      projectId: dotenv.env['PROJECT_ID']!,
-    ),
-  );
+  // Native (Android google-services) có thể đã tạo [DEFAULT] trước khi Dart thấy Firebase.apps.
+  try {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: dotenv.env['API_KEY']!,
+        appId: dotenv.env['APP_ID']!,
+        messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+        projectId: dotenv.env['PROJECT_ID']!,
+      ),
+    );
+  } on FirebaseException catch (e) {
+    if (!e.code.toLowerCase().contains('duplicate')) rethrow;
+  } catch (e) {
+    if (!e.toString().toLowerCase().contains('duplicate')) rethrow;
+  }
   final firebaseService = FirebaseService();
   print(
       "Current base URL from Firebase Remote Config: ${firebaseService.getBaseURLServer()}");
