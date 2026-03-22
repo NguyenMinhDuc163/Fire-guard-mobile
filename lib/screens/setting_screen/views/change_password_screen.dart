@@ -88,12 +88,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 children: [
                    Text(
                     'change_password.update_password'.tr(),
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
                   ),
                   const SizedBox(height: 10),
                    Text(
                     'change_password.enter_info_to_change_password'.tr(),
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 24),
 

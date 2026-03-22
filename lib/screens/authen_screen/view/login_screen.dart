@@ -1,16 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/authen_screen/provider/auth_view_model.dart';
-import 'package:fire_guard/screens/authen_screen/provider/auth_with_firebase.dart';
 import 'package:fire_guard/screens/authen_screen/view/forgot_password_screen.dart';
 import 'package:fire_guard/screens/authen_screen/view/seslect_preferences_screen.dart';
 import 'package:fire_guard/screens/authen_screen/widget/custom_rich_text_widget.dart';
-import 'package:fire_guard/screens/authen_screen/widget/dividerR_row_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/icon_language_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/password_text_field_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/primary_button_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/primary_text_button_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/primary_text_form_field_widget.dart';
-import 'package:fire_guard/screens/authen_screen/widget/secondary_button_widget.dart';
 import 'package:fire_guard/screens/authen_screen/widget/terms_and_privacyText_widget.dart';
 import 'package:fire_guard/service/common/status_api.dart';
 import 'package:fire_guard/service/service_config/network_service.dart';
@@ -89,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final model = authViewModel.model;
 
 
-    void _showApiConfigSheet() {
+    void showApiConfigSheet() {
       showModalBottomSheet(
         context: context,
         isScrollControlled:
@@ -162,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               // Nút Config ở bên trái
               GestureDetector(
-                onTap: _showApiConfigSheet,
+                onTap: showApiConfigSheet,
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(

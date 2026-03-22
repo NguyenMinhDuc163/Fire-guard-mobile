@@ -291,16 +291,16 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
         children: [
           FloatingActionButton(
             onPressed: _showMapStyleSelector,
-            child: const Icon(Icons.layers),
             backgroundColor: Colors.orange,
             heroTag: 'mapStyleSelector',
+            child: const Icon(Icons.layers),
           ),
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: _goToCurrentPosition,
-            child: const Icon(Icons.my_location),
             backgroundColor: Colors.blue,
             heroTag: 'goToCurrentPosition',
+            child: const Icon(Icons.my_location),
           ),
         ],
       ),

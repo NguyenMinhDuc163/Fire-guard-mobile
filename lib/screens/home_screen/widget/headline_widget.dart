@@ -14,17 +14,17 @@ class HeadLineWidget extends StatelessWidget {
           children: [
             Text(
               "your_quizzes".tr(),
-              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.normal),
+              style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.normal),
             ),
             Text(
               "start_a_quick_quiz".tr(),
-              style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.normal),
+              style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.normal),
             ),
           ],
         ),
         Text(
           "see_all".tr(),
-          style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.normal),
+          style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.normal),
         ),
       ],
     );

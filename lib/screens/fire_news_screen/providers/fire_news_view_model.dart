@@ -6,6 +6,7 @@ class FireNewsViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
   List<GuideAndNewsResponse> fireNews = [];
   List<GuideAndNewsResponse> goodPeopleStories = [];
+  @override
   bool isLoading = false;
   String? error;
 

@@ -160,7 +160,7 @@ class _FascinateViewState extends State<FascinateView> {
             child:  Center(
               child: Text(
                 'what_fascinates_you'.tr(),
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -171,7 +171,7 @@ class _FascinateViewState extends State<FascinateView> {
               child: Text(
                 'customized_quiz_experience'.tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
               ),
             ),
           ),
@@ -310,7 +310,7 @@ class _SetupStoreViewState extends State<SetupStoreView> {
             duration: const Duration(milliseconds: 1000),
             child:  Text(
               'what_should_we_call_you'.tr(),
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),
@@ -319,7 +319,7 @@ class _SetupStoreViewState extends State<SetupStoreView> {
             duration: const Duration(milliseconds: 1000),
             child:  Text(
               'you_can_change_later'.tr(),
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
           ),
           const SizedBox(height: 30),
@@ -499,7 +499,7 @@ class _UserTypeViewState extends State<UserTypeView> {
             duration: const Duration(milliseconds: 1000),
             child:  Text(
               'join_quizz_pro'.tr(),
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: ColorPalette.kSecondary),
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: ColorPalette.kSecondary),
             ),
           ),
           const SizedBox(height: 10),
@@ -507,7 +507,7 @@ class _UserTypeViewState extends State<UserTypeView> {
             duration: const Duration(milliseconds: 1000),
             child:  Text(
               'join_as_student_or_teacher'.tr(),
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: ColorPalette.kSecondary),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: ColorPalette.kSecondary),
             ),
           ),
           const SizedBox(height: 40),

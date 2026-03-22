@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/delete_family_request.dart';
@@ -8,6 +7,7 @@ import '../../../providers/BaseViewModel.dart';
 class FamilyManagerViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
   List<dynamic> familyMembers = [];
+  @override
   bool isLoading = false;
 
   Future<void> fetchFamily(int userId) async {
@@ -69,6 +69,7 @@ class FamilyManagerViewModel extends BaseViewModel {
     }
   }
 
+  @override
   void setLoading(bool value) {
     isLoading = value;
     notifyListeners();

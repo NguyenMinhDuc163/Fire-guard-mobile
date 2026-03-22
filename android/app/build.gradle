@@ -36,7 +36,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.nguyenduc.fire_guard"
-    compileSdkVersion 34
+    compileSdk 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -58,11 +58,10 @@ android {
         applicationId "com.nguyenduc.fire_guard"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 23
-
+        minSdkVersion 24
 
         //noinspection EditedTargetSdkVersion
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

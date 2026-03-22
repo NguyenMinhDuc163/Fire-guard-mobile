@@ -5,7 +5,6 @@ import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/add_family_request.dart';
 import 'package:fire_guard/service/api_service/request/add_guide_and_news_request.dart';
 import 'package:fire_guard/service/api_service/request/change_password_request.dart';
-import 'package:fire_guard/service/api_service/request/device_status_request.dart';
 import 'package:fire_guard/service/api_service/request/fire_emergency_request.dart';
 import 'package:fire_guard/service/api_service/request/forgot_password_request.dart';
 import 'package:fire_guard/service/api_service/request/login_request.dart';

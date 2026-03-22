@@ -6,6 +6,7 @@ class FireSafetySkillsViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
   List<GuideAndNewsResponse> fireSafetySkills = [];
   List<GuideAndNewsResponse> escapeSkills = [];
+  @override
   bool isLoading = false;
   String? error;
 

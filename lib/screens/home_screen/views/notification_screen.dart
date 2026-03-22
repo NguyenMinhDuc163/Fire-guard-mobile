@@ -2,7 +2,6 @@ import 'package:fire_guard/service/common/status_api.dart';
 import 'package:fire_guard/utils/core/constants/error_constants.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import '../providers/home_view_model.dart';
@@ -292,7 +291,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final fullImageUrl = imageUrl != null && imageUrl.isNotEmpty
           ? "$baseUrl$imageUrl"
           : null;
-      print("====> fullImageUrl  ${fullImageUrl}");
+      print("====> fullImageUrl  $fullImageUrl");
 
       showModalBottomSheet(
         context: context,
@@ -503,7 +502,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.calendar_today, color: ColorPalette.colorFFBB35, size: 22),
+          const Icon(Icons.calendar_today, color: ColorPalette.colorFFBB35, size: 22),
           const SizedBox(width: 12),
           Text(
             date != null ? DateFormat('dd/MM/yyyy').format(date) : label,

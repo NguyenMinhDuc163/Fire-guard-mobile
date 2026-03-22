@@ -242,7 +242,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
                             const SizedBox(width: 4),
                              Text(
                               'family_manager.activity'.tr(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.green,
                                 fontSize: 12,
                               ),

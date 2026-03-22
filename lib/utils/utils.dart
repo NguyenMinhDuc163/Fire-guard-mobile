@@ -9,7 +9,7 @@ class Utils{
   }
 
   static bool isCheckString(String str) {
-    if (str == null || str == "") {
+    if (str == "") {
       return false;
     }
     return true;

@@ -39,9 +39,9 @@ class SkillItem extends StatelessWidget {
         ),
         child: ListTile(
           leading: CircleAvatar(
-            child: Text(number),
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
+            child: Text(number),
           ),
           title: Text(title),
         ),

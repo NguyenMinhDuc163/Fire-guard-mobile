@@ -1,5 +1,4 @@
 // firebase_service.dart
-import 'package:fire_guard/service/base_connect.dart';
 import 'package:fire_guard/service/common/status_api.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 

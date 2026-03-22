@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
 
 class SkillDetailScreen extends StatelessWidget {

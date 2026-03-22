@@ -51,10 +51,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NotificationService _notificationService = NotificationService();
+    final NotificationService notificationService = NotificationService();
     // Khởi tạo Notification Service với context
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _notificationService.init(context);
+      notificationService.init(context);
     });
 
     return ScreenUtilInit(

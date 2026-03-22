@@ -123,7 +123,7 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
             FlutterMap(
               mapController: _mapController,
               options: MapOptions(
-                initialCenter: _selectedPosition ?? LatLng(21.028511, 105.804817),
+                initialCenter: _selectedPosition ?? const LatLng(21.028511, 105.804817),
                 initialZoom: 13.0,
                 onTap: (tapPosition, point) => _onMapTap(point),
               ),
@@ -131,7 +131,7 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
                 TileLayer(
                   urlTemplate:
                   "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
+                  subdomains: const ['a', 'b', 'c'],
                 ),
                 if (_selectedPosition != null)
                   MarkerLayer(

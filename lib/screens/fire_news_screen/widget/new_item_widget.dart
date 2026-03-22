@@ -7,7 +7,7 @@ class NewsItemWidget extends StatelessWidget {
   final String description;
   final VoidCallback onTap; // Hàm callback khi ấn vào tin tức
 
-  NewsItemWidget({
+  const NewsItemWidget({super.key, 
     required this.imageUrl,
     required this.title,
     required this.time,
@@ -20,7 +20,7 @@ class NewsItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -32,19 +32,19 @@ class NewsItemWidget extends StatelessWidget {
                 height: 100,
                 fit: BoxFit.cover,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
                       time,
                       style: TextStyle(
@@ -52,7 +52,7 @@ class NewsItemWidget extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
                       description,
                       style: TextStyle(

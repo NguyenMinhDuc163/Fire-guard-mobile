@@ -4,10 +4,7 @@ import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
 import 'package:fire_guard/screens/family_manager_screen/views/family_management_screen.dart';
 import 'package:fire_guard/screens/fire_map_screen/views/register_coordinates_screen.dart';
 import 'package:fire_guard/screens/setting_screen/views/settings_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
-import 'package:fire_guard/utils/core/constants/color_constants.dart';
 
 import '../../../init.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +22,9 @@ class DrawerWidget extends StatelessWidget {
           children: <Widget>[
             Container(
               height: 200,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: ColorPalette.colorFFBB35,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
@@ -35,7 +32,7 @@ class DrawerWidget extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 40,
                     backgroundImage: AssetImage(AssetHelper.avatar),
                   ),

@@ -149,7 +149,7 @@ class AuthViewModel extends BaseViewModel {
 
         // Đăng nhập vào Firebase với credential
         final UserCredential authResult = await _auth.signInWithCredential(credential);
-        User? _user = authResult.user;
+        User? user = authResult.user;
 
 
         // bool? isLoginSUCC = await checkLoginGoogle(_user!);
@@ -188,7 +188,7 @@ class AuthViewModel extends BaseViewModel {
   }
 
   Future<void> signOut() async {
-    return await execute(() async {;
+    return await execute(() async {
 
       try {
         await _auth.signOut();

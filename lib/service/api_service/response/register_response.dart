@@ -14,6 +14,7 @@ class RegisterResponse extends BaseResponse{
   }
 
   // Chuyển RegisterResponse sang JSON
+  @override
   Map<String, dynamic> toJson() => user.toJson();
 
   @override

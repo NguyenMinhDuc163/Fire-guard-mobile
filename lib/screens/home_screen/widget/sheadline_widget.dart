@@ -102,7 +102,7 @@ class _SHeadlineWidgetState extends State<SHeadlineWidget> {
                               ],
                             ),
                           ),
-                          SizedBox(width: kDefaultPadding),
+                          const SizedBox(width: kDefaultPadding),
                            Text(
                             widget.score.toString(),
                             style: const TextStyle(

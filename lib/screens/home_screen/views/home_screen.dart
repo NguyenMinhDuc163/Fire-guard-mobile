@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                             color: Colors.black.withOpacity(0.2),
                             spreadRadius: 5,
                             blurRadius: 7,
-                            offset: Offset(0, 3),  // Độ mờ và bóng của nút
+                            offset: const Offset(0, 3),  // Độ mờ và bóng của nút
                           ),
                         ],
                       ),
@@ -80,8 +80,8 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: height_20),
 
                 Container(
-                  padding: EdgeInsets.all(16.0),
-                  margin: EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.all(16.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.7),  // Màu nền với độ trong suốt
                     borderRadius: BorderRadius.circular(20.0),  // Bo góc các cạnh
@@ -141,7 +141,7 @@ class HomeScreen extends StatelessWidget {
                           }
                         },
                         child: Container(
-                          padding: EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           width: width_250,  // Chiều rộng của nút
                           height: height_85, // Chiều cao của nút
                           decoration: BoxDecoration(
@@ -152,18 +152,18 @@ class HomeScreen extends StatelessWidget {
                                 color: Colors.black.withOpacity(0.1),  // Đổ bóng nhẹ
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: Offset(0, 2),  // Vị trí của bóng
+                                offset: const Offset(0, 2),  // Vị trí của bóng
                               ),
                             ],
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.phone, color: Colors.orange, size: 30),  // Icon Gọi
-                              SizedBox(height: 10),
+                              const Icon(Icons.phone, color: Colors.orange, size: 30),  // Icon Gọi
+                              const SizedBox(height: 10),
                               Text(
                                 'home_screen.call114'.tr(),
-                                style: TextStyle(color: Colors.orange, fontSize: 16),
+                                style: const TextStyle(color: Colors.orange, fontSize: 16),
                               ),
                             ],
                           ),
@@ -191,7 +191,7 @@ class HomeScreen extends StatelessWidget {
                                 color: Colors.black.withOpacity(0.1),
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: Offset(0, 2),
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),

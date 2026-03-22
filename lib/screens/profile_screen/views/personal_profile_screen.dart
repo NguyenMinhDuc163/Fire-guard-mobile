@@ -8,7 +8,6 @@ import 'package:fire_guard/screens/profile_screen/providers/sensor_view_model.da
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
-import 'package:fire_guard/utils/core/constants/color_constants.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/material.dart';
@@ -189,16 +188,16 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.orange,
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(30),
                       bottomRight: Radius.circular(30),
                     ),
                   ),
                   child: Column(
                     children: [
-                      CircleAvatar(
+                      const CircleAvatar(
                         radius: 50,
                         backgroundImage: AssetImage(AssetHelper.avatar),
                       ),

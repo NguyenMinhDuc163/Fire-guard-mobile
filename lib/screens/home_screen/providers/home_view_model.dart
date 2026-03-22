@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/home_screen/models/home_model.dart';
@@ -10,13 +9,11 @@ import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/fire_emergency_response.dart';
 import 'package:fire_guard/service/api_service/response/send_notification_response.dart';
 import 'package:fire_guard/service/api_service/response/user_list_response.dart';
-import 'package:fire_guard/service/api_service/response/user_location_response.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:fire_guard/providers/BaseViewModel.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../service/api_service/response/save_location_response.dart';
 
 class HomeViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
@@ -109,11 +106,10 @@ class HomeViewModel extends BaseViewModel {
             DateTime timestamp;
             if (incident.timestamp is String) {
               timestamp = DateTime.parse(incident.timestamp as String);
-            } else if (incident.timestamp is DateTime) {
-              timestamp = incident.timestamp as DateTime;
             } else {
-              timestamp = DateTime.now();
+              timestamp = incident.timestamp;
             }
+          
 
             notifications.add({
               'incidentId': incident.incidentId,

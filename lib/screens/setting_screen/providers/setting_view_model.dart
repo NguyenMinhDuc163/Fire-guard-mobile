@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/init.dart';
-import 'package:fire_guard/screens/setting_screen/models/personal_profile_model.dart';
 import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/change_password_request.dart';
 import 'package:fire_guard/service/api_service/request/update_info_user_request.dart';
@@ -13,6 +12,7 @@ import 'package:fire_guard/providers/BaseViewModel.dart';
 
 class SettingViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
+  @override
   bool isLoading = false;
   String? error;
 

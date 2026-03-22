@@ -28,7 +28,7 @@ class PromoCardWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
                   "get_started_now".tr(),
-                  style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

@@ -154,7 +154,7 @@ const Color colorYellow100 = Color(0xFFECBC3C);
 const Color mau_vangbaca_50 = Color(0xFFFCF5E3);
 const Color mau_vangbaca_100 = Color(0xFFF5D98D);
 // màu sắc button
-Color color_button = Color.fromRGBO(201, 137, 18, 1);
+Color color_button = const Color.fromRGBO(201, 137, 18, 1);
 
 const Color colorPrimary = Color(0xFF02215A);
 const Color color000031 = Color(0xFF000031);
@@ -190,7 +190,7 @@ const Color color2981DA = Color(0xFF2981DA);
 const Color colorF2F2F2 = Color(0xFFF2F2F2);
 const Color color828282 = Color(0xFF828282);
 const Color colorF4FAFF = Color(0xFFF4FAFF);
-Color color_icon = Color.fromRGBO(50, 68, 134, 1.0);
+Color color_icon = const Color.fromRGBO(50, 68, 134, 1.0);
 
 TextStyle text_default_black = TextStyle(
     color: colorBlack,
@@ -216,7 +216,7 @@ TextStyle text_label_in_register = TextStyle(
 );
 
 TextStyle text_default_white_home = TextStyle(
-  color: Color(0xFFFFFFFF),
+  color: const Color(0xFFFFFFFF),
   fontSize: 32.sp,
 );
 
@@ -347,7 +347,7 @@ TextStyle text20Bold300White = TextStyle(
 );
 
 TextStyle text50Bold900White = TextStyle(
-  shadows: [
+  shadows: const [
     Shadow(
       blurRadius: 10.0,
       color: Colors.black12,
@@ -390,7 +390,7 @@ TextStyle text45spItalic = TextStyle(
 
 TextStyle text45spColorBlue = TextStyle(
   fontSize: fontSize_45sp,
-  color: Color(0xff0039e6),
+  color: const Color(0xff0039e6),
 );
 
 TextStyle text45spColorBackground = TextStyle(

@@ -6,21 +6,25 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => SensorViewModel(), // Cung cấp SensorViewModel cho ứng dụng
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: SensorDataPage(),
     );
   }
 }
 
 class SensorDataPage extends StatefulWidget {
+  const SensorDataPage({super.key});
+
   @override
   _SensorDataPageState createState() => _SensorDataPageState();
 }
@@ -32,7 +36,7 @@ class _SensorDataPageState extends State<SensorDataPage> {
     final model = sensorViewModel.model;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gửi Dữ Liệu Cảm Biến'),
+        title: const Text('Gửi Dữ Liệu Cảm Biến'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -44,13 +48,13 @@ class _SensorDataPageState extends State<SensorDataPage> {
                 // sensorViewModel.saveDeviceStatus(deviceName: 'buzzer', status: 'active');
                 sensorViewModel.sendLogin();
               },
-              child: Text('Gửi Dữ Liệu'),
+              child: const Text('Gửi Dữ Liệu'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               model.responseMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),

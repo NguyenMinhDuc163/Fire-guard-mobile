@@ -15,7 +15,7 @@ class CustomDialog extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Thông báo'),
+                title: const Text('Thông báo'),
                 content: const Text(
                   'Vui lòng đợi 5 phút trước khi gửi thông báo cứu hỏa tiếp theo, '
                       'hoặc có thể gọi điện trực tiếp.',
@@ -27,13 +27,13 @@ class CustomDialog extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: onConfirm,
-                        child: Text('Gọi ngay'),
+                        child: const Text('Gọi ngay'),
                       ),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop(); // Đóng popup
                         },
-                        child: Text('Huỷ'),
+                        child: const Text('Huỷ'),
                       ),
                     ],
                   ),
@@ -42,7 +42,7 @@ class CustomDialog extends StatelessWidget {
             },
           );
         },
-        child: Text('Hiển thị thông báo'),
+        child: const Text('Hiển thị thông báo'),
       ),
     );
   }
