@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/home/nguyenduc/fvm/versions/3.29.2/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/nguyenduc/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/android/app/.cxx/Debug/1f3r2v1z/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/nguyenduc/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/android/app/.cxx/Debug/1f3r2v1z/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

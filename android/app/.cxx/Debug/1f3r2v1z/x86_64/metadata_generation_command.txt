@@ -1,0 +1,20 @@
+                        -H/home/nguyenduc/fvm/versions/3.29.2/packages/flutter_tools/gradle/src/main/groovy
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=24
+-DANDROID_PLATFORM=android-24
+-DANDROID_ABI=x86_64
+-DCMAKE_ANDROID_ARCH_ABI=x86_64
+-DANDROID_NDK=/home/nguyenduc/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_ANDROID_NDK=/home/nguyenduc/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_TOOLCHAIN_FILE=/home/nguyenduc/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/home/nguyenduc/Android/Sdk/cmake/3.22.1/bin/ninja
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/build/app/intermediates/cxx/Debug/1f3r2v1z/obj/x86_64
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/build/app/intermediates/cxx/Debug/1f3r2v1z/obj/x86_64
+-DCMAKE_BUILD_TYPE=Debug
+-B/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/android/app/.cxx/Debug/1f3r2v1z/x86_64
+-GNinja
+-Wno-dev
+--no-warn-unused-cli
+                        Build command args: []
+                        Version: 2

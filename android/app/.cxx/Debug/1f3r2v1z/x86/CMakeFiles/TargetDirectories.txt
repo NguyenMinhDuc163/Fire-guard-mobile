@@ -1,0 +1,2 @@
+/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/android/app/.cxx/Debug/1f3r2v1z/x86/CMakeFiles/edit_cache.dir
+/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/android/app/.cxx/Debug/1f3r2v1z/x86/CMakeFiles/rebuild_cache.dir

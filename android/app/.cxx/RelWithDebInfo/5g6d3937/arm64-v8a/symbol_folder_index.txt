@@ -1,0 +1,1 @@
+/home/nguyenduc/Desktop/project/workspace/Fire-guard-mobile/build/app/intermediates/cxx/RelWithDebInfo/5g6d3937/obj/arm64-v8a
