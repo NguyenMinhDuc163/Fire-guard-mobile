@@ -1,3 +1,4 @@
+import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
 import 'package:fire_guard/screens/setting_screen/providers/setting_view_model.dart';
 import 'package:fire_guard/screens/setting_screen/views/click_send_settings_screen.dart';
 import 'package:fire_guard/screens/setting_screen/views/settings_detail_screen.dart';
@@ -111,6 +112,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final color = success ? Colors.green : Colors.red;
 
     _showMessage(message, color);
+  }
+
+  Future<void> _showDeleteAccountDialog(BuildContext context) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('settings.delete_account_title'.tr()),
+        content: Text('settings.delete_account_warning'.tr()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text('settings.cancel'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              'settings.delete'.tr(),
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && mounted) {
+      await _handleDeleteAccount(context);
+    }
+  }
+
+  Future<void> _handleDeleteAccount(BuildContext context) async {
+    final viewModel = context.read<SettingViewModel>();
+    final success = await viewModel.deleteAccount();
+
+    if (!mounted) return;
+
+    if (success) {
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => AlertDialog(
+          title: Text('settings.delete_account_success_title'.tr()),
+          content: Text('settings.delete_account_success'.tr()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text('settings.close'.tr()),
+            ),
+          ],
+        ),
+      );
+
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        LoginScreen.routeName,
+        (route) => false,
+      );
+    } else {
+      final message = viewModel.error ?? 'settings.delete_account_failed'.tr();
+      _showMessage(message, Colors.red);
+    }
   }
 
   Widget _buildSettingCard({
@@ -271,6 +332,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     },
                     iconColor: Colors.indigo,
+                  ),
+                  _buildSettingCard(
+                    icon: Icons.delete,
+                    title: 'settings.delete_account'.tr(),
+                    onTap: () => _showDeleteAccountDialog(context),
+                    iconColor: Colors.red,
                   ),
                 ],
               ),

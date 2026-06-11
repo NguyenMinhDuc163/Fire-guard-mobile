@@ -7,6 +7,7 @@ import 'package:fire_guard/service/api_service/request/change_password_request.d
 import 'package:fire_guard/service/api_service/request/update_info_user_request.dart';
 import 'package:fire_guard/service/api_service/response/base_response.dart';
 import 'package:fire_guard/service/api_service/response/change_password_response.dart';
+import 'package:fire_guard/service/api_service/response/delete_account_response.dart';
 import 'package:fire_guard/service/api_service/response/update_info_user_response.dart';
 import 'package:fire_guard/providers/BaseViewModel.dart';
 
@@ -208,6 +209,40 @@ class SettingViewModel extends BaseViewModel {
         print('Error: $e');
         return false;
       } finally {}
+    });
+  }
+
+  Future<bool> deleteAccount() async {
+    return await execute(() async {
+      try {
+        isLoading = true;
+        error = null;
+        notifyListeners();
+
+        final BaseResponse<DeleteAccountResponse> response =
+            await apiServices.deleteAccount();
+
+        if (response.code == 200 || response.code == 201) {
+          LocalStorageHelper.deleteValue('ignoreIntroScreen');
+          LocalStorageHelper.deleteValue('userName');
+          LocalStorageHelper.deleteValue('email');
+          LocalStorageHelper.deleteValue('authToken');
+          LocalStorageHelper.deleteValue('userId');
+          LocalStorageHelper.deleteValue('userID');
+          LocalStorageHelper.deleteValue('clickSendName');
+          LocalStorageHelper.deleteValue('clickSendKey');
+          return true;
+        } else {
+          error = response.message ?? 'settings.delete_account_failed'.tr();
+          return false;
+        }
+      } catch (e) {
+        error = 'settings.error_occurred'.tr() + e.toString();
+        return false;
+      } finally {
+        isLoading = false;
+        notifyListeners();
+      }
     });
   }
 }

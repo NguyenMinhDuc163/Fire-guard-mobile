@@ -12,6 +12,7 @@ class UrlStatic{
   static const String API_LOGIN = 'auth/login';
   static const String API_REGISTER = 'auth/register';
   static const String API_FORGOT_PASSWORD = 'auth/forgot_password';
+  static const String API_DELETE_ACCOUNT = 'auth/delete';
   static const String API_USER_LOCATION = 'user_location';
   static const String API_CHANGE_PASSWORD = 'auth/change_password';
   static const String API_UPDATE_AUTH = 'auth/update';

@@ -17,6 +17,7 @@ export 'api_service/response/add_family_response.dart';
 export 'api_service/response/add_guide_and_news_response.dart';
 export 'api_service/response/base_response.dart';
 export 'api_service/response/change_password_response.dart';
+export 'api_service/response/delete_account_response.dart';
 export 'api_service/response/device_status_response.dart';
 export 'api_service/response/fire_emergency_response.dart';
 export 'api_service/response/forgot_password_response.dart';

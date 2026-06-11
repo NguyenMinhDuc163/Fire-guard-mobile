@@ -232,6 +232,15 @@ class ApiServices extends BaseApiService {
     );
   }
 
+  // xoa tai khoan user
+  Future<BaseResponse<DeleteAccountResponse>> deleteAccount() async {
+    return await sendRequest<DeleteAccountResponse>(
+      UrlStatic.API_DELETE_ACCOUNT,
+      method: 'POST',
+      fromJson: (json) => DeleteAccountResponse.fromJson(json),
+    );
+  }
+
   // cap nhat thong tin user
   Future<BaseResponse<AddFamilyResponse>> addFamily(
       AddFamilyRequest request) async {
@@ -273,7 +282,6 @@ class ApiServices extends BaseApiService {
   }
 
 }
-
 
 
 
