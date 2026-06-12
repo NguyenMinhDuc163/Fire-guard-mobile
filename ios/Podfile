@@ -42,6 +42,7 @@ post_install do |installer|
 
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
     end
 
     if target.name == 'BoringSSL-GRPC'
@@ -54,13 +55,74 @@ post_install do |installer|
     end
   end
 
-  grpc_basic_seq = File.join(installer.sandbox.root, 'gRPC-Core/src/core/lib/promise/detail/basic_seq.h')
-  if File.exist?(grpc_basic_seq)
-    contents = File.read(grpc_basic_seq)
-    fixed_contents = contents.gsub('Traits::template CallSeqFactory', 'Traits::CallSeqFactory')
-    if fixed_contents != contents
-      File.chmod(0644, grpc_basic_seq)
-      File.write(grpc_basic_seq, fixed_contents)
+  ['gRPC-Core', 'gRPC-C++'].each do |grpc_pod|
+    grpc_basic_seq = File.join(installer.sandbox.root, "#{grpc_pod}/src/core/lib/promise/detail/basic_seq.h")
+    if File.exist?(grpc_basic_seq)
+      contents = File.read(grpc_basic_seq)
+      fixed_contents = contents.gsub('Traits::template CallSeqFactory', 'Traits::CallSeqFactory')
+      if fixed_contents != contents
+        File.chmod(0644, grpc_basic_seq)
+        File.write(grpc_basic_seq, fixed_contents)
+      end
+    end
+  end
+
+  firebase_import_patches = {
+    'firebase_app_check' => {
+      'replacement' => "@import FirebaseCore;\n@import FirebaseAppCheck;",
+      'patterns' => [
+        '#import <Firebase/Firebase.h>',
+        "#import <FirebaseCore/FirebaseCore.h>\n#import <FirebaseAppCheck/FirebaseAppCheck.h>",
+      ],
+    },
+    'firebase_messaging' => {
+      'replacement' => "@import FirebaseCore;\n@import FirebaseMessaging;\n#if __has_include(<FirebaseAuth/FirebaseAuth.h>)\n@import FirebaseAuth;\n#endif",
+      'patterns' => [
+        '#import <Firebase/Firebase.h>',
+        "#import <FirebaseCore/FirebaseCore.h>\n#import <FirebaseMessaging/FirebaseMessaging.h>",
+        "@import FirebaseCore;\n@import FirebaseMessaging;",
+      ],
+    },
+    'cloud_firestore' => {
+      'replacement' => "@import FirebaseCore;\n@import FirebaseFirestore;",
+      'patterns' => [
+        '#import <Firebase/Firebase.h>',
+        "#import <FirebaseCore/FirebaseCore.h>\n#import <FirebaseFirestore/FirebaseFirestore.h>",
+      ],
+    },
+    'firebase_remote_config' => {
+      'replacement' => "@import FirebaseCore;\n@import FirebaseRemoteConfig;",
+      'patterns' => [
+        '#import <Firebase/Firebase.h>',
+        "#import <FirebaseCore/FirebaseCore.h>\n#import <FirebaseRemoteConfig/FirebaseRemoteConfig.h>",
+      ],
+    },
+    'firebase_storage' => {
+      'replacement' => "@import FirebaseCore;\n@import FirebaseStorage;",
+      'patterns' => [
+        '#import <Firebase/Firebase.h>',
+        '#import <FirebaseStorage/FirebaseStorage.h>',
+        '#import <FirebaseStorage/FIRStorageTypedefs.h>',
+        "#import <FirebaseCore/FirebaseCore.h>\n#import <FirebaseStorage/FirebaseStorage.h>",
+      ],
+    },
+  }
+
+  plugins_root = File.expand_path('../.symlinks/plugins', installer.sandbox.root)
+  firebase_import_patches.each do |plugin_name, patch|
+    classes_dir = File.join(plugins_root, plugin_name, 'ios/Classes')
+    next unless Dir.exist?(classes_dir)
+
+    Dir.glob(File.join(classes_dir, '**/*.{h,m,mm}')).each do |source_file|
+      contents = File.read(source_file)
+      fixed_contents = contents
+      patch['patterns'].each do |pattern|
+        fixed_contents = fixed_contents.gsub(pattern, patch['replacement'])
+      end
+      if fixed_contents != contents
+        File.chmod(0644, source_file)
+        File.write(source_file, fixed_contents)
+      end
     end
   end
 end
