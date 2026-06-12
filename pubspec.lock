@@ -915,13 +915,13 @@ packages:
     source: hosted
     version: "6.1.35"
   google_sign_in_ios:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: google_sign_in_ios
-      sha256: "102005f498ce18442e7158f6791033bbc15ad2dcc0afa4cf4752e2722a516c96"
+      sha256: "29cd125f58f50ceb40e8253d3c0209e321eee3e5df16cd6d262495f7cad6a2bd"
       url: "https://pub.dev"
     source: hosted
-    version: "5.9.0"
+    version: "5.8.1"
   google_sign_in_platform_interface:
     dependency: transitive
     description:

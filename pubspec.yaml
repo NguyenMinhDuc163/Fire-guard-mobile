@@ -83,6 +83,8 @@ dependency_overrides:
   app_links: 6.3.3
   # geolocator_android 4.6.2+ cùng lỗi DSL; 4.6.1 dùng compileSdk/minSdk cố định (geolocator ^12 cho phép ^4.3.0).
   geolocator_android: 4.6.1
+  # google_sign_in_ios 5.9.0 dùng GoogleSignIn 8.x, xung đột AppCheckCore với Firebase iOS SDK 10.x.
+  google_sign_in_ios: 5.8.1
   web: ^1.1.1
 
 dev_dependencies:
