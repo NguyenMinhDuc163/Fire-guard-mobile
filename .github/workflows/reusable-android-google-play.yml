@@ -4,14 +4,19 @@ on:
   workflow_call:
     inputs:
       commit_sha:
+        description: "Commit SHA that contains the bumped pubspec.yaml version"
         required: true
         type: string
       android_track:
-        required: true
+        description: "Google Play track"
+        required: false
         type: string
+        default: internal
       android_release_status:
-        required: true
+        description: "Google Play release status"
+        required: false
         type: string
+        default: completed
     secrets:
       GOOGLE_PLAY_SERVICE_ACCOUNT_JSON:
         required: true
@@ -21,40 +26,184 @@ on:
         required: true
 
 jobs:
-  android_google_play:
+  build_google_play:
+    name: Build and upload Google Play
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+      FASTLANE_HIDE_CHANGELOG: "1"
     steps:
-      - name: Checkout bumped commit
+      - name: Checkout bumped main
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.commit_sha }}
+          persist-credentials: false
 
-      - name: Resolve Flutter version
-        id: flutter
+      - name: Validate required secrets
+        shell: bash
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in \
+            GOOGLE_PLAY_SERVICE_ACCOUNT_JSON \
+            ANDROID_KEYSTORE_BASE64 \
+            ANDROID_KEY_PROPERTIES_BASE64
+          do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is not set"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Write Android signing and Play credentials
+        shell: bash
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
+        run: |
+          set -euo pipefail
+          mkdir -p android/fastlane
+          printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" > android/fastlane/play-store-credentials.json
+
+          python3 <<'PY'
+          import base64
+          import os
+          from pathlib import Path
+
+          key_properties_path = Path("android/key.properties")
+          key_properties_path.write_bytes(base64.b64decode(os.environ["ANDROID_KEY_PROPERTIES_BASE64"]))
+          key_properties_path.chmod(0o600)
+
+          props = {}
+          for raw_line in key_properties_path.read_text().splitlines():
+              line = raw_line.strip()
+              if not line or line.startswith("#") or "=" not in line:
+                  continue
+              key, value = line.split("=", 1)
+              props[key.strip()] = value.strip()
+
+          store_file = props.get("storeFile")
+          if not store_file:
+              raise SystemExit("android/key.properties must contain storeFile")
+
+          keystore_path = Path(store_file)
+          if not keystore_path.is_absolute():
+              keystore_path = Path("android/app") / keystore_path
+
+          keystore_path.parent.mkdir(parents=True, exist_ok=True)
+          keystore_path.write_bytes(base64.b64decode(os.environ["ANDROID_KEYSTORE_BASE64"]))
+          keystore_path.chmod(0o600)
+          PY
+
+          chmod 600 android/fastlane/play-store-credentials.json
+
+      - name: Debug Android release inputs
         shell: bash
         run: |
-          version="$(ruby -rjson -e 'path=".fvmrc"; if File.exist?(path); raw=File.read(path).strip; begin; data=JSON.parse(raw); puts(data["flutter"] || data["flutterSdkVersion"] || raw); rescue JSON::ParserError; puts raw; end; else; puts "3.29.2"; end')"
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "Flutter version: ${version}"
+          set -euo pipefail
 
-      - name: Set up Java
+          jq -e '
+            type == "object"
+            and has("client_email")
+            and has("private_key")
+            and has("token_uri")
+          ' android/fastlane/play-store-credentials.json > /dev/null
+
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          props_path = Path("android/key.properties")
+          props = {}
+          for raw_line in props_path.read_text().splitlines():
+              line = raw_line.strip()
+              if not line or line.startswith("#") or "=" not in line:
+                  continue
+              key, value = line.split("=", 1)
+              props[key.strip()] = value.strip()
+
+          required = ["storeFile", "storePassword", "keyAlias", "keyPassword"]
+          missing = [key for key in required if not props.get(key)]
+          if missing:
+              raise SystemExit(f"android/key.properties missing keys: {', '.join(missing)}")
+
+          store_file = Path(props["storeFile"])
+          keystore_path = store_file if store_file.is_absolute() else Path("android/app") / store_file
+          if not keystore_path.is_file() or keystore_path.stat().st_size == 0:
+              raise SystemExit(f"Android keystore was not written at {keystore_path}")
+
+          gradle_paths = [Path("android/app/build.gradle"), Path("android/app/build.gradle.kts")]
+          gradle_text = "\n".join(path.read_text() for path in gradle_paths if path.is_file())
+          app_id_match = re.search(r'applicationId\s*(?:=)?\s*"([^"]+)"', gradle_text)
+          if not app_id_match:
+              raise SystemExit("Could not find Android applicationId in android/app/build.gradle or android/app/build.gradle.kts")
+
+          appfile_text = Path("android/fastlane/Appfile").read_text()
+          package_match = re.search(r'package_name\("([^"]+)"\)', appfile_text)
+          if not package_match:
+              raise SystemExit("Could not find package_name in android/fastlane/Appfile")
+
+          application_id = app_id_match.group(1)
+          package_name = package_match.group(1)
+          if application_id != package_name:
+              raise SystemExit(
+                  f"Android applicationId ({application_id}) does not match Fastlane package_name ({package_name})"
+              )
+
+          print(f"Android applicationId: {application_id}")
+          print(f"Android key.properties keys present: {', '.join(required)}")
+          print(f"Android keystore path: {keystore_path}")
+          print(f"Android keystore bytes: {keystore_path.stat().st_size}")
+          PY
+
+          echo "Google Play JSON: valid JSON with required top-level keys"
+
+      - name: Read Flutter version
+        id: flutter_version
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+
+          version = ""
+          fvmrc = Path(".fvmrc")
+          if fvmrc.is_file():
+              raw = fvmrc.read_text().strip()
+              try:
+                  parsed = json.loads(raw)
+                  version = parsed.get("flutter", "")
+              except json.JSONDecodeError:
+                  version = raw
+
+          if not version:
+              config = Path(".fvm/fvm_config.json")
+              if config.is_file():
+                  version = json.loads(config.read_text()).get("flutterSdkVersion", "")
+
+          if not version:
+              raise SystemExit("Could not determine Flutter version from .fvmrc or .fvm/fvm_config.json")
+
+          print(f"version={version}")
+          PY
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ steps.flutter.outputs.version }}
-          cache: true
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          working-directory: android
-          bundler-cache: true
+          cache: gradle
 
       - name: Cache Android SDK packages
         uses: actions/cache@v4
@@ -64,55 +213,28 @@ jobs:
             /usr/local/lib/android/sdk/platforms/android-36
           key: ${{ runner.os }}-android-sdk-ndk-27.0.12077973-platform-36-v1
 
-      - name: Recreate Android release secrets
-        shell: bash
-        env:
-          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
-        run: |
-          missing=0
-          for name in GOOGLE_PLAY_SERVICE_ACCOUNT_JSON ANDROID_KEYSTORE_BASE64 ANDROID_KEY_PROPERTIES_BASE64; do
-            if [ -z "${!name:-}" ]; then
-              echo "::error::${name} is not set"
-              missing=1
-            else
-              echo "${name}: present"
-            fi
-          done
-          [ "$missing" -eq 0 ]
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.flutter_version.outputs.version }}
+          cache: true
 
-          mkdir -p android/fastlane
-          printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" > android/fastlane/play-store-credentials.json
-          ruby -rjson -e 'JSON.parse(File.read("android/fastlane/play-store-credentials.json")); puts "Google Play JSON parse: ok"'
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: android
 
-          printf '%s' "$ANDROID_KEY_PROPERTIES_BASE64" | base64 --decode > android/key.properties
-          store_file="$(awk -F= '/^storeFile=/{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}' android/key.properties)"
-          if [ -z "$store_file" ]; then
-            echo "::error::storeFile is missing from android/key.properties"
-            exit 1
-          fi
-
-          case "$store_file" in
-            /*) keystore_path="$store_file" ;;
-            *) keystore_path="android/app/$store_file" ;;
-          esac
-
-          mkdir -p "$(dirname "$keystore_path")"
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$keystore_path"
-          echo "android/key.properties exists: yes"
-          echo "keystore file exists: yes"
-          echo "Google Play JSON bytes: $(wc -c < android/fastlane/play-store-credentials.json)"
-
-      - name: Verify Android package id
-        shell: bash
-        run: |
-          app_id="$(ruby -ne 'puts $1 if /applicationId\s*(?:=)?\s*"([^"]+)"/ =~ $_' android/app/build.gradle android/app/build.gradle.kts 2>/dev/null | head -1)"
-          fastlane_id="$(ruby -ne 'puts $1 if /package_name\("([^"]+)"\)/ =~ $_' android/fastlane/Appfile)"
-          echo "Gradle applicationId: ${app_id}"
-          echo "Fastlane package_name: ${fastlane_id}"
-          test "$app_id" = "$fastlane_id"
-
-      - name: Deploy Android App Bundle to Google Play
+      - name: Upload to Google Play
         working-directory: android
+        shell: bash
         run: bundle exec fastlane android deploy track:${{ inputs.android_track }} release_status:${{ inputs.android_release_status }}
+
+      - name: Upload AAB artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: build/app/outputs/bundle/release/*.aab
+          if-no-files-found: ignore

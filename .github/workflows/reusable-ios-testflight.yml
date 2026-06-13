@@ -4,6 +4,7 @@ on:
   workflow_call:
     inputs:
       commit_sha:
+        description: "Commit SHA that contains the bumped pubspec.yaml version"
         required: true
         type: string
     secrets:
@@ -21,34 +22,196 @@ on:
         required: true
 
 jobs:
-  ios_testflight:
+  build_testflight:
+    name: Build and upload TestFlight
     runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+      FASTLANE_HIDE_CHANGELOG: "1"
     steps:
-      - name: Checkout bumped commit
+      - name: Checkout bumped main
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.commit_sha }}
+          persist-credentials: false
 
-      - name: Resolve Flutter version
-        id: flutter
+      - name: Validate required secrets
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 }}
+          IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          IOS_APPSTORE_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_APPSTORE_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in \
+            APP_STORE_CONNECT_KEY_ID \
+            APP_STORE_CONNECT_ISSUER_ID \
+            APP_STORE_CONNECT_API_KEY_P8 \
+            IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 \
+            IOS_DISTRIBUTION_CERTIFICATE_PASSWORD \
+            IOS_APPSTORE_PROVISIONING_PROFILE_BASE64
+          do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is not set"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Write App Store Connect API key
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          api_key_path="$RUNNER_TEMP/AuthKey.p8"
+          echo "APP_STORE_CONNECT_API_KEY_KEY_FILEPATH=$api_key_path" >> "$GITHUB_ENV"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_P8" > "$api_key_path"
+          chmod 600 "$api_key_path"
+
+      - name: Debug App Store Connect key
         shell: bash
         run: |
-          version="$(ruby -rjson -e 'path=".fvmrc"; if File.exist?(path); raw=File.read(path).strip; begin; data=JSON.parse(raw); puts(data["flutter"] || data["flutterSdkVersion"] || raw); rescue JSON::ParserError; puts raw; end; else; puts "3.29.2"; end')"
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "Flutter version: ${version}"
+          set -euo pipefail
+          key_path="$APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"
 
-      - name: Set up Flutter
+          if [ ! -s "$key_path" ]; then
+            echo "::error::App Store Connect .p8 key file was not written"
+            exit 1
+          fi
+
+          if ! grep -q "BEGIN PRIVATE KEY" "$key_path" || ! grep -q "END PRIVATE KEY" "$key_path"; then
+            echo "::error::APP_STORE_CONNECT_API_KEY_P8 does not look like a raw .p8 private key"
+            exit 1
+          fi
+
+          echo "App Store Connect key id: present (${#APP_STORE_CONNECT_KEY_ID} chars)"
+          echo "App Store Connect issuer id: present (${#APP_STORE_CONNECT_ISSUER_ID} chars)"
+          echo "App Store Connect .p8 bytes: $(wc -c < "$key_path" | tr -d ' ')"
+
+      - name: Install Apple signing assets
+        shell: bash
+        env:
+          IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 }}
+          IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          IOS_APPSTORE_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_APPSTORE_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          set -euo pipefail
+
+          certificate_path="$RUNNER_TEMP/ios_distribution.p12"
+          profile_path="$RUNNER_TEMP/appstore.mobileprovision"
+          profile_plist="$RUNNER_TEMP/appstore_profile.plist"
+          keychain_path="$RUNNER_TEMP/app-signing.keychain-db"
+          keychain_password="$(uuidgen)"
+
+          CERTIFICATE_PATH="$certificate_path" PROFILE_PATH="$profile_path" python3 <<'PY'
+          import base64
+          import os
+          from pathlib import Path
+
+          Path(os.environ["CERTIFICATE_PATH"]).write_bytes(
+              base64.b64decode(os.environ["IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64"])
+          )
+          Path(os.environ["PROFILE_PATH"]).write_bytes(
+              base64.b64decode(os.environ["IOS_APPSTORE_PROVISIONING_PROFILE_BASE64"])
+          )
+          PY
+
+          security create-keychain -p "$keychain_password" "$keychain_path"
+          security set-keychain-settings -lut 21600 "$keychain_path"
+          security unlock-keychain -p "$keychain_password" "$keychain_path"
+          security import "$certificate_path" -P "$IOS_DISTRIBUTION_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$keychain_path"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain_path"
+          security list-keychains -d user -s "$keychain_path" login.keychain-db
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          security cms -D -i "$profile_path" > "$profile_plist"
+          profile_uuid=$(/usr/libexec/PlistBuddy -c "Print UUID" "$profile_plist")
+          profile_name=$(/usr/libexec/PlistBuddy -c "Print Name" "$profile_plist")
+          cp "$profile_path" "$HOME/Library/MobileDevice/Provisioning Profiles/$profile_uuid.mobileprovision"
+
+          echo "IOS_PROVISIONING_PROFILE_NAME=$profile_name" >> "$GITHUB_ENV"
+
+          profile_team=$(/usr/libexec/PlistBuddy -c "Print TeamIdentifier:0" "$profile_plist")
+          profile_app_id=$(/usr/libexec/PlistBuddy -c "Print Entitlements:application-identifier" "$profile_plist")
+          profile_bundle_id="${profile_app_id#*.}"
+          expected_bundle_id="com.nguyenduc.fireGuard"
+          expected_team_id="Q236Z72BGN"
+
+          echo "Provisioning profile name: $profile_name"
+          echo "Provisioning profile UUID: $profile_uuid"
+          echo "Provisioning profile team id: $profile_team"
+          echo "Provisioning profile bundle id: $profile_bundle_id"
+          echo "Expected iOS bundle id: $expected_bundle_id"
+          echo "Expected Apple team id: $expected_team_id"
+
+          if [ "$profile_bundle_id" != "$expected_bundle_id" ]; then
+            echo "::error::Provisioning profile bundle id does not match this app"
+            exit 1
+          fi
+
+          if [ "$profile_team" != "$expected_team_id" ]; then
+            echo "::error::Provisioning profile team id does not match ios/fastlane/Appfile"
+            exit 1
+          fi
+
+      - name: Select Xcode
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Read Flutter version
+        id: flutter_version
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+
+          version = ""
+          fvmrc = Path(".fvmrc")
+          if fvmrc.is_file():
+              raw = fvmrc.read_text().strip()
+              try:
+                  parsed = json.loads(raw)
+                  version = parsed.get("flutter", "")
+              except json.JSONDecodeError:
+                  version = raw
+
+          if not version:
+              config = Path(".fvm/fvm_config.json")
+              if config.is_file():
+                  version = json.loads(config.read_text()).get("flutterSdkVersion", "")
+
+          if not version:
+              raise SystemExit("Could not determine Flutter version from .fvmrc or .fvm/fvm_config.json")
+
+          print(f"version={version}")
+          PY
+
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ steps.flutter.outputs.version }}
+          flutter-version: ${{ steps.flutter_version.outputs.version }}
           cache: true
 
-      - name: Set up Ruby
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
-          working-directory: ios
           bundler-cache: true
+          working-directory: ios
 
       - name: Cache CocoaPods
         uses: actions/cache@v4
@@ -61,102 +224,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cocoapods-
 
-      - name: Recreate App Store Connect API key
-        shell: bash
-        env:
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
-        run: |
-          missing=0
-          for name in APP_STORE_CONNECT_KEY_ID APP_STORE_CONNECT_ISSUER_ID APP_STORE_CONNECT_API_KEY_P8; do
-            if [ -z "${!name:-}" ]; then
-              echo "::error::${name} is not set"
-              missing=1
-            else
-              echo "${name}: present"
-            fi
-          done
-          [ "$missing" -eq 0 ]
-
-          key_path="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
-          printf '%s' "$APP_STORE_CONNECT_API_KEY_P8" > "$key_path"
-          chmod 600 "$key_path"
-          echo "APP_STORE_CONNECT_API_KEY_KEY_FILEPATH=$key_path" >> "$GITHUB_ENV"
-          echo "App Store Connect key file exists: yes"
-
-      - name: Install iOS signing assets
-        shell: bash
-        env:
-          IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 }}
-          IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
-          IOS_APPSTORE_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_APPSTORE_PROVISIONING_PROFILE_BASE64 }}
-        run: |
-          missing=0
-          for name in IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 IOS_DISTRIBUTION_CERTIFICATE_PASSWORD IOS_APPSTORE_PROVISIONING_PROFILE_BASE64; do
-            if [ -z "${!name:-}" ]; then
-              echo "::error::${name} is not set"
-              missing=1
-            else
-              echo "${name}: present"
-            fi
-          done
-          [ "$missing" -eq 0 ]
-
-          decode_base64() {
-            if base64 --help 2>&1 | grep -q -- '--decode'; then
-              base64 --decode
-            else
-              base64 -D
-            fi
-          }
-
-          cert_path="$RUNNER_TEMP/distribution.p12"
-          profile_path="$RUNNER_TEMP/appstore.mobileprovision"
-          keychain_path="$RUNNER_TEMP/app-signing.keychain-db"
-          keychain_password="$(openssl rand -hex 24)"
-
-          printf '%s' "$IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64" | decode_base64 > "$cert_path"
-          printf '%s' "$IOS_APPSTORE_PROVISIONING_PROFILE_BASE64" | decode_base64 > "$profile_path"
-
-          security create-keychain -p "$keychain_password" "$keychain_path"
-          security set-keychain-settings -lut 21600 "$keychain_path"
-          security unlock-keychain -p "$keychain_password" "$keychain_path"
-          security import "$cert_path" -P "$IOS_DISTRIBUTION_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$keychain_path"
-          security list-keychain -d user -s "$keychain_path" $(security list-keychains -d user | sed 's/[ "]//g')
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain_path"
-
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          uuid="$(security cms -D -i "$profile_path" | plutil -extract UUID raw -o - -)"
-          profile_name="$(security cms -D -i "$profile_path" | plutil -extract Name raw -o - -)"
-          profile_team="$(security cms -D -i "$profile_path" | plutil -extract TeamIdentifier.0 raw -o - -)"
-          profile_bundle="$(security cms -D -i "$profile_path" | plutil -extract Entitlements.application-identifier raw -o - - | sed 's/^[^.]*\.//')"
-          cp "$profile_path" "$HOME/Library/MobileDevice/Provisioning Profiles/${uuid}.mobileprovision"
-
-          echo "IOS_PROVISIONING_PROFILE_NAME=$profile_name" >> "$GITHUB_ENV"
-          echo "Provisioning profile installed: yes"
-          echo "Provisioning profile bundle id: ${profile_bundle}"
-          echo "Provisioning profile team id: ${profile_team}"
-
-      - name: Verify iOS bundle id
-        shell: bash
-        run: |
-          appfile_id="$(ruby -ne 'puts $1 if /app_identifier\("([^"]+)"\)/ =~ $_' ios/fastlane/Appfile)"
-          project_id="$(ruby -ne 'puts $1 if /PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);/ =~ $_ && $1 !~ /RunnerTests/' ios/Runner.xcodeproj/project.pbxproj | head -1)"
-          echo "Xcode bundle id: ${project_id}"
-          echo "Fastlane app_identifier: ${appfile_id}"
-          test "$project_id" = "$appfile_id"
-
-      - name: Build and upload iOS IPA to TestFlight
+      - name: Upload to TestFlight
         working-directory: ios
-        env:
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        shell: bash
         run: bundle exec fastlane ios beta
 
-      - name: Upload gym logs on failure
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: ignore
+
+      - name: Upload fastlane gym logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: ios-gym-logs
-          path: ~/Library/Logs/gym
+          name: fastlane-gym-logs
+          path: ~/Library/Logs/gym/*.log
+          if-no-files-found: ignore
