@@ -184,5 +184,12 @@ ruby -e 'p=ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"]; puts File.exist?(p.to_
 
 ## Optional Features
 
-- Add `ITSAppUsesNonExemptEncryption=false` only if the user explicitly requests encryption compliance handling and the app truly qualifies.
+- For iOS builds, if the user wants to avoid manually accepting export compliance for each uploaded build and the app qualifies for non-exempt encryption, add this to `ios/Runner/Info.plist`:
+
+```xml
+<key>ITSAppUsesNonExemptEncryption</key>
+<false/>
+```
+
+- Do not add or change `ITSAppUsesNonExemptEncryption` unless the user explicitly requests this encryption compliance handling.
 - Configure external testers/groups only when the user explicitly asks. External distribution generally requires waiting for build processing and may require `distribute_external`, `groups`, and a changelog.

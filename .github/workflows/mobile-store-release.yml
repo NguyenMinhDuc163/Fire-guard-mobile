@@ -35,7 +35,7 @@ env:
   # Flip these defaults in this root workflow when you want push-to-main
   # releases to build only one platform.
   # RUN_IOS/RUN_ANDROID: "true" to build, "false" to skip.
-  RUN_IOS: "false"
+  RUN_IOS: "true"
   RUN_ANDROID: "true"
   # ANDROID_TRACK: internal, alpha, beta, production.
   ANDROID_TRACK: "internal"
