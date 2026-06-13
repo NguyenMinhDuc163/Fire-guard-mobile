@@ -1,0 +1,143 @@
+require "shellwords"
+
+default_platform(:android)
+
+PROJECT_ROOT = File.expand_path("../..", __dir__)
+AAB_PATH = File.join(PROJECT_ROOT, "build", "app", "outputs", "bundle", "release", "app-release.aab")
+PUBSPEC_PATH = File.join(PROJECT_ROOT, "pubspec.yaml")
+DEFAULT_TRACK = "internal"
+DEFAULT_RELEASE_STATUS = "completed"
+
+def project_root_sh(command)
+  sh("cd #{PROJECT_ROOT.shellescape} && #{command}")
+end
+
+def flutter_bin
+  fvm_flutter = File.join(PROJECT_ROOT, ".fvm", "flutter_sdk", "bin", "flutter")
+  return fvm_flutter.shellescape if File.executable?(fvm_flutter)
+
+  "flutter"
+end
+
+def appfile_value(key)
+  CredentialsManager::AppfileConfig.try_fetch_value(key)
+end
+
+def expanded_path_from_android(path)
+  return nil if path.to_s.empty?
+
+  File.expand_path(path, File.expand_path("..", __dir__))
+end
+
+def require_existing_file(path, label)
+  UI.user_error!("#{label} is not configured.") if path.to_s.empty?
+
+  expanded_path = expanded_path_from_android(path)
+  UI.user_error!("#{label} not found at #{expanded_path}") unless File.file?(expanded_path)
+
+  expanded_path
+end
+
+def pubspec_version_parts
+  version_line = File.readlines(PUBSPEC_PATH).find { |line| line.match?(/^\s*version:/) }
+  UI.user_error!("Flutter version is not configured in #{PUBSPEC_PATH}") if version_line.to_s.empty?
+
+  match = version_line.match(/^\s*version:\s*([^\s+]+)(?:\+(\d+))?/)
+  UI.user_error!("Flutter version must use format x.y.z+N in #{PUBSPEC_PATH}") unless match
+
+  [match[1], match[2]]
+end
+
+def play_release_name(options)
+  pubspec_build_name, pubspec_build_number = pubspec_version_parts
+  build_name = (options[:build_name] || pubspec_build_name).to_s
+  build_number = (options[:build_number] || pubspec_build_number).to_s
+
+  UI.user_error!("Android build name is not configured.") if build_name.empty?
+  UI.user_error!("Android build number is not configured.") if build_number.empty?
+
+  "#{build_number} (#{build_name})"
+end
+
+platform :android do
+  desc "Check local Android release setup"
+  lane :doctor do
+    package_name = appfile_value(:package_name)
+    json_key = appfile_value(:json_key_file)
+
+    UI.user_error!("Android package name is not configured.") if package_name.to_s.empty?
+    require_existing_file("key.properties", "Android signing file")
+    require_existing_file(json_key, "Google Play service account JSON")
+
+    UI.success("Android package: #{package_name}")
+    UI.success("Signing file: #{File.join(File.expand_path('..', __dir__), 'key.properties')}")
+    UI.success("Google Play JSON: #{expanded_path_from_android(json_key)}")
+  end
+
+  desc "Run Flutter tests"
+  lane :test do
+    project_root_sh("#{flutter_bin} test")
+  end
+
+  desc "Build signed Android App Bundle"
+  lane :build do |options|
+    build_args = []
+    build_args << "--build-name #{options[:build_name].shellescape}" if options[:build_name]
+    build_args << "--build-number #{options[:build_number].to_s.shellescape}" if options[:build_number]
+
+    project_root_sh("#{flutter_bin} pub get")
+    project_root_sh("#{flutter_bin} build appbundle --release --no-pub #{build_args.join(' ')}".strip)
+
+    UI.success("AAB generated at #{AAB_PATH}")
+  end
+
+  desc "Validate Google Play upload without publishing"
+  lane :validate do |options|
+    track = options[:track] || DEFAULT_TRACK
+
+    doctor
+    build(options)
+
+    upload_to_play_store(
+      track: track,
+      aab: AAB_PATH,
+      version_name: play_release_name(options),
+      validate_only: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Upload a new build to Google Play internal testing"
+  lane :deploy_internal do |options|
+    deploy(options.merge(track: "internal"))
+  end
+
+  desc "Upload a new build to Google Play closed testing"
+  lane :deploy_closed do |options|
+    deploy(options.merge(track: "alpha", release_status: "completed"))
+  end
+
+  desc "Upload a new build to Google Play"
+  lane :deploy do |options|
+    track = options[:track] || DEFAULT_TRACK
+    release_status = options[:release_status] || DEFAULT_RELEASE_STATUS
+
+    doctor
+    build(options)
+
+    upload_to_play_store(
+      track: track,
+      aab: AAB_PATH,
+      version_name: play_release_name(options),
+      release_status: release_status,
+      changes_not_sent_for_review: false,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

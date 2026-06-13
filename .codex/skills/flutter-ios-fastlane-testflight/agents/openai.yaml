@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter iOS Fastlane TestFlight"
+  short_description: "Safely configure Flutter iOS TestFlight."
+  default_prompt: "Use this skill when configuring or debugging this project's Flutter iOS Fastlane/TestFlight build, upload, signing, API key, versioning, or App Store Connect issue."

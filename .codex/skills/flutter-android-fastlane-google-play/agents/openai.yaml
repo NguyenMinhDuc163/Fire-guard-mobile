@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Android Fastlane Google Play"
+  short_description: "Configure Flutter Android Google Play Fastlane."
+  default_prompt: "Use this skill when setting up, reviewing, or debugging Flutter Android Fastlane lanes for building app bundles and uploading to Google Play internal or closed testing."

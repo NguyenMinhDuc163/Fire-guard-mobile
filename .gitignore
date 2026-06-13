@@ -47,3 +47,15 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+
+# Store release secrets and signing assets
+android/fastlane/play-store-credentials*.json
+android/key.properties
+**/*.keystore
+**/*.jks
+*.p8
+*.p12
+*.mobileprovision
+ios/fastlane/.env
+ios/.bundle/
+ios/vendor/bundle/

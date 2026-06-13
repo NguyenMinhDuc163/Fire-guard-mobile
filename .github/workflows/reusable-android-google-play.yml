@@ -1,0 +1,118 @@
+name: Reusable Android Google Play
+
+on:
+  workflow_call:
+    inputs:
+      commit_sha:
+        required: true
+        type: string
+      android_track:
+        required: true
+        type: string
+      android_release_status:
+        required: true
+        type: string
+    secrets:
+      GOOGLE_PLAY_SERVICE_ACCOUNT_JSON:
+        required: true
+      ANDROID_KEYSTORE_BASE64:
+        required: true
+      ANDROID_KEY_PROPERTIES_BASE64:
+        required: true
+
+jobs:
+  android_google_play:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout bumped commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha }}
+
+      - name: Resolve Flutter version
+        id: flutter
+        shell: bash
+        run: |
+          version="$(ruby -rjson -e 'path=".fvmrc"; if File.exist?(path); raw=File.read(path).strip; begin; data=JSON.parse(raw); puts(data["flutter"] || data["flutterSdkVersion"] || raw); rescue JSON::ParserError; puts raw; end; else; puts "3.29.2"; end')"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Flutter version: ${version}"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.flutter.outputs.version }}
+          cache: true
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          working-directory: android
+          bundler-cache: true
+
+      - name: Cache Android SDK packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/lib/android/sdk/ndk/27.0.12077973
+            /usr/local/lib/android/sdk/platforms/android-36
+          key: ${{ runner.os }}-android-sdk-ndk-27.0.12077973-platform-36-v1
+
+      - name: Recreate Android release secrets
+        shell: bash
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
+        run: |
+          missing=0
+          for name in GOOGLE_PLAY_SERVICE_ACCOUNT_JSON ANDROID_KEYSTORE_BASE64 ANDROID_KEY_PROPERTIES_BASE64; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::${name} is not set"
+              missing=1
+            else
+              echo "${name}: present"
+            fi
+          done
+          [ "$missing" -eq 0 ]
+
+          mkdir -p android/fastlane
+          printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" > android/fastlane/play-store-credentials.json
+          ruby -rjson -e 'JSON.parse(File.read("android/fastlane/play-store-credentials.json")); puts "Google Play JSON parse: ok"'
+
+          printf '%s' "$ANDROID_KEY_PROPERTIES_BASE64" | base64 --decode > android/key.properties
+          store_file="$(awk -F= '/^storeFile=/{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}' android/key.properties)"
+          if [ -z "$store_file" ]; then
+            echo "::error::storeFile is missing from android/key.properties"
+            exit 1
+          fi
+
+          case "$store_file" in
+            /*) keystore_path="$store_file" ;;
+            *) keystore_path="android/app/$store_file" ;;
+          esac
+
+          mkdir -p "$(dirname "$keystore_path")"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$keystore_path"
+          echo "android/key.properties exists: yes"
+          echo "keystore file exists: yes"
+          echo "Google Play JSON bytes: $(wc -c < android/fastlane/play-store-credentials.json)"
+
+      - name: Verify Android package id
+        shell: bash
+        run: |
+          app_id="$(ruby -ne 'puts $1 if /applicationId\s*(?:=)?\s*"([^"]+)"/ =~ $_' android/app/build.gradle android/app/build.gradle.kts 2>/dev/null | head -1)"
+          fastlane_id="$(ruby -ne 'puts $1 if /package_name\("([^"]+)"\)/ =~ $_' android/fastlane/Appfile)"
+          echo "Gradle applicationId: ${app_id}"
+          echo "Fastlane package_name: ${fastlane_id}"
+          test "$app_id" = "$fastlane_id"
+
+      - name: Deploy Android App Bundle to Google Play
+        working-directory: android
+        run: bundle exec fastlane android deploy track:${{ inputs.android_track }} release_status:${{ inputs.android_release_status }}

@@ -1,0 +1,147 @@
+default_platform(:ios)
+
+require "rbconfig"
+require "shellwords"
+
+APP_IDENTIFIER = "com.nguyenduc.fireGuard"
+TEAM_ID = "Q236Z72BGN"
+APP_ARTIFACT_NAME = "Fire-Guard"
+
+def bundle_command
+  ENV["BUNDLE_BIN"] || File.join(File.dirname(RbConfig.ruby), "bundle")
+end
+
+def pubspec_version
+  pubspec_path = File.expand_path("../../pubspec.yaml", __dir__)
+  version_line = File.readlines(pubspec_path).find { |line| line.match?(/\Aversion:/) }
+  match = version_line&.match(/\Aversion:\s*([^\s+#]+)(?:\+([^\s#]+))?/)
+
+  UI.user_error!("Missing or invalid version in #{pubspec_path}") unless match
+
+  {
+    name: match[1],
+    number: match[2] || "1"
+  }
+end
+
+def flutter_command
+  return ENV["FLUTTER_BIN"] unless ENV["FLUTTER_BIN"].to_s.strip.empty?
+
+  fvm = `command -v fvm`.strip
+  return "#{fvm} flutter" unless fvm.empty?
+
+  generated_config = File.expand_path("../Flutter/Generated.xcconfig", __dir__)
+  if File.exist?(generated_config)
+    flutter_root = File.readlines(generated_config).find { |line| line.start_with?("FLUTTER_ROOT=") }&.split("=", 2)&.last&.strip
+    flutter_bin = File.join(flutter_root, "bin", "flutter") if flutter_root
+    return flutter_bin if flutter_bin && File.executable?(flutter_bin)
+  end
+
+  "flutter"
+end
+
+def app_store_connect_key_path
+  ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"].to_s.strip
+end
+
+def xcodebuild_auth_args
+  key_path = app_store_connect_key_path
+  return "-allowProvisioningUpdates" if key_path.empty?
+
+  [
+    "-allowProvisioningUpdates",
+    "-authenticationKeyPath #{Shellwords.escape(key_path)}",
+    "-authenticationKeyID #{Shellwords.escape(ENV.fetch("APP_STORE_CONNECT_KEY_ID"))}",
+    "-authenticationKeyIssuerID #{Shellwords.escape(ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"))}"
+  ].join(" ")
+end
+
+def ci_provisioning_profile_name
+  ENV["IOS_PROVISIONING_PROFILE_NAME"].to_s.strip
+end
+
+def build_export_options
+  options = {
+    method: "app-store",
+    teamID: TEAM_ID,
+    uploadSymbols: true,
+    uploadBitcode: false,
+    manageAppVersionAndBuildNumber: false
+  }
+
+  profile_name = ci_provisioning_profile_name
+  if profile_name.empty?
+    options[:signingStyle] = "automatic"
+  else
+    options[:signingStyle] = "manual"
+    options[:provisioningProfiles] = {
+      APP_IDENTIFIER => profile_name
+    }
+  end
+
+  options
+end
+
+def configure_ci_code_signing
+  profile_name = ci_provisioning_profile_name
+  return if profile_name.empty?
+
+  update_code_signing_settings(
+    path: "Runner.xcodeproj",
+    use_automatic_signing: false,
+    team_id: TEAM_ID,
+    targets: ["Runner"],
+    build_configurations: ["Release"],
+    code_sign_identity: "Apple Distribution",
+    profile_name: profile_name
+  )
+end
+
+platform :ios do
+  before_all do
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] ||= "120"
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] ||= "5"
+  end
+
+  desc "Build signed iOS IPA locally"
+  lane :build do
+    version = pubspec_version
+
+    Dir.chdir("..") do
+      sh("#{flutter_command} pub get")
+    end
+
+    sh("#{bundle_command} exec pod install --deployment")
+    configure_ci_code_signing
+
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      configuration: "Release",
+      export_options: build_export_options,
+      output_directory: "../build/ios/ipa",
+      output_name: "#{APP_ARTIFACT_NAME}-#{version[:name]}-#{version[:number]}.ipa",
+      clean: true,
+      include_bitcode: false,
+      include_symbols: true,
+      skip_profile_detection: true
+    )
+  end
+
+  desc "Build & upload iOS app to TestFlight"
+  lane :beta do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("APP_STORE_CONNECT_KEY_ID"),
+      issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
+      key_filepath: ENV.fetch("APP_STORE_CONNECT_API_KEY_KEY_FILEPATH")
+    )
+
+    build
+
+    upload_to_testflight(
+      api_key: api_key,
+      app_identifier: APP_IDENTIFIER,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end

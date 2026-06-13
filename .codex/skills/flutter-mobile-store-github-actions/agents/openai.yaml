@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Mobile Store GitHub Actions"
+  short_description: "Configure mobile store GitHub Actions."
+  default_prompt: "Use this skill when setting up, reviewing, or debugging this project's Flutter GitHub Actions mobile release workflow for bumping pubspec.yaml and uploading iOS TestFlight plus Android Google Play builds."

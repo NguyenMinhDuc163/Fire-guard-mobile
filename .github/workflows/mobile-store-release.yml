@@ -1,0 +1,142 @@
+name: Mobile Store Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      run_ios:
+        description: "Build and upload iOS TestFlight"
+        type: boolean
+        default: false
+      run_android:
+        description: "Build and upload Android Google Play"
+        type: boolean
+        default: true
+      android_track:
+        description: "Google Play track"
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+          - production
+        default: internal
+      android_release_status:
+        description: "Google Play release status"
+        type: choice
+        options:
+          - completed
+          - draft
+        default: completed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mobile-store-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  RUN_IOS: "false"
+  RUN_ANDROID: "true"
+  ANDROID_TRACK: "internal"
+  ANDROID_RELEASE_STATUS: "completed"
+
+jobs:
+  release_config:
+    runs-on: ubuntu-24.04
+    outputs:
+      run_ios: ${{ steps.config.outputs.run_ios }}
+      run_android: ${{ steps.config.outputs.run_android }}
+      android_track: ${{ steps.config.outputs.android_track }}
+      android_release_status: ${{ steps.config.outputs.android_release_status }}
+    steps:
+      - name: Resolve release config
+        id: config
+        shell: bash
+        run: |
+          run_ios="${RUN_IOS}"
+          run_android="${RUN_ANDROID}"
+          android_track="${ANDROID_TRACK}"
+          android_release_status="${ANDROID_RELEASE_STATUS}"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            run_ios="${{ inputs.run_ios }}"
+            run_android="${{ inputs.run_android }}"
+            android_track="${{ inputs.android_track }}"
+            android_release_status="${{ inputs.android_release_status }}"
+          fi
+
+          {
+            echo "run_ios=${run_ios}"
+            echo "run_android=${run_android}"
+            echo "android_track=${android_track}"
+            echo "android_release_status=${android_release_status}"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "iOS enabled: ${run_ios}"
+          echo "Android enabled: ${run_android}"
+          echo "Android track: ${android_track}"
+          echo "Android release status: ${android_release_status}"
+
+  bump_version:
+    runs-on: ubuntu-24.04
+    needs: release_config
+    if: ${{ needs.release_config.outputs.run_ios == 'true' || needs.release_config.outputs.run_android == 'true' }}
+    outputs:
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump Flutter build number
+        shell: bash
+        run: |
+          ruby - <<'RUBY'
+          path = "pubspec.yaml"
+          text = File.read(path)
+          updated = text.sub(/^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$/) do
+            "version: #{$1}+#{$2.to_i + 1}"
+          end
+
+          abort "pubspec.yaml version must use format x.y.z+n" if updated == text
+
+          File.write(path, updated)
+          RUBY
+
+      - name: Commit version bump
+        id: commit
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pubspec.yaml
+          git commit -m "chore: bump mobile build number [skip ci]"
+          git push
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  build_testflight:
+    needs:
+      - release_config
+      - bump_version
+    if: ${{ needs.release_config.outputs.run_ios == 'true' }}
+    uses: ./.github/workflows/reusable-ios-testflight.yml
+    with:
+      commit_sha: ${{ needs.bump_version.outputs.commit_sha }}
+    secrets: inherit
+
+  build_google_play:
+    needs:
+      - release_config
+      - bump_version
+    if: ${{ needs.release_config.outputs.run_android == 'true' }}
+    uses: ./.github/workflows/reusable-android-google-play.yml
+    with:
+      commit_sha: ${{ needs.bump_version.outputs.commit_sha }}
+      android_track: ${{ needs.release_config.outputs.android_track }}
+      android_release_status: ${{ needs.release_config.outputs.android_release_status }}
+    secrets: inherit
