@@ -20,6 +20,8 @@ on:
         required: true
       IOS_APPSTORE_PROVISIONING_PROFILE_BASE64:
         required: true
+      ENV_FILE_CONTENTS:
+        required: true
 
 jobs:
   build_testflight:
@@ -45,6 +47,7 @@ jobs:
           IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 }}
           IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
           IOS_APPSTORE_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_APPSTORE_PROVISIONING_PROFILE_BASE64 }}
+          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
         run: |
           set -euo pipefail
           missing=0
@@ -54,7 +57,8 @@ jobs:
             APP_STORE_CONNECT_API_KEY_P8 \
             IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 \
             IOS_DISTRIBUTION_CERTIFICATE_PASSWORD \
-            IOS_APPSTORE_PROVISIONING_PROFILE_BASE64
+            IOS_APPSTORE_PROVISIONING_PROFILE_BASE64 \
+            ENV_FILE_CONTENTS
           do
             if [ -z "${!name:-}" ]; then
               echo "::error::$name is not set"
@@ -65,6 +69,15 @@ jobs:
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
+
+      - name: Write Flutter dotenv file
+        shell: bash
+        env:
+          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$ENV_FILE_CONTENTS" > .env
+          chmod 600 .env
 
       - name: Write App Store Connect API key
         shell: bash

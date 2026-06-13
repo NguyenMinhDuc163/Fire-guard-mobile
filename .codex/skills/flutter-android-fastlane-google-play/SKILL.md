@@ -10,6 +10,7 @@ description: Configure, review, or debug Flutter Android Fastlane delivery to Go
 - Do not run `flutter build appbundle`, `fastlane android deploy*`, or any upload command unless the user explicitly asks to build or upload.
 - Prefer minimal configuration. Do not add many environment variables. Use fixed local paths unless the user asks for a configurable setup.
 - Never print secret values from `play-store-credentials.json`, keystores, passwords, or `key.properties`. Only report existence, path, readability, and missing keys.
+- If `pubspec.yaml` declares `.env` as a Flutter asset, CI must create `.env` from a GitHub secret such as `ENV_FILE_CONTENTS` before running `flutter build appbundle`.
 - Treat `android/key.properties` and `android/fastlane/play-store-credentials*.json` as local secrets that must be ignored by Git.
 - Use `ruby -c`, `bundle install`, `bundle exec fastlane lanes`, and `bundle exec fastlane android doctor` as non-uploading validation.
 - Use FVM automatically when `.fvm/flutter_sdk/bin/flutter` exists; otherwise use `flutter` from PATH.
@@ -307,6 +308,16 @@ Google Play release name = 48 (1.0.1)
 ```
 
 ## GitHub Actions Android SDK/NDK Cache Pitfall
+
+If Fastlane reports only that `flutter build appbundle --release --no-pub` exited 1, inspect the Gradle/Flutter output above the Fastlane summary. For this project, this message means the runner did not create `.env`:
+
+```text
+Error detected in pubspec.yaml:
+No file or variants found for asset: .env.
+Target aot_android_asset_bundle failed: Exception: Failed to bundle asset files.
+```
+
+Fix the workflow by writing `.env` from `ENV_FILE_CONTENTS` before the Fastlane deploy step, and keep the real `.env` out of Git.
 
 If Android CI logs repeatedly show package installation during `flutter build appbundle`, the slow part may be Android SDK package downloads rather than Dart/Gradle compile. Cache the SDK directories that match the project; do not assume fixed versions.
 

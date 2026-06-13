@@ -24,6 +24,8 @@ on:
         required: true
       ANDROID_KEY_PROPERTIES_BASE64:
         required: true
+      ENV_FILE_CONTENTS:
+        required: true
 
 jobs:
   build_google_play:
@@ -46,13 +48,15 @@ jobs:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
+          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
         run: |
           set -euo pipefail
           missing=0
           for name in \
             GOOGLE_PLAY_SERVICE_ACCOUNT_JSON \
             ANDROID_KEYSTORE_BASE64 \
-            ANDROID_KEY_PROPERTIES_BASE64
+            ANDROID_KEY_PROPERTIES_BASE64 \
+            ENV_FILE_CONTENTS
           do
             if [ -z "${!name:-}" ]; then
               echo "::error::$name is not set"
@@ -63,6 +67,15 @@ jobs:
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
+
+      - name: Write Flutter dotenv file
+        shell: bash
+        env:
+          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$ENV_FILE_CONTENTS" > .env
+          chmod 600 .env
 
       - name: Write Android signing and Play credentials
         shell: bash

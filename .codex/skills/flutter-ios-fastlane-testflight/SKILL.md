@@ -160,6 +160,18 @@ For `xcodebuild -exportArchive` exit status `64` after `ARCHIVE SUCCEEDED`:
 - Do not pass App Store Connect authentication flags through `build_app(xcargs:)` or `export_xcargs` when a certificate/profile is already installed.
 - With Fastlane 2.236.x, keep the export method value as `app-store`; Fastlane does not accept Xcode 26's newer `app-store-connect` method name yet.
 
+For `bundle exec pod install --deployment` failing with `uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger` on GitHub Actions:
+
+- Treat this as a Ruby/CocoaPods dependency loading issue, not an iOS signing or Flutter compile issue.
+- Ensure the iOS Fastfile sets `ENV["RUBYOPT"]` to include `-rlogger` before running CocoaPods so the `pod` subprocess loads Ruby's `logger` library.
+- Keep `gem "cocoapods", "1.16.2"` and `gem "ostruct"` in `ios/Gemfile`; add `gem "logger"` only if the lockfile does not already include `logger`.
+
+For `pod install --deployment` failing with `There were changes to the lockfile in deployment mode`:
+
+- Treat this as an out-of-sync `ios/Podfile.lock`, not a signing issue.
+- Run `bundle exec pod install` locally from `ios/`, then rerun `bundle exec pod install --deployment` to verify it is stable.
+- Commit the updated `ios/Podfile.lock` with the Fastlane/workflow fix.
+
 For TestFlight duplicate build errors:
 
 - Increase the build number after `+` in `pubspec.yaml`, e.g. `version: 1.0.0+39`.

@@ -101,6 +101,8 @@ platform :ios do
   before_all do
     ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] ||= "120"
     ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] ||= "5"
+    rubyopt = ENV["RUBYOPT"].to_s.split
+    ENV["RUBYOPT"] = (["-rlogger"] + rubyopt).uniq.join(" ")
   end
 
   desc "Build signed iOS IPA locally"
