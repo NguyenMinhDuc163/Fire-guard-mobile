@@ -180,8 +180,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sudo xcode-select -s /Applications/Xcode.app
+
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+          sw_vers
+          xcode-select -p
           xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          xcodebuild -showsdks
 
       - name: Read Flutter version
         id: flutter_version
@@ -219,6 +225,12 @@ jobs:
           flutter-version: ${{ steps.flutter_version.outputs.version }}
           cache: true
 
+      - name: Print Flutter doctor
+        shell: bash
+        run: |
+          set -euo pipefail
+          flutter --version
+          flutter doctor -v
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
