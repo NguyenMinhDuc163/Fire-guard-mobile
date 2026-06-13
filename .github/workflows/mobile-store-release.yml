@@ -36,7 +36,7 @@ env:
   # releases to build only one platform.
   # RUN_IOS/RUN_ANDROID: "true" to build, "false" to skip.
   RUN_IOS: "true"
-  RUN_ANDROID: "true"
+  RUN_ANDROID: "false"
   # ANDROID_TRACK: internal, alpha, beta, production.
   ANDROID_TRACK: "internal"
   # ANDROID_RELEASE_STATUS: draft, completed.

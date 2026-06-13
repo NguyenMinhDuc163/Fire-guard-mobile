@@ -250,6 +250,30 @@ jobs:
           path: build/ios/ipa/*.ipa
           if-no-files-found: ignore
 
+      - name: Print fastlane gym failure log
+        if: failure()
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          logs=("$HOME"/Library/Logs/gym/*.log)
+
+          if [ ${#logs[@]} -eq 0 ]; then
+            echo "No fastlane gym logs found"
+            exit 0
+          fi
+
+          for log in "${logs[@]}"; do
+            echo "::group::$(basename "$log") - important errors"
+            grep -nEi "error:|fatal error:|ARCHIVE FAILED|EXPORT FAILED|No profiles|Provisioning profile|Signing certificate|CodeSign|SwiftCompile|CompileSwift|PhaseScriptExecution|clang: error|ld:|xcodebuild" "$log" | tail -n 150 || true
+            echo "::endgroup::"
+
+            echo "::group::$(basename "$log") - tail"
+            tail -n 250 "$log"
+            echo "::endgroup::"
+          done
+
       - name: Upload fastlane gym logs
         if: failure()
         uses: actions/upload-artifact@v4
