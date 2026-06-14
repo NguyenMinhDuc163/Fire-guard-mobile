@@ -44,28 +44,15 @@ def app_store_connect_key_path
   ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"].to_s.strip
 end
 
-def xcodebuild_auth_args
-  key_path = app_store_connect_key_path
-  return "-allowProvisioningUpdates" if key_path.empty?
-
-  [
-    "-allowProvisioningUpdates",
-    "-authenticationKeyPath #{Shellwords.escape(key_path)}",
-    "-authenticationKeyID #{Shellwords.escape(ENV.fetch("APP_STORE_CONNECT_KEY_ID"))}",
-    "-authenticationKeyIssuerID #{Shellwords.escape(ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"))}"
-  ].join(" ")
-end
-
 def ci_provisioning_profile_name
   ENV["IOS_PROVISIONING_PROFILE_NAME"].to_s.strip
 end
 
 def build_export_options
   options = {
-    method: "app-store",
+    method: "app-store-connect",
     teamID: TEAM_ID,
     uploadSymbols: true,
-    uploadBitcode: false,
     manageAppVersionAndBuildNumber: false
   }
 
@@ -124,7 +111,6 @@ platform :ios do
       output_directory: "../build/ios/ipa",
       output_name: "#{APP_ARTIFACT_NAME}-#{version[:name]}-#{version[:number]}.ipa",
       clean: true,
-      include_bitcode: false,
       include_symbols: true,
       skip_profile_detection: true
     )

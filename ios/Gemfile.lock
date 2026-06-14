@@ -304,6 +304,7 @@ PLATFORMS
 DEPENDENCIES
   cocoapods (= 1.16.2)
   fastlane
+  logger
   ostruct
 
 BUNDLED WITH
