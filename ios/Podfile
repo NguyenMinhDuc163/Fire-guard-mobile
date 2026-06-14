@@ -68,6 +68,13 @@ post_install do |installer|
   end
 
   firebase_import_patches = {
+    'firebase_auth' => {
+      'replacement' => "@import FirebaseCore;\n@import FirebaseAuth;",
+      'patterns' => [
+        '#import <Firebase/Firebase.h>',
+        "#import <FirebaseCore/FirebaseCore.h>\n#import <FirebaseAuth/FirebaseAuth.h>",
+      ],
+    },
     'firebase_app_check' => {
       'replacement' => "@import FirebaseCore;\n@import FirebaseAppCheck;",
       'patterns' => [
