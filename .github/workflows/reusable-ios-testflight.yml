@@ -277,13 +277,18 @@ jobs:
           fi
 
           for log in "${logs[@]}"; do
-            echo "::group::$(basename "$log") - important errors"
-            grep -nEi "error:|fatal error:|ARCHIVE FAILED|EXPORT FAILED|No profiles|Provisioning profile|Signing certificate|CodeSign|SwiftCompile|CompileSwift|PhaseScriptExecution|clang: error|ld:|xcodebuild" "$log" | tail -n 150 || true
-            echo "::endgroup::"
+            echo "====== $(basename "$log") — head (first 100 lines) ======"
+            head -n 100 "$log" || true
 
-            echo "::group::$(basename "$log") - tail"
-            tail -n 250 "$log"
-            echo "::endgroup::"
+            echo ""
+            echo "====== $(basename "$log") — important errors ======"
+            grep -nEi \
+              "error:|fatal error:|ARCHIVE FAILED|EXPORT FAILED|Build FAILED|No profiles|Provisioning profile|Signing certificate|CodeSign|SwiftCompile|CompileSwift|PhaseScriptExecution|clang: error|ld:|xcodebuild|failed|abort|cannot|invalid|missing|unsatisfied|requires|incompatible" \
+              "$log" | tail -n 200 || true
+
+            echo ""
+            echo "====== $(basename "$log") — tail (last 300 lines) ======"
+            tail -n 300 "$log"
           done
 
       - name: Upload fastlane gym logs
