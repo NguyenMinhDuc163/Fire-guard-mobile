@@ -50,7 +50,7 @@ end
 
 def build_export_options
   options = {
-    method: "app-store-connect",
+    method: "app-store",
     teamID: TEAM_ID,
     uploadSymbols: true,
     manageAppVersionAndBuildNumber: false
