@@ -100,7 +100,7 @@ platform :ios do
       sh("#{flutter_command} pub get")
     end
 
-    sh("#{bundle_command} exec pod install --deployment")
+    sh("#{bundle_command} exec pod install")
     configure_ci_code_signing
 
     build_app(
