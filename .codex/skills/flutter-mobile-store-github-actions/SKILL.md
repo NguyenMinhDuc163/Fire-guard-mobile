@@ -146,6 +146,9 @@ The Android workflow should:
   - `android/key.properties`
   - the keystore path declared by `storeFile` in `android/key.properties`
   - `android/fastlane/play-store-credentials.json`
+- Upload build diagnostics artifacts after the deploy step with `if: always()`:
+  - AAB from `build/app/outputs/bundle/release/*.aab`
+  - native libs from `build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib`
 - Run Fastlane from `android/`:
 
 ```bash
@@ -329,6 +332,11 @@ The iOS workflow should:
 ```bash
 bundle exec fastlane ios beta
 ```
+
+- Keep the Fastlane archive path stable, e.g. `archive_path: "../build/ios/archive/Runner.xcarchive"`.
+- Upload build diagnostics artifacts after the TestFlight step with `if: always()`:
+  - IPA from `build/ios/ipa/*.ipa`
+  - dSYM files from `build/ios/archive/Runner.xcarchive/dSYMs`
 
 Expected iOS secrets:
 

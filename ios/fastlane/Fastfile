@@ -108,6 +108,7 @@ platform :ios do
       scheme: "Runner",
       configuration: "Release",
       export_options: build_export_options,
+      archive_path: "../build/ios/archive/Runner.xcarchive",
       output_directory: "../build/ios/ipa",
       output_name: "#{APP_ARTIFACT_NAME}-#{version[:name]}-#{version[:number]}.ipa",
       clean: true,

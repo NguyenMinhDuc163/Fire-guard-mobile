@@ -254,6 +254,14 @@ jobs:
         shell: bash
         run: bundle exec fastlane ios beta
 
+      - name: Upload dSYM artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-dsyms
+          path: build/ios/archive/Runner.xcarchive/dSYMs
+          if-no-files-found: warn
+
       - name: Upload IPA artifact
         if: always()
         uses: actions/upload-artifact@v4

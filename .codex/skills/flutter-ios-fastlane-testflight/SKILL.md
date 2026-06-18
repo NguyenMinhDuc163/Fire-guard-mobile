@@ -82,6 +82,7 @@ Do not use `APP_STORE_CONNECT_API_KEY_PATH` for a raw `.p8` file. Fastlane/Pilot
 - Let the Runner target own `PRODUCT_BUNDLE_IDENTIFIER` through the Xcode project.
 - If `flutter` is not in PATH, support FVM or `FLUTTER_ROOT/bin/flutter`, but do not hardcode one user's Flutter path unless the repo already does.
 - For local build output, naming the IPA from `pubspec.yaml` is safe, e.g. `EdTech-1.0.0-38.ipa`; do not rely on output filename as the actual app version.
+- In GitHub Actions, keep `build_app` archive output stable with `archive_path: "../build/ios/archive/Runner.xcarchive"` so dSYM upload can use a deterministic path.
 
 ## GitHub Actions Cache Guidance
 
@@ -116,6 +117,20 @@ bundle exec pod install --deployment
 over `pod install --clean-install` when `ios/Podfile.lock` is committed. `--deployment` respects the lockfile and fails if pods are out of sync, which is useful for reproducible CI. Keep `build_app(clean: true)` if a clean archive is desired; it is separate from CocoaPods dependency caching.
 
 Do not cache Xcode `DerivedData` for signed App Store/TestFlight builds unless logs prove compilation dominates and the user accepts larger, more fragile caches.
+
+Upload release diagnostics after the TestFlight step with `if: always()`:
+
+```yaml
+- name: Upload dSYM artifact
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: ios-dsyms
+    path: build/ios/archive/Runner.xcarchive/dSYMs
+    if-no-files-found: warn
+```
+
+Keep the existing IPA artifact upload as well; dSYMs are needed later to symbolicate iOS crash logs.
 
 ## Debugging Upload Errors
 
@@ -158,7 +173,7 @@ For `xcodebuild -exportArchive` exit status `64` after `ARCHIVE SUCCEEDED`:
 - Treat it as invalid export command arguments.
 - Remember Fastlane/gym appends `xcargs` to the `-exportArchive` command too, not only archive/build.
 - Do not pass App Store Connect authentication flags through `build_app(xcargs:)` or `export_xcargs` when a certificate/profile is already installed.
-- With Xcode 26 (and Xcode 16+), use export method `app-store-connect` instead of the deprecated `app-store`. Fastlane 2.227+ accepts `app-store-connect`; using the old `app-store` value causes `xcodebuild -exportArchive` to fail with a deprecation error on Xcode 26.
+- With Fastlane 2.236.x, keep the export method value as `app-store`; Fastlane does not accept Xcode 26's newer `app-store-connect` method name yet.
 
 For `bundle exec pod install --deployment` failing with `uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger` on GitHub Actions:
 

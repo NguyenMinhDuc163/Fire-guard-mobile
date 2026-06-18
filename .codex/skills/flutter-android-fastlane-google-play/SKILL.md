@@ -356,6 +356,22 @@ key: ${{ runner.os }}-android-sdk-ndk-27.0.12077973-platform-33-v1
 
 This cache is safe because it stores SDK/NDK toolchain packages, not app source or release build output. Change the key/path when `ndkVersion` or the required Android SDK platform changes.
 
+## Android Native Libs Artifact
+
+Upload release native libraries after the Google Play deploy step with `if: always()` so crash/native logs can be traced later:
+
+```yaml
+- name: Upload Android symbol artifact
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: symbol
+    path: build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
+    if-no-files-found: warn
+```
+
+Keep the existing AAB artifact upload as well. This artifact should contain the built ABI folders and native `.so` files from the release build.
+
 ## Lane Commands
 
 Run from `android/`:

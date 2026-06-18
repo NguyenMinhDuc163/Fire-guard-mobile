@@ -244,6 +244,14 @@ jobs:
         shell: bash
         run: bundle exec fastlane android deploy track:${{ inputs.android_track }} release_status:${{ inputs.android_release_status }}
 
+      - name: Upload Android symbol artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbol
+          path: build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
+          if-no-files-found: warn
+
       - name: Upload AAB artifact
         if: always()
         uses: actions/upload-artifact@v4
