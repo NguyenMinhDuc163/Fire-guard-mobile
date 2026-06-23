@@ -155,6 +155,7 @@ jobs:
 
           profile_team=$(/usr/libexec/PlistBuddy -c "Print TeamIdentifier:0" "$profile_plist")
           profile_app_id=$(/usr/libexec/PlistBuddy -c "Print Entitlements:application-identifier" "$profile_plist")
+          profile_aps_environment=$(/usr/libexec/PlistBuddy -c "Print Entitlements:aps-environment" "$profile_plist" 2>/dev/null || true)
           profile_bundle_id="${profile_app_id#*.}"
           expected_bundle_id="com.nguyenduc.fireGuard"
           expected_team_id="Q236Z72BGN"
@@ -163,6 +164,7 @@ jobs:
           echo "Provisioning profile UUID: $profile_uuid"
           echo "Provisioning profile team id: $profile_team"
           echo "Provisioning profile bundle id: $profile_bundle_id"
+          echo "Provisioning profile aps-environment: ${profile_aps_environment:-missing}"
           echo "Expected iOS bundle id: $expected_bundle_id"
           echo "Expected Apple team id: $expected_team_id"
 
@@ -173,6 +175,16 @@ jobs:
 
           if [ "$profile_team" != "$expected_team_id" ]; then
             echo "::error::Provisioning profile team id does not match ios/fastlane/Appfile"
+            exit 1
+          fi
+
+          if [ -z "$profile_aps_environment" ]; then
+            echo "::error::Provisioning profile does not include the aps-environment entitlement. Regenerate the App Store provisioning profile after enabling Push Notifications, then update IOS_APPSTORE_PROVISIONING_PROFILE_BASE64."
+            exit 1
+          fi
+
+          if [ "$profile_aps_environment" != "production" ]; then
+            echo "::error::App Store/TestFlight provisioning profile must have aps-environment=production, got '$profile_aps_environment'. Export a new App Store distribution provisioning profile and update IOS_APPSTORE_PROVISIONING_PROFILE_BASE64."
             exit 1
           fi
 
