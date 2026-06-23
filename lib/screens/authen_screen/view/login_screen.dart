@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:fire_guard/utils/utils.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
@@ -78,6 +79,16 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pushNamed(SelectPreferencesScreen.routeName);
     }
     // Navigator.of(context).pushNamed(RouteNames.introScreen);
+  }
+
+  Future<void> requestLocationPermissionAfterLogin() async {
+    final isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationServiceEnabled) return;
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      await Geolocator.requestPermission();
+    }
   }
 
   @override
@@ -304,6 +315,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 username: emailC.text.trim(),
                                 password: passwordC.text.trim());
                             if (isSend) {
+                              await requestLocationPermissionAfterLogin();
+                              if (!context.mounted) return;
                               Navigator.pushNamed(context, MainApp.routeName);
                             }
                           },

@@ -7,7 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
@@ -22,23 +21,8 @@ void main() async {
   await Hive.initFlutter();
   await LocalStorageHelper.initLocalStorageHelper();
   await dotenv.load(fileName: ".env");
-  await Geolocator.requestPermission();
 
-  // Native (Android google-services) có thể đã tạo [DEFAULT] trước khi Dart thấy Firebase.apps.
-  try {
-    await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: dotenv.env['API_KEY']!,
-        appId: dotenv.env['APP_ID']!,
-        messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-        projectId: dotenv.env['PROJECT_ID']!,
-      ),
-    );
-  } on FirebaseException catch (e) {
-    if (!e.code.toLowerCase().contains('duplicate')) rethrow;
-  } catch (e) {
-    if (!e.toString().toLowerCase().contains('duplicate')) rethrow;
-  }
+  await _initializeFirebase();
   final firebaseService = FirebaseService();
   print(
       "Current base URL from Firebase Remote Config: ${firebaseService.getBaseURLServer()}");
@@ -70,6 +54,26 @@ void main() async {
         providers: ProviderSetup.getProviders(),
         child: const MyApp(),
       ),
+    ),
+  );
+}
+
+Future<void> _initializeFirebase() async {
+  try {
+    await Firebase.initializeApp();
+    return;
+  } on FirebaseException catch (e) {
+    if (!e.code.contains('not-initialized')) {
+      rethrow;
+    }
+  }
+
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: dotenv.env['API_KEY']!,
+      appId: dotenv.env['APP_ID']!,
+      messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+      projectId: dotenv.env['PROJECT_ID']!,
     ),
   );
 }

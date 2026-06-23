@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'providers/provider_setup.dart';
@@ -20,7 +19,6 @@ void main() async {
   await Hive.initFlutter();
   await LocalStorageHelper.initLocalStorageHelper();
   await dotenv.load(fileName: ".env");
-  await Geolocator.requestPermission();
 
   Locale defaultLocale = const Locale('en', 'US');
   String? savedLocale = LocalStorageHelper.getValue('languageCode');

@@ -20,17 +20,20 @@ class NotificationService {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings androidSettings =
     AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings iosSettings =
+    DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     const InitializationSettings initializationSettings =
-    InitializationSettings(android: androidSettings);
+    InitializationSettings(android: androidSettings, iOS: iosSettings);
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    // Nhận token FCM
-    _firebaseMessaging.getToken().then((token) {
-      print("FCM Token: $token");
-      if(token != null) {
-        LocalStorageHelper.setValue('fcm_token', token);
-        print("Token đã được lưu vào local storage!");
-      }
+    await _saveMessagingToken();
+    _firebaseMessaging.onTokenRefresh.listen((token) {
+      LocalStorageHelper.setValue('fcm_token', token);
+      print("FCM Token refreshed: $token");
     });
 
     // Xử lý khi ứng dụng đang mở (foreground)
@@ -49,6 +52,35 @@ class NotificationService {
     } catch (e) {
       print('Lỗi phát âm thanh: $e');
     }
+  }
+
+  Future<void> _saveMessagingToken() async {
+    final apnsToken = await _waitForApnsToken();
+    print("APNs Token: $apnsToken");
+
+    if (apnsToken == null) {
+      throw StateError(
+        'APNs token is null. Check real iPhone device, Push Notifications '
+        'capability, aps-environment entitlement, provisioning profile, and '
+        'APNs auth key in Firebase.',
+      );
+    }
+
+    final token = await _firebaseMessaging.getToken();
+    print("FCM Token: $token");
+    if (token != null) {
+      LocalStorageHelper.setValue('fcm_token', token);
+      print("Token đã được lưu vào local storage!");
+    }
+  }
+
+  Future<String?> _waitForApnsToken() async {
+    for (int attempt = 0; attempt < 10; attempt++) {
+      final token = await _firebaseMessaging.getAPNSToken();
+      if (token != null) return token;
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+    return null;
   }
 
   // Hiển thị dialog với nút tắt âm thanh
