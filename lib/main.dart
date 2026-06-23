@@ -40,7 +40,9 @@ void main() async {
   Locale defaultLocale = const Locale('en', 'US');
   String? savedLocale = LocalStorageHelper.getValue('languageCode');
   if (savedLocale != null) {
-    defaultLocale = Locale(savedLocale);
+    defaultLocale = savedLocale == 'vi'
+        ? const Locale('vi', 'VN')
+        : const Locale('en', 'US');
   }
 
   await ErrorStack.init();
@@ -50,6 +52,7 @@ void main() async {
       supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
+      startLocale: defaultLocale,
       child: MultiProvider(
         providers: ProviderSetup.getProviders(),
         child: const MyApp(),

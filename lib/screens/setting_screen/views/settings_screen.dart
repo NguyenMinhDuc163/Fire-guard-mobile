@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart'; // Thư viện đổi ngôn ngữ
 import 'package:provider/provider.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
   static const String routeName = '/settings';
@@ -17,39 +18,18 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool isVietnamese = true;
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeLanguage();
-  }
-
-  void _initializeLanguage() {
-    String? savedLocale = LocalStorageHelper.getValue('languageCode');
-    if (savedLocale != null) {
-      isVietnamese = savedLocale == 'vi';
-    }
-  }
-
   void _changeLanguage() async {
-    setState(() {
-      isVietnamese = !isVietnamese;
-      if (isVietnamese) {
-        context.setLocale(const Locale('vi', 'VN'));
-        LocalStorageHelper.setValue('languageCode', 'vi');
-      } else {
-        context.setLocale(const Locale('en', 'US'));
-        LocalStorageHelper.setValue('languageCode', 'en');
-      }
-    });
+    final currentLocale = context.locale;
+    final nextLocale = currentLocale.languageCode == 'vi'
+        ? const Locale('en', 'US')
+        : const Locale('vi', 'VN');
 
-    // Đợi một chút để đảm bảo locale được cập nhật
-    await Future.delayed(const Duration(milliseconds: 100));
+    await context.setLocale(nextLocale);
+    LocalStorageHelper.setValue('languageCode', nextLocale.languageCode);
 
-    // Cập nhật lại toàn bộ widget tree
     if (mounted) {
       setState(() {});
     }
@@ -232,7 +212,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       key: _scaffoldKey,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('settings.settings_title'.tr()),
+          title: Text(context.tr('settings.settings_title')),
           backgroundColor: ColorPalette.colorFFBB35,
           elevation: 0,
         ),
@@ -262,14 +242,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   _buildSettingCard(
                     icon: Icons.language,
-                    title: 'settings.settings_change_language'.tr(),
-                    subtitle: isVietnamese ? 'Tiếng Việt' : 'English',
+                    title: context.tr('settings.settings_change_language'),
+                    subtitle: context.locale.languageCode == 'vi'
+                        ? 'Tiếng Việt'
+                        : 'English',
                     onTap: _changeLanguage,
                     iconColor: Colors.blue,
                   ),
                   _buildSettingCard(
                     icon: Icons.lock,
-                    title: 'settings.settings_change_password'.tr(),
+                    title: context.tr('settings.settings_change_password'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -281,14 +263,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingCard(
                     icon: Icons.email,
-                    title: 'settings.settings_change_email'.tr(),
+                    title: context.tr('settings.settings_change_email'),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SettingsDetailScreen(
-                            title: 'settings.settings_change_email'.tr(),
-                            hintText: 'settings.settings_enter_new_email'.tr(),
+                            title: context.tr('settings.settings_change_email'),
+                            hintText:
+                                context.tr('settings.settings_enter_new_email'),
                             inputType: TextInputType.emailAddress,
                             onSave: (value) =>
                                 _handleUpdateEmail(context, value),
@@ -300,14 +283,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingCard(
                     icon: Icons.phone,
-                    title: 'settings.settings_change_phone'.tr(),
+                    title: context.tr('settings.settings_change_phone'),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SettingsDetailScreen(
-                            title: 'settings.settings_change_phone'.tr(),
-                            hintText: 'settings.settings_enter_new_phone'.tr(),
+                            title: context.tr('settings.settings_change_phone'),
+                            hintText:
+                                context.tr('settings.settings_enter_new_phone'),
                             inputType: TextInputType.phone,
                             onSave: (value) =>
                                 _handleUpdatePhone(context, value),
@@ -319,7 +303,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingCard(
                     icon: Icons.notifications_active,
-                    title: 'settings.settings_clicksend_title'.tr(),
+                    title: context.tr('settings.settings_clicksend_title'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -335,7 +319,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingCard(
                     icon: Icons.delete,
-                    title: 'settings.delete_account'.tr(),
+                    title: context.tr('settings.delete_account'),
                     onTap: () => _showDeleteAccountDialog(context),
                     iconColor: Colors.red,
                   ),
