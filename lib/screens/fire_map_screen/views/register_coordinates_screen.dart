@@ -17,6 +17,8 @@ class RegisterCoordinatesScreen extends StatefulWidget {
 }
 
 class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
+  static const String _osmUserAgentPackageName = 'com.nguyenduc.fire_guard';
+
   final TextEditingController _latitudeController = TextEditingController();
   final TextEditingController _longitudeController = TextEditingController();
   LatLng? _selectedPosition;
@@ -123,15 +125,18 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
             FlutterMap(
               mapController: _mapController,
               options: MapOptions(
-                initialCenter: _selectedPosition ?? const LatLng(21.028511, 105.804817),
+                initialCenter:
+                    _selectedPosition ?? const LatLng(21.028511, 105.804817),
                 initialZoom: 13.0,
                 onTap: (tapPosition, point) => _onMapTap(point),
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: const ['a', 'b', 'c'],
+                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  userAgentPackageName: _osmUserAgentPackageName,
+                ),
+                const SimpleAttributionWidget(
+                  source: Text('OpenStreetMap contributors'),
                 ),
                 if (_selectedPosition != null)
                   MarkerLayer(

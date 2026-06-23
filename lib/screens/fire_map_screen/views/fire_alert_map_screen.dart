@@ -18,6 +18,8 @@ class FireAlertMapScreen extends StatefulWidget {
 }
 
 class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
+  static const String _osmUserAgentPackageName = 'com.nguyenduc.fire_guard';
+
   final MapController _mapController = MapController();
   Position? _currentPosition;
   bool _isLoading = true;
@@ -237,7 +239,12 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
         children: [
           TileLayer(
             urlTemplate: _mapStyles[_selectedMapStyle]!,
+            userAgentPackageName: _osmUserAgentPackageName,
           ),
+          if (_selectedMapStyle == "OpenStreetMap")
+            const SimpleAttributionWidget(
+              source: Text('OpenStreetMap contributors'),
+            ),
           MarkerLayer(
             markers: [
               // Vị trí hiện tại
