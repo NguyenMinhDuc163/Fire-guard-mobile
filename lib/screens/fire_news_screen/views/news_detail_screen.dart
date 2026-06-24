@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewsDetailScreen extends StatelessWidget {
   final String title;
@@ -16,6 +17,35 @@ class NewsDetailScreen extends StatelessWidget {
     required this.content,
     required this.urlImage,
   });
+
+  Future<void> _openSourceUrl(BuildContext context) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || !uri.hasScheme) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('fire_news.cannot_open_source'.tr())),
+      );
+      return;
+    }
+
+    try {
+      final isOpened = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!isOpened && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('fire_news.cannot_open_source'.tr())),
+        );
+      }
+    } catch (e, stackTrace) {
+      print('Cannot open news source: $e');
+      print(stackTrace);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('fire_news.cannot_open_source'.tr())),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,20 +131,29 @@ class NewsDetailScreen extends StatelessWidget {
                   if (url.isNotEmpty) ...[
                     const Divider(),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        const Icon(Icons.link, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            '${'fire_news.source'.tr()}: $url',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
+                    InkWell(
+                      onTap: () => _openSourceUrl(context),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.link,
+                                size: 16, color: Colors.blue),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '${'fire_news.source'.tr()}: $url',
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 14,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ],

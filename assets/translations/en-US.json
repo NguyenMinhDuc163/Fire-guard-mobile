@@ -110,6 +110,7 @@
     "article": "Article",
     "video": "Video",
     "source": "Source",
+    "cannot_open_source": "Unable to open the source.",
     "read_more": "Read more"
   },
   "fire_safety_skills": {
