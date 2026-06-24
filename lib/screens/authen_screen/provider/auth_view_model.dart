@@ -32,7 +32,7 @@ class AuthViewModel extends BaseViewModel {
       LoginRequest request = LoginRequest(
         email: username,
         password: password,
-        fcmToken: tokenFCM ?? "123",
+        fcmToken: tokenFCM ?? "",
       );
       final BaseResponse<LoginResponse> response = await apiServices.sendLogin(request);
 

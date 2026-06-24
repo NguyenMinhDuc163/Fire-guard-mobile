@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:error_stack/error_stack.dart';
+import 'package:fire_guard/config/firebase_app_config.dart';
 import 'package:fire_guard/init.dart';
 import 'package:fire_guard/utils/routers.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +20,6 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await Hive.initFlutter();
   await LocalStorageHelper.initLocalStorageHelper();
-  await dotenv.load(fileName: ".env");
 
   await _initializeFirebase();
   final firebaseService = FirebaseService();
@@ -29,11 +28,6 @@ void main() async {
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
   );
-
-  // await Supabase.initialize(
-  //   url: dotenv.env['SUPABASE_URL']!,
-  //   anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-  // );
 
   // Khởi tạo FirebaseService để kích hoạt Remote Config
 
@@ -65,22 +59,8 @@ Locale? _getSavedLocale() {
 }
 
 Future<void> _initializeFirebase() async {
-  try {
-    await Firebase.initializeApp();
-    return;
-  } on FirebaseException catch (e) {
-    if (!e.code.contains('not-initialized')) {
-      rethrow;
-    }
-  }
-
   await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: dotenv.env['API_KEY']!,
-      appId: dotenv.env['APP_ID']!,
-      messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
-      projectId: dotenv.env['PROJECT_ID']!,
-    ),
+    options: FirebaseAppConfig.currentPlatform,
   );
 }
 

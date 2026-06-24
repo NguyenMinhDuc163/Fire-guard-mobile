@@ -5,7 +5,6 @@ import 'package:fire_guard/init.dart';
 import 'package:fire_guard/utils/routers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
@@ -18,13 +17,8 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await Hive.initFlutter();
   await LocalStorageHelper.initLocalStorageHelper();
-  await dotenv.load(fileName: ".env");
 
-  Locale defaultLocale = const Locale('en', 'US');
-  String? savedLocale = LocalStorageHelper.getValue('languageCode');
-  if (savedLocale != null) {
-    defaultLocale = Locale(savedLocale);
-  }
+  final savedLocale = _getSavedLocale();
 
   await ErrorStack.init();
 
@@ -33,6 +27,7 @@ void main() async {
       supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
+      startLocale: savedLocale,
       child: MultiProvider(
         providers: ProviderSetup.getProviders(),
         child: DevicePreview(
@@ -42,6 +37,15 @@ void main() async {
       ),
     ),
   );
+}
+
+Locale? _getSavedLocale() {
+  final savedLanguageCode = LocalStorageHelper.getValue('languageCode');
+  if (savedLanguageCode == null) return null;
+
+  return savedLanguageCode == 'vi'
+      ? const Locale('vi', 'VN')
+      : const Locale('en', 'US');
 }
 
 class MyApp extends StatelessWidget {

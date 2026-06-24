@@ -42,7 +42,6 @@ dependencies:
   hive_flutter: ^1.1.0
   smooth_page_indicator: ^1.2.0+3
   supabase_flutter: ^2.6.0
-  flutter_dotenv: ^5.1.0
   flutter_launcher_icons: ^0.13.1
   curved_labeled_navigation_bar: ^2.0.2
   animate_do: ^3.3.4
@@ -122,7 +121,6 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/sounds/alarm.wav
-    - .env
 false_secrets:
   - android/app/google-services.json
   # An image asset can refer to one or more resolution-specific "variants", see
