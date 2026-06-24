@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/home_screen/models/home_model.dart';
 import 'package:fire_guard/service/api_service/api_service.dart';
@@ -11,15 +10,16 @@ import 'package:fire_guard/service/api_service/response/send_notification_respon
 import 'package:fire_guard/service/api_service/response/user_list_response.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:fire_guard/providers/BaseViewModel.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 class HomeViewModel extends BaseViewModel {
   final ApiServices apiServices = ApiServices();
   HomeModel homeModel = HomeModel();
   HomeModel get model => homeModel;
-  final String phoneNumber = LocalStorageHelper.getValue("alertPhone");
+  String get phoneNumber {
+    final value = LocalStorageHelper.getValue("alertPhone")?.toString().trim();
+    return value == null || value.isEmpty ? '114' : value;
+  }
 
   Future<bool> sendNotification() async {
     return await execute(() async {
@@ -51,29 +51,27 @@ class HomeViewModel extends BaseViewModel {
     });
   }
 
-  Future<bool> _requestCallPermission() async {
-    var status = await Permission.phone.status;
-    if (!status.isGranted) {
-      status = await Permission.phone.request();
-    }
-    return status.isGranted;
-  }
-
   // Hàm thực hiện cuộc gọi tự động
-  Future<void> directCall() async {
+  Future<bool> directCall() async {
     final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
 
-    // Kiểm tra và xin quyền
-    bool permissionGranted = await _requestCallPermission();
-    if (permissionGranted) {
-      try {
-        // Thực hiện gọi trực tiếp bằng externalApplication mode
-        await launchUrl(phoneUri, mode: LaunchMode.externalApplication);
-      } catch (e) {
-        print('Lỗi khi gọi: $e');
+    try {
+      final launched =
+          await launchUrl(phoneUri, mode: LaunchMode.externalApplication);
+
+      if (!launched) {
+        print('Không mở được trình gọi điện: $phoneUri');
+        print(
+          'Nếu đang chạy iOS Simulator, tel: thường không được hỗ trợ. '
+          'Hãy test trên thiết bị thật hoặc Android emulator có ứng dụng Phone.',
+        );
       }
-    } else {
-      print('Quyền gọi điện bị từ chối.');
+
+      return launched;
+    } catch (e, stackTrace) {
+      print('Lỗi khi gọi: $e');
+      print(stackTrace);
+      return false;
     }
   }
 
@@ -109,7 +107,6 @@ class HomeViewModel extends BaseViewModel {
             } else {
               timestamp = incident.timestamp;
             }
-          
 
             notifications.add({
               'incidentId': incident.incidentId,

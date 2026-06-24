@@ -109,6 +109,7 @@
     "viewAndReportFireLocation": "View and Report Fire Location",
     "call114": "Call 114",
     "wait_before_next_alert": "Please wait 5 minutes before sending another fire alarm notification, or you can call directly.",
+    "call_not_supported": "This device does not support phone calls.",
     "call_now": "Call Now",
     "notification": "Notification",
     "view_and_report_fire": "View and Report Fire Location",

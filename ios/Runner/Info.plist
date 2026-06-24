@@ -28,6 +28,10 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+	</array>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Fire Guard uses your location to show nearby fire alerts, display your position on the map, and save monitoring coordinates when you use location-based features.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

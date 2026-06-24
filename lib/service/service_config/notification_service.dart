@@ -5,7 +5,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 
-
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -19,21 +18,29 @@ class NotificationService {
     // Cài đặt thông báo local
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings iosSettings =
-    DarwinInitializationSettings(
+        DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
     const InitializationSettings initializationSettings =
-    InitializationSettings(android: androidSettings, iOS: iosSettings);
+        InitializationSettings(android: androidSettings, iOS: iosSettings);
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    await _saveMessagingToken();
+    try {
+      await _saveMessagingToken();
+    } catch (e, stackTrace) {
+      print("Không thể lấy FCM token: $e");
+      print(stackTrace);
+    }
     _firebaseMessaging.onTokenRefresh.listen((token) {
       LocalStorageHelper.setValue('fcm_token', token);
       print("FCM Token refreshed: $token");
+    }, onError: (error, stackTrace) {
+      print("Không thể refresh FCM token: $error");
+      print(stackTrace);
     });
 
     // Xử lý khi ứng dụng đang mở (foreground)
@@ -49,8 +56,9 @@ class NotificationService {
     try {
       await _audioPlayer.play(AssetSource('sounds/alarm.wav'));
       print('Phát âm thanh thành công!');
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Lỗi phát âm thanh: $e');
+      print(stackTrace);
     }
   }
 
@@ -59,11 +67,10 @@ class NotificationService {
     print("APNs Token: $apnsToken");
 
     if (apnsToken == null) {
-      throw StateError(
-        'APNs token is null. Check real iPhone device, Push Notifications '
-        'capability, aps-environment entitlement, provisioning profile, and '
-        'APNs auth key in Firebase.',
+      print(
+        'APNs token is null. Bỏ qua lưu FCM token trên thiết bị hiện tại.',
       );
+      return;
     }
 
     final token = await _firebaseMessaging.getToken();
@@ -112,14 +119,14 @@ class NotificationService {
     }
   }
 
-
   // Dừng âm thanh báo động
   Future<void> _stopAlarm() async {
     try {
       await _audioPlayer.stop();
       print('Đã dừng âm thanh!');
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Lỗi khi dừng âm thanh: $e');
+      print(stackTrace);
     }
   }
 }
