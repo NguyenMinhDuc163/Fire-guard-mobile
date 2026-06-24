@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../init.dart';
+
 class PasswordTextFieldWidget extends StatefulWidget {
   final String hintText;
 
@@ -8,13 +9,15 @@ class PasswordTextFieldWidget extends StatefulWidget {
   final BorderRadiusGeometry borderRadius;
   const PasswordTextFieldWidget(
       {super.key,
-        required this.hintText,
-        required this.height,
-        required this.controller,
-        required this.width,
-        required this.borderRadius});
+      required this.hintText,
+      required this.height,
+      required this.controller,
+      required this.width,
+      required this.borderRadius});
+
   @override
-  _PasswordTextFieldWidgetState createState() => _PasswordTextFieldWidgetState();
+  State<PasswordTextFieldWidget> createState() =>
+      _PasswordTextFieldWidgetState();
 }
 
 class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
@@ -25,10 +28,11 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
     InputBorder focusedErrorBorder = InputBorder.none;
     InputBorder errorBorder = InputBorder.none;
     InputBorder focusedBorder = InputBorder.none;
+    final fieldHeight = widget.height < 48 ? 48.0 : widget.height;
 
     return Container(
       width: widget.width,
-      height: widget.height,
+      constraints: BoxConstraints(minHeight: fieldHeight),
       decoration: BoxDecoration(
           borderRadius: widget.borderRadius,
           color: ColorPalette.kBackground2,
@@ -36,17 +40,20 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
       child: TextFormField(
           obscureText: _obscureText,
           controller: widget.controller,
+          maxLines: 1,
+          textAlignVertical: TextAlignVertical.center,
           style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: ColorPalette.kWhite)
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: ColorPalette.kWhite)
               .copyWith(
             color: ColorPalette.kGrayscaleDark100,
           ),
           decoration: InputDecoration(
             filled: true,
+            isDense: false,
             contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscureText
@@ -63,13 +70,13 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
             ),
             hintText: widget.hintText,
             hintStyle: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: ColorPalette.kWhite)
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: ColorPalette.kWhite)
                 .copyWith(
-                color: ColorPalette.kGrayscale40,
-                fontWeight: FontWeight.w600,
-                fontSize: 14),
+                    color: ColorPalette.kGrayscale40,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14),
             enabledBorder: enabledBorder,
             focusedBorder: focusedBorder,
             errorBorder: errorBorder,
