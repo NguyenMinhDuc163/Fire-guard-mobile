@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/init.dart';
 import 'package:fire_guard/screens/fire_map_screen/providers/fire_map_view_model.dart';
+import 'package:fire_guard/utils/core/helpers/location_permission_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,11 +30,11 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
   final Map<String, String> _mapStyles = {
     "OpenStreetMap": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     "World Street Map":
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
     "World Imagery":
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     "Topographic":
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
   };
 
   List<Map<String, dynamic>> familyMembers = [];
@@ -50,21 +51,22 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
   Future<void> _loadLocation() async {
     try {
       final response =
-      await Provider.of<FireMapViewModel>(context, listen: false).sendLocation();
+          await Provider.of<FireMapViewModel>(context, listen: false)
+              .sendLocation();
 
       if (response.data != null) {
         final apiFamilyMembers = response.data!
             .map<Map<String, dynamic>>((location) => {
-          'name': 'Vị trí từ API',
-          'position': LatLng(
-            double.parse(location.latitude),
-            double.parse(location.longitude),
-          ),
-          'isFire': location.isFire,
-          'imageURL': location.isFire
-              ? AssetHelper.icoFire
-              : AssetHelper.icoFamilyMap,
-        })
+                  'name': 'Vị trí từ API',
+                  'position': LatLng(
+                    double.parse(location.latitude),
+                    double.parse(location.longitude),
+                  ),
+                  'isFire': location.isFire,
+                  'imageURL': location.isFire
+                      ? AssetHelper.icoFire
+                      : AssetHelper.icoFamilyMap,
+                })
             .toList();
 
         // Kiểm tra cháy tại vị trí hiện tại
@@ -76,9 +78,9 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
 
           // Kiểm tra vị trí hiện tại có cháy hay không
           final currentLocationFire = apiFamilyMembers.firstWhere(
-                (location) =>
-            (location['position'] as LatLng).latitude.toStringAsFixed(5) ==
-                currentPosition.latitude.toStringAsFixed(5) &&
+            (location) =>
+                (location['position'] as LatLng).latitude.toStringAsFixed(5) ==
+                    currentPosition.latitude.toStringAsFixed(5) &&
                 (location['position'] as LatLng).longitude.toStringAsFixed(5) ==
                     currentPosition.longitude.toStringAsFixed(5) &&
                 location['isFire'] == true,
@@ -93,12 +95,9 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
           setState(() {
             _isHomeOnFire = currentLocationFire['isFire'] == true;
           });
-
-          setState(() {
-            _isHomeOnFire = currentLocationFire != null;
-          });
         }
 
+        if (!mounted) return;
         setState(() {
           familyMembers = apiFamilyMembers; // Cập nhật danh sách từ API
         });
@@ -106,17 +105,29 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
     } catch (e) {
       print('Error loading location data: $e');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-
   Future<void> _getCurrentPosition() async {
     try {
+      final hasPermission =
+          await LocationPermissionHelper.ensureWhenInUsePermission(context);
+      if (!mounted) return;
+      if (!hasPermission) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
+      if (!mounted) return;
       setState(() {
         _currentPosition = position;
         _isLoading = false;
@@ -126,7 +137,8 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
       LocalStorageHelper.setValue("latitude", position.latitude.toString());
       LocalStorageHelper.setValue("longitude", position.longitude.toString());
 
-      print('=====> Latitude: ${LocalStorageHelper.getValue("latitude")} + Longitude: ${LocalStorageHelper.getValue("longitude")}');
+      print(
+          '=====> Latitude: ${LocalStorageHelper.getValue("latitude")} + Longitude: ${LocalStorageHelper.getValue("longitude")}');
     } catch (e) {
       print("Error getting location: $e");
     }
@@ -158,7 +170,8 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
       try {
         await launchUrl(
           googleMapsUri,
-          mode: LaunchMode.inAppWebView, // Mở trong trình duyệt nếu ứng dụng không hoạt động
+          mode: LaunchMode
+              .inAppWebView, // Mở trong trình duyệt nếu ứng dụng không hoạt động
         );
       } catch (e) {
         print("Lỗi khi mở Google Maps trong trình duyệt: $e");
@@ -170,7 +183,7 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
+        SnackBar(
           content: Text("location.cannot_open".tr()),
         ),
       );
@@ -211,7 +224,7 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('location.map_fire'.tr()),
+        title: Text('location.map_fire'.tr()),
         backgroundColor: Colors.orange,
         actions: [
           IconButton(
@@ -228,71 +241,70 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : FlutterMap(
-        mapController: _mapController,
-        options: MapOptions(
-          initialCenter: LatLng(
-            _currentPosition?.latitude ?? 21.028511,
-            _currentPosition?.longitude ?? 105.804817,
-          ),
-          initialZoom: 13.0,
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: _mapStyles[_selectedMapStyle]!,
-            userAgentPackageName: _osmUserAgentPackageName,
-          ),
-          if (_selectedMapStyle == "OpenStreetMap")
-            const SimpleAttributionWidget(
-              source: Text('OpenStreetMap contributors'),
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: LatLng(
+                  _currentPosition?.latitude ?? 21.028511,
+                  _currentPosition?.longitude ?? 105.804817,
+                ),
+                initialZoom: 13.0,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: _mapStyles[_selectedMapStyle]!,
+                  userAgentPackageName: _osmUserAgentPackageName,
+                ),
+                if (_selectedMapStyle == "OpenStreetMap")
+                  const SimpleAttributionWidget(
+                    source: Text('OpenStreetMap contributors'),
+                  ),
+                MarkerLayer(
+                  markers: [
+                    // Vị trí hiện tại
+                    if (_currentPosition != null)
+                      Marker(
+                        point: LatLng(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                        ),
+                        width: 40,
+                        height: 40,
+                        child: GestureDetector(
+                          onTap: () {
+                            _openGoogleMaps(LatLng(
+                              _currentPosition!.latitude,
+                              _currentPosition!.longitude,
+                            ));
+                          },
+                          child: SvgPicture.asset(
+                            _isHomeOnFire
+                                ? AssetHelper.icoFire
+                                : AssetHelper.icoHomeMap,
+                            width: 40,
+                            height: 40,
+                          ),
+                        ),
+                      ),
+                    // Các vị trí từ API
+                    ...familyMembers.map((member) => Marker(
+                          point: member['position'],
+                          width: 40,
+                          height: 40,
+                          child: GestureDetector(
+                            onTap: () {
+                              _openGoogleMaps(member['position']);
+                            },
+                            child: SvgPicture.asset(
+                              member['imageURL'],
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+                        )),
+                  ],
+                ),
+              ],
             ),
-          MarkerLayer(
-            markers: [
-              // Vị trí hiện tại
-              if (_currentPosition != null)
-                Marker(
-                  point: LatLng(
-                    _currentPosition!.latitude,
-                    _currentPosition!.longitude,
-                  ),
-                  width: 40,
-                  height: 40,
-                  child: GestureDetector(
-                    onTap: () {
-                      _openGoogleMaps(LatLng(
-                        _currentPosition!.latitude,
-                        _currentPosition!.longitude,
-                      ));
-                    },
-                    child: SvgPicture.asset(
-                      _isHomeOnFire
-                          ? AssetHelper.icoFire
-                          : AssetHelper.icoHomeMap,
-                      width: 40,
-                      height: 40,
-                    ),
-                  ),
-                ),
-              // Các vị trí từ API
-              ...familyMembers.map((member) => Marker(
-                point: member['position'],
-                width: 40,
-                height: 40,
-                child: GestureDetector(
-                  onTap: () {
-                    _openGoogleMaps(member['position']);
-                  },
-                  child: SvgPicture.asset(
-                    member['imageURL'],
-                    width: 40,
-                    height: 40,
-                  ),
-                ),
-              )),
-            ],
-          ),
-
-        ],
-      ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -313,5 +325,4 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
       ),
     );
   }
-
 }

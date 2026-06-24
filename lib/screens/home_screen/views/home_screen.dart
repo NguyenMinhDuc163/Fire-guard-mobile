@@ -4,6 +4,7 @@ import 'package:fire_guard/screens/home_screen/views/notification_screen.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
+import 'package:fire_guard/utils/core/helpers/location_permission_helper.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -267,8 +268,12 @@ class HomeScreen extends StatelessWidget {
                     // Nút Xem và Thông báo vị trí đám cháy
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          // Hành động khi nhấn vào nút Thông báo vị trí đám cháy
+                        onTap: () async {
+                          final hasLocationPermission =
+                              await LocationPermissionHelper
+                                  .ensureWhenInUsePermission(context);
+                          if (!hasLocationPermission) return;
+                          if (!context.mounted) return;
                           Navigator.pushNamed(
                               context, FireAlertMapScreen.routeName);
                         },

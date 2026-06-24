@@ -61,6 +61,7 @@
   },
   "location": {
     "cannot_open": "Cannot open Google Maps. Please check your network connection.",
+    "service_disabled": "Location services are turned off. Please enable location in your device settings.",
     "map_fire": "Fire Alert Map",
     "cannot_get_current_location": "Unable to get current location!",
     "coordinate_saved": "Coordinates have been saved!",
@@ -75,6 +76,17 @@
   "common": {
     "cancel": "Cancel",
     "ok": "OK"
+  },
+  "permissions": {
+    "allow": "Allow",
+    "not_now": "Not Now",
+    "open_settings": "Open Settings",
+    "notification_title": "Enable Alert Notifications",
+    "notification_body": "Fire Guard needs notification permission to send support alerts when risk signals or information from related people are available. If notifications are off, you may miss important alerts. You can change this permission in Settings at any time.",
+    "location_title": "Allow Location Access",
+    "location_body": "Fire Guard uses your location when you open the map or register coordinates to show your current position and help save monitoring coordinates. The app does not access your location when you are not using these features.",
+    "location_denied_title": "Location Permission Is Off",
+    "location_denied_body": "Location permission for Fire Guard is turned off. To use the map with your current position, open Settings and allow location access while using the app."
   },
   "safety_disclaimer": {
     "title": "Support Scope Notice",

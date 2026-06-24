@@ -62,6 +62,7 @@
   },
   "location": {
     "cannot_open": "Không thể mở Google Maps. Vui lòng kiểm tra kết nối mạng.",
+    "service_disabled": "Dịch vụ vị trí đang tắt. Vui lòng bật vị trí trong cài đặt thiết bị.",
     "map_fire": "Bản Đồ Báo Cháy",
     "cannot_get_current_location": "Không thể lấy tọa độ hiện tại!",
     "coordinate_saved": "Tọa độ đã được lưu!",
@@ -77,6 +78,18 @@
   "common": {
     "cancel": "Huỷ",
     "ok": "OK"
+  },
+
+  "permissions": {
+    "allow": "Cho phép",
+    "not_now": "Để sau",
+    "open_settings": "Mở Cài đặt",
+    "notification_title": "Bật thông báo cảnh báo",
+    "notification_body": "Fire Guard cần quyền thông báo để gửi cảnh báo hỗ trợ khi có tín hiệu rủi ro hoặc thông tin từ người liên quan. Nếu tắt thông báo, bạn có thể bỏ lỡ cảnh báo quan trọng. Bạn có thể thay đổi quyền này trong Cài đặt bất cứ lúc nào.",
+    "location_title": "Cho phép truy cập vị trí",
+    "location_body": "Fire Guard sử dụng vị trí khi bạn mở bản đồ hoặc đăng ký tọa độ để hiển thị vị trí hiện tại và hỗ trợ lưu tọa độ giám sát. Ứng dụng không truy cập vị trí khi bạn không sử dụng các tính năng này.",
+    "location_denied_title": "Quyền vị trí đang bị tắt",
+    "location_denied_body": "Bạn đã tắt quyền vị trí cho Fire Guard. Để sử dụng bản đồ với vị trí hiện tại, vui lòng mở Cài đặt và cấp quyền vị trí khi dùng ứng dụng."
   },
 
   "safety_disclaimer": {

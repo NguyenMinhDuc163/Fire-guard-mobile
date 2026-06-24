@@ -4,6 +4,7 @@ import 'package:fire_guard/screens/authen_screen/view/login_screen.dart';
 import 'package:fire_guard/screens/family_manager_screen/views/family_management_screen.dart';
 import 'package:fire_guard/screens/fire_map_screen/views/register_coordinates_screen.dart';
 import 'package:fire_guard/screens/setting_screen/views/settings_screen.dart';
+import 'package:fire_guard/utils/core/helpers/location_permission_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../init.dart';
@@ -38,8 +39,7 @@ class DrawerWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    LocalStorageHelper.getValue('userName') ??
-                        '',
+                    LocalStorageHelper.getValue('userName') ?? '',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -47,8 +47,7 @@ class DrawerWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    LocalStorageHelper.getValue('email') ??
-                        '',
+                    LocalStorageHelper.getValue('email') ?? '',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
@@ -68,7 +67,12 @@ class DrawerWidget extends StatelessWidget {
             _buildDrawerItem(
               icon: Icons.location_on_outlined,
               title: 'drawer.registered_location'.tr(),
-              onTap: () {
+              onTap: () async {
+                final hasLocationPermission =
+                    await LocationPermissionHelper.ensureWhenInUsePermission(
+                        context);
+                if (!hasLocationPermission) return;
+                if (!context.mounted) return;
                 Navigator.pushNamed(
                     context, RegisterCoordinatesScreen.routeName);
               },
@@ -97,6 +101,7 @@ class DrawerWidget extends StatelessWidget {
                     mode: LaunchMode.externalApplication)) {
                   throw 'Could not launch URL}';
                 }
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
             ),

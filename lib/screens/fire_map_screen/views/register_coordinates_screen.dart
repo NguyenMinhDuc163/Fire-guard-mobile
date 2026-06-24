@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/fire_map_screen/providers/fire_map_view_model.dart';
+import 'package:fire_guard/utils/core/helpers/location_permission_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -37,10 +38,21 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
         _isLoading = true; // Bắt đầu loading
       });
 
+      final hasPermission =
+          await LocationPermissionHelper.ensureWhenInUsePermission(context);
+      if (!mounted) return;
+      if (!hasPermission) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
       // Lấy vị trí hiện tại
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+      if (!mounted) return;
 
       setState(() {
         _selectedPosition = LatLng(position.latitude, position.longitude);
@@ -55,7 +67,7 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('location.cannot_get_current_location'.tr())),
+        SnackBar(content: Text('location.cannot_get_current_location'.tr())),
       );
     } finally {
       setState(() {
@@ -73,15 +85,14 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
   }
 
   Future<void> _saveCoordinates() async {
-
     if (_selectedPosition != null) {
       setState(() {
         _isLoading = true;
       });
       try {
-
-        final bool isSave = await Provider.of<FireMapViewModel>(context, listen: false)
-            .saveLocation(
+        final bool isSave =
+            await Provider.of<FireMapViewModel>(context, listen: false)
+                .saveLocation(
           longitude: _selectedPosition!.longitude.toString(),
           latitude: _selectedPosition!.latitude.toString(),
           isFire: true,
@@ -89,14 +100,15 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-            Text(isSave ? 'location.coordinate_saved' : 'location.coordinate_save_failed'),
+            content: Text(isSave
+                ? 'location.coordinate_saved'
+                : 'location.coordinate_save_failed'),
           ),
         );
       } catch (e) {
         print('Error saving location: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('location.save_error'.tr())),
+          SnackBar(content: Text('location.save_error'.tr())),
         );
       } finally {
         setState(() {
@@ -105,7 +117,7 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('location.please_select'.tr())),
+        SnackBar(content: Text('location.please_select'.tr())),
       );
     }
   }
@@ -116,7 +128,7 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
       gestures: const [GestureType.onTap],
       child: Scaffold(
         appBar: AppBar(
-          title:  Text('location.register_monitoring_coordinate'.tr()),
+          title: Text('location.register_monitoring_coordinate'.tr()),
           backgroundColor: Colors.orange,
         ),
         body: Stack(
@@ -211,9 +223,9 @@ class _RegisterCoordinatesScreenState extends State<RegisterCoordinatesScreen> {
                       onPressed: _isLoading ? null : _saveCoordinates,
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                          :  Text('location.save_coordinates'.tr()),
+                              color: Colors.white,
+                            )
+                          : Text('location.save_coordinates'.tr()),
                     ),
                   ],
                 ),

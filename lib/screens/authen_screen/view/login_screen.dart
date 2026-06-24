@@ -17,7 +17,6 @@ import 'package:flutter/foundation.dart';
 import 'package:fire_guard/utils/utils.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
@@ -70,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final ignoreSelectPreferencesScreen =
         LocalStorageHelper.getValue('ignoreSelectPreferencesScreen') as bool?;
     await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
     if (ignoreSelectPreferencesScreen != null &&
         ignoreSelectPreferencesScreen) {
       Navigator.of(context).pushNamed(MainApp.routeName);
@@ -81,21 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
     // Navigator.of(context).pushNamed(RouteNames.introScreen);
   }
 
-  Future<void> requestLocationPermissionAfterLogin() async {
-    final isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!isLocationServiceEnabled) return;
-
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      await Geolocator.requestPermission();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
-    final model = authViewModel.model;
-
 
     void showApiConfigSheet() {
       showModalBottomSheet(
@@ -118,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ListView(
                   controller: scrollController, // Để cuộn nếu nội dung nhiều.
                   children: [
-                     Text(
+                    Text(
                       "auth.configuration".tr(),
                       style: const TextStyle(
                         fontSize: 20,
@@ -128,24 +116,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: apiUrlController,
-                      decoration:  InputDecoration(labelText: "auth.api_url".tr()),
+                      decoration:
+                          InputDecoration(labelText: "auth.api_url".tr()),
                     ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: apiPortController,
-                      decoration:  InputDecoration(labelText: "port".tr()),
+                      decoration: InputDecoration(labelText: "port".tr()),
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          NetworkService.instance.updateBaseUrl("${apiUrlController.text.trim()}:${apiPortController.text.trim()}/api/v1/");
-                          StatusApi.BASE_API_URL = "${apiUrlController.text}:${apiPortController.text}/api/v1/";
+                          NetworkService.instance.updateBaseUrl(
+                              "${apiUrlController.text.trim()}:${apiPortController.text.trim()}/api/v1/");
+                          StatusApi.BASE_API_URL =
+                              "${apiUrlController.text}:${apiPortController.text}/api/v1/";
                         });
                         Navigator.pop(context);
                       },
-                      child:  Text("auth.save".tr()),
+                      child: Text("auth.save".tr()),
                     ),
                   ],
                 ),
@@ -308,14 +299,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (emailC.text.trim().isEmpty ||
                                 passwordC.text.trim().isEmpty ||
                                 !Utils.isValidEmail(emailC.text.trim())) {
-                              showToast(message: 'auth.invalid_email_password'.tr());
+                              showToast(
+                                  message: 'auth.invalid_email_password'.tr());
                               return;
                             }
                             bool isSend = await authViewModel.signIn(
                                 username: emailC.text.trim(),
                                 password: passwordC.text.trim());
                             if (isSend) {
-                              await requestLocationPermissionAfterLogin();
                               if (!context.mounted) return;
                               Navigator.pushNamed(context, MainApp.routeName);
                             }

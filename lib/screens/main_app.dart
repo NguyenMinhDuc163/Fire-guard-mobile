@@ -8,6 +8,7 @@ import 'package:fire_guard/screens/fire_safety_skills_screen/views/fire_safety_s
 import 'package:fire_guard/screens/fire_news_screen/providers/fire_news_view_model.dart';
 import 'package:fire_guard/screens/fire_safety_skills_screen/providers/fire_safety_skills_view_model.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
+import 'package:fire_guard/service/service_config/notification_service.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -58,7 +59,7 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showSafetyDisclaimerIfNeeded();
+      _runStartupPermissionFlow();
     });
   }
 
@@ -66,6 +67,12 @@ class _MainAppState extends State<MainApp> {
     setState(() {
       _selectedIndex = index; // Cập nhật chỉ số khi người dùng chọn trang
     });
+  }
+
+  Future<void> _runStartupPermissionFlow() async {
+    await _showSafetyDisclaimerIfNeeded();
+    if (!mounted) return;
+    await _showNotificationPermissionIfNeeded();
   }
 
   Future<void> _showSafetyDisclaimerIfNeeded() async {
@@ -97,6 +104,43 @@ class _MainAppState extends State<MainApp> {
         );
       },
     );
+  }
+
+  Future<void> _showNotificationPermissionIfNeeded() async {
+    final notificationService = NotificationService();
+    final shouldAsk =
+        await notificationService.isNotificationPermissionNotDetermined();
+    if (!shouldAsk) {
+      await notificationService.requestPermissionAndSaveToken();
+      return;
+    }
+
+    if (!mounted) return;
+
+    final shouldRequest = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text('permissions.notification_title'.tr()),
+          content: Text('permissions.notification_body'.tr()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text('permissions.not_now'.tr()),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text('permissions.allow'.tr()),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldRequest == true) {
+      await notificationService.requestPermissionAndSaveToken();
+    }
   }
 
   @override

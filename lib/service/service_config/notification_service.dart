@@ -2,18 +2,21 @@ import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 
 class NotificationService {
+  static bool _isInitialized = false;
+
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final AudioPlayer _audioPlayer = AudioPlayer();
   late FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   // Khởi tạo Notification Service
   Future<void> init(BuildContext context) async {
-    // Yêu cầu quyền thông báo
-    await _firebaseMessaging.requestPermission();
+    if (_isInitialized) return;
+    _isInitialized = true;
 
     // Cài đặt thông báo local
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -29,12 +32,6 @@ class NotificationService {
         InitializationSettings(android: androidSettings, iOS: iosSettings);
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    try {
-      await _saveMessagingToken();
-    } catch (e, stackTrace) {
-      print("Không thể lấy FCM token: $e");
-      print(stackTrace);
-    }
     _firebaseMessaging.onTokenRefresh.listen((token) {
       LocalStorageHelper.setValue('fcm_token', token);
       print("FCM Token refreshed: $token");
@@ -51,6 +48,46 @@ class NotificationService {
     });
   }
 
+  Future<bool> isNotificationPermissionNotDetermined() async {
+    final settings = await _firebaseMessaging.getNotificationSettings();
+    return settings.authorizationStatus == AuthorizationStatus.notDetermined;
+  }
+
+  Future<bool> requestPermissionAndSaveToken() async {
+    NotificationSettings settings =
+        await _firebaseMessaging.getNotificationSettings();
+
+    if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
+      settings = await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
+
+    print(
+      'Notification permission status: ${settings.authorizationStatus.name}',
+    );
+
+    final isAllowed =
+        settings.authorizationStatus == AuthorizationStatus.authorized ||
+            settings.authorizationStatus == AuthorizationStatus.provisional;
+
+    if (!isAllowed) {
+      print('Người dùng chưa cấp quyền thông báo, bỏ qua lấy FCM token.');
+      return false;
+    }
+
+    try {
+      await _saveMessagingToken();
+      return true;
+    } catch (e, stackTrace) {
+      print("Không thể lấy FCM token: $e");
+      print(stackTrace);
+      return false;
+    }
+  }
+
   // Phát âm thanh báo động
   Future<void> _playAlarm() async {
     try {
@@ -63,14 +100,19 @@ class NotificationService {
   }
 
   Future<void> _saveMessagingToken() async {
-    final apnsToken = await _waitForApnsToken();
-    print("APNs Token: $apnsToken");
+    final needsApnsToken = defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS;
 
-    if (apnsToken == null) {
-      print(
-        'APNs token is null. Bỏ qua lưu FCM token trên thiết bị hiện tại.',
-      );
-      return;
+    if (needsApnsToken) {
+      final apnsToken = await _waitForApnsToken();
+      print("APNs Token: $apnsToken");
+
+      if (apnsToken == null) {
+        print(
+          'APNs token is null. Bỏ qua lưu FCM token trên thiết bị hiện tại.',
+        );
+        return;
+      }
     }
 
     final token = await _firebaseMessaging.getToken();
