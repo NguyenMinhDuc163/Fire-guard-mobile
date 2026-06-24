@@ -13,10 +13,49 @@ import '../../../init.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   static const String routeName = '/home_screen';
+  static const String _fireAlertDisclaimerAcceptedKey =
+      'fireAlertDisclaimerAccepted';
+
+  Future<bool> _confirmFireAlertIfNeeded(BuildContext context) async {
+    final isAccepted =
+        LocalStorageHelper.getValue(_fireAlertDisclaimerAcceptedKey) == true;
+    if (isAccepted) return true;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text('safety_disclaimer.fire_alert_title'.tr()),
+          content: SingleChildScrollView(
+            child: Text('safety_disclaimer.fire_alert_body'.tr()),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text('common.cancel'.tr()),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                LocalStorageHelper.setValue(
+                  _fireAlertDisclaimerAcceptedKey,
+                  true,
+                );
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: Text('safety_disclaimer.continue'.tr()),
+            ),
+          ],
+        );
+      },
+    );
+
+    return confirmed == true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final homeViewModel = Provider.of<HomeViewModel>(context);
-    final model = homeViewModel.model;
 
     return Scaffold(
       backgroundColor: ColorPalette.backgroundScaffoldColor,
@@ -40,6 +79,9 @@ class HomeScreen extends StatelessWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () async {
+                      final canSend = await _confirmFireAlertIfNeeded(context);
+                      if (!canSend) return;
+
                       bool isSend = await homeViewModel.sendNotification();
                       if (isSend) {
                         showToast(
@@ -107,6 +149,35 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.black87, // Màu chữ
                     ),
                     textAlign: TextAlign.center, // Căn giữa văn bản
+                  ),
+                ),
+                SizedBox(height: height_12),
+                Container(
+                  padding: const EdgeInsets.all(12.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.55),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      SizedBox(width: width_8),
+                      Expanded(
+                        child: Text(
+                          'safety_disclaimer.home_note'.tr(),
+                          style: const TextStyle(
+                            fontSize: 13.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: height_20),

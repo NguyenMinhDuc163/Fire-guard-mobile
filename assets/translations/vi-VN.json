@@ -79,6 +79,16 @@
     "ok": "OK"
   },
 
+  "safety_disclaimer": {
+    "title": "Thông báo về phạm vi hỗ trợ",
+    "body": "Fire Guard là ứng dụng hỗ trợ ghi nhận, hiển thị và gửi cảnh báo liên quan đến nguy cơ cháy.\n\nỨng dụng không thay thế thiết bị báo cháy đạt chuẩn, hệ thống PCCC, cuộc gọi khẩn cấp hoặc hướng dẫn của cơ quan chức năng.\n\nThông tin từ cảm biến, vị trí, bản đồ và thông báo có thể bị chậm, gián đoạn hoặc sai lệch do thiết bị, mạng, pin, quyền truy cập hoặc hạ tầng bên thứ ba.\n\nKhi có dấu hiệu nguy hiểm, hãy ưu tiên rời khỏi khu vực không an toàn và liên hệ 114 hoặc cơ quan chức năng theo quy định địa phương.",
+    "understood": "Tôi đã hiểu",
+    "continue": "Tiếp tục",
+    "home_note": "Fire Guard chỉ hỗ trợ gửi cảnh báo tham khảo. Khi có nguy hiểm, hãy gọi 114 hoặc cơ quan chức năng và làm theo hướng dẫn an toàn.",
+    "fire_alert_title": "Xác nhận gửi cảnh báo hỗ trợ",
+    "fire_alert_body": "Tính năng này chỉ hỗ trợ gửi cảnh báo đến hệ thống hoặc người liên quan. Cảnh báo có thể bị chậm, gián đoạn hoặc sai lệch và không thay thế cuộc gọi khẩn cấp.\n\nNếu có nguy hiểm thực tế, hãy ưu tiên an toàn cá nhân và liên hệ 114 hoặc cơ quan chức năng ngay."
+  },
+
   "errors_message": {
     "no_relatives_found": "Không tìm thấy người thân trong danh sách, vui lòng chọn tính năng \"Quản lý người thân\" để thêm người thân"
   },

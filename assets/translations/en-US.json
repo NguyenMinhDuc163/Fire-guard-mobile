@@ -76,6 +76,15 @@
     "cancel": "Cancel",
     "ok": "OK"
   },
+  "safety_disclaimer": {
+    "title": "Support Scope Notice",
+    "body": "Fire Guard is a support tool for recording, displaying, and sending alerts related to possible fire risks.\n\nThe app does not replace certified fire alarms, fire safety systems, emergency calls, or instructions from public safety authorities.\n\nSensor data, location, maps, and notifications may be delayed, interrupted, or inaccurate due to device conditions, network availability, battery status, permissions, or third-party infrastructure.\n\nIf there is any sign of immediate danger, prioritize leaving unsafe areas and contact 114 or the appropriate local emergency authority.",
+    "understood": "I Understand",
+    "continue": "Continue",
+    "home_note": "Fire Guard only provides support alerts for reference. In an emergency, call 114 or the appropriate authority and follow safety instructions.",
+    "fire_alert_title": "Confirm Support Alert",
+    "fire_alert_body": "This feature only helps send an alert to the system or related people. Alerts may be delayed, interrupted, or inaccurate and do not replace an emergency call.\n\nIf there is immediate danger, prioritize personal safety and contact 114 or the appropriate emergency authority right away."
+  },
   "errors_message": {
     "no_relatives_found": "No relatives found in your list. Please go to \"Manage Relatives\" feature to add relatives"
   },

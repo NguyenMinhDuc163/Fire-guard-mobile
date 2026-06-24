@@ -8,12 +8,12 @@ import 'package:fire_guard/screens/fire_safety_skills_screen/views/fire_safety_s
 import 'package:fire_guard/screens/fire_news_screen/providers/fire_news_view_model.dart';
 import 'package:fire_guard/screens/fire_safety_skills_screen/providers/fire_safety_skills_view_model.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
+import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'profile_screen/views/personal_profile_screen.dart';
-
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
@@ -23,7 +23,9 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  int _selectedIndex = 0;  // Chỉ số của trang hiện tạixl
+  static const String _safetyDisclaimerAcceptedKey = 'safetyDisclaimerAccepted';
+
+  int _selectedIndex = 0; // Chỉ số của trang hiện tạixl
 
   // Danh sách các màn hình tương ứng với mỗi mục trong BottomNavigationBar
   // static const List<Widget> _widgetOptions = <Widget>[
@@ -52,19 +54,56 @@ class _MainAppState extends State<MainApp> {
     ),
   ];
 
-
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showSafetyDisclaimerIfNeeded();
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;  // Cập nhật chỉ số khi người dùng chọn trang
+      _selectedIndex = index; // Cập nhật chỉ số khi người dùng chọn trang
     });
+  }
+
+  Future<void> _showSafetyDisclaimerIfNeeded() async {
+    final isAccepted =
+        LocalStorageHelper.getValue(_safetyDisclaimerAcceptedKey) == true;
+    if (isAccepted || !mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text('safety_disclaimer.title'.tr()),
+          content: SingleChildScrollView(
+            child: Text('safety_disclaimer.body'.tr()),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                LocalStorageHelper.setValue(
+                  _safetyDisclaimerAcceptedKey,
+                  true,
+                );
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text('safety_disclaimer.understood'.tr()),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      body: _widgetOptions[_selectedIndex],  // Hiển thị màn hình tương ứng với chỉ số hiện tại
+      body: _widgetOptions[
+          _selectedIndex], // Hiển thị màn hình tương ứng với chỉ số hiện tại
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
@@ -86,10 +125,11 @@ class _MainAppState extends State<MainApp> {
             label: 'home_screen.personalProfile'.tr(),
           ),
         ],
-        selectedItemColor: Colors.orange,  // Màu sắc khi item được chọn
-        unselectedItemColor: Colors.grey,  // Màu sắc khi item không được chọn
-        backgroundColor: ColorPalette.kLightPink2,  // Màu nền của thanh điều hướng
-        onTap: _onItemTapped,  // Sự kiện khi người dùng nhấn vào item
+        selectedItemColor: Colors.orange, // Màu sắc khi item được chọn
+        unselectedItemColor: Colors.grey, // Màu sắc khi item không được chọn
+        backgroundColor:
+            ColorPalette.kLightPink2, // Màu nền của thanh điều hướng
+        onTap: _onItemTapped, // Sự kiện khi người dùng nhấn vào item
       ),
     );
   }
