@@ -15,6 +15,7 @@ import 'package:fire_guard/service/service_config/notification_service.dart';
 import 'package:fire_guard/utils/core/common/toast.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../providers/BaseViewModel.dart';
@@ -29,7 +30,9 @@ class AuthViewModel extends BaseViewModel {
 
   Future<bool> signIn({required String username, required String password}) async {
     return await execute(() async{
-      await NotificationService().requestPermissionAndSaveToken();
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        await NotificationService().requestPermissionAndSaveToken();
+      }
       final tokenFCM = LocalStorageHelper.getValue('fcm_token');
       LoginRequest request = LoginRequest(
         email: username,
@@ -81,7 +84,9 @@ class AuthViewModel extends BaseViewModel {
   }) async {
 
     return await execute(() async{
-      await NotificationService().requestPermissionAndSaveToken();
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        await NotificationService().requestPermissionAndSaveToken();
+      }
       final tokenFCM = LocalStorageHelper.getValue('fcm_token');
       RegisterRequest request = RegisterRequest(
           username: '$firstName $lastName', email: email, password: password, tokenFcm: tokenFCM);

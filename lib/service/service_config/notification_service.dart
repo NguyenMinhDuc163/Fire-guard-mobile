@@ -57,8 +57,12 @@ class NotificationService {
     NotificationSettings settings =
         await _firebaseMessaging.getNotificationSettings();
 
-    if (settings.authorizationStatus != AuthorizationStatus.authorized &&
-        settings.authorizationStatus != AuthorizationStatus.provisional) {
+    final shouldRequestPermission =
+        settings.authorizationStatus == AuthorizationStatus.notDetermined ||
+            (defaultTargetPlatform == TargetPlatform.android &&
+                settings.authorizationStatus == AuthorizationStatus.denied);
+
+    if (shouldRequestPermission) {
       settings = await _firebaseMessaging.requestPermission(
         alert: true,
         badge: true,
