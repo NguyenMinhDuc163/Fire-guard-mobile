@@ -35,7 +35,7 @@ class SettingViewModel extends BaseViewModel {
         try {
           userId = userIdStr;
         } catch (e) {
-          error = 'settings.invalid_user_id'.tr() +  userIdStr;
+          error = 'settings.invalid_user_id'.tr() + userIdStr;
           return false;
         }
 
@@ -45,7 +45,7 @@ class SettingViewModel extends BaseViewModel {
         );
 
         final BaseResponse<UpdateInfoUserResponse> response =
-        await apiServices.updateInfoUser(request);
+            await apiServices.updateInfoUser(request);
 
         if (response.code == 200 || response.code == 201) {
           return true;
@@ -54,7 +54,7 @@ class SettingViewModel extends BaseViewModel {
           return false;
         }
       } catch (e) {
-        error = 'settings.error_occurred'.tr() +  e.toString();
+        error = 'settings.error_occurred'.tr() + e.toString();
         return false;
       } finally {
         isLoading = false;
@@ -91,17 +91,16 @@ class SettingViewModel extends BaseViewModel {
         );
 
         final BaseResponse<UpdateInfoUserResponse> response =
-        await apiServices.updateInfoUser(request);
+            await apiServices.updateInfoUser(request);
 
         if (response.code == 200 || response.code == 201) {
           return true;
         } else {
-          error =
-              response.message ?? 'settings.error_updating_phone'.tr();
+          error = response.message ?? 'settings.error_updating_phone'.tr();
           return false;
         }
       } catch (e) {
-         error = 'settings.error_occurred'.tr() +  e.toString();
+        error = 'settings.error_occurred'.tr() + e.toString();
         return false;
       } finally {
         isLoading = false;
@@ -141,7 +140,7 @@ class SettingViewModel extends BaseViewModel {
         );
 
         final BaseResponse<UpdateInfoUserResponse> response =
-        await apiServices.updateInfoUser(request);
+            await apiServices.updateInfoUser(request);
 
         if (response.code == 200 || response.code == 201) {
           // Lưu thông tin mới vào LocalStorage
@@ -154,7 +153,7 @@ class SettingViewModel extends BaseViewModel {
           return false;
         }
       } catch (e) {
-         error = 'settings.error_occurred'.tr() +  e.toString();
+        error = 'settings.error_occurred'.tr() + e.toString();
         return false;
       } finally {
         isLoading = false;
@@ -183,10 +182,17 @@ class SettingViewModel extends BaseViewModel {
   //   notifyListeners();
   // }
 
-  Future<bool> changePassword({required String oldPassword, required String newPassword}) async {
+  Future<bool> changePassword(
+      {required String oldPassword, required String newPassword}) async {
     return await execute(() async {
+      final userId = _getCurrentUserId();
+      if (userId == null) {
+        showToastTop(message: 'settings.user_id_not_found'.tr());
+        return false;
+      }
+
       ChangePasswordRequest request = ChangePasswordRequest(
-        userID: LocalStorageHelper.getValue('userID') ?? 7,
+        userID: userId,
         oldPassword: oldPassword,
         newPassword: newPassword,
       );
@@ -195,7 +201,7 @@ class SettingViewModel extends BaseViewModel {
         print('JSON request data: ${jsonEncode(request.toJson())}');
 
         final BaseResponse<ChangePasswordResponse> response =
-        await apiServices.changePassword(request);
+            await apiServices.changePassword(request);
 
         print('Code: ${response.code}');
         print('Status: ${response.status}');
@@ -203,13 +209,22 @@ class SettingViewModel extends BaseViewModel {
         print('Error: ${response.error}');
         print('Data: ${response.data}');
 
-        showToastTop(message: response.message ?? 'settings.change_password_success'.tr());
+        showToastTop(
+            message:
+                response.message ?? 'settings.change_password_success'.tr());
         return response.code == 200 || response.code == 201;
       } catch (e) {
         print('Error: $e');
         return false;
       } finally {}
     });
+  }
+
+  int? _getCurrentUserId() {
+    final value = LocalStorageHelper.getValue('userId');
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   Future<bool> deleteAccount() async {
