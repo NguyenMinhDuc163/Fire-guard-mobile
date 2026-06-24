@@ -36,25 +36,6 @@ class _MainAppState extends State<MainApp> {
   //   PersonalProfileScreen(),   // Trang "Cá nhân"
   // ];
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    ChangeNotifierProvider<HomeViewModel>(
-      create: (_) => HomeViewModel(),
-      child: const HomeScreen(),
-    ),
-    ChangeNotifierProvider<FireNewsViewModel>(
-      create: (_) => FireNewsViewModel(),
-      child: const FireNewsScreen(),
-    ),
-    ChangeNotifierProvider<FireSafetySkillsViewModel>(
-      create: (_) => FireSafetySkillsViewModel(),
-      child: const FireSafetySkillsScreen(),
-    ),
-    ChangeNotifierProvider<PersonalProfileViewModel>(
-      create: (_) => PersonalProfileViewModel(),
-      child: const PersonalProfileScreen(),
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -145,8 +126,32 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = context.locale;
+    final widgetOptions = <Widget>[
+      ChangeNotifierProvider<HomeViewModel>(
+        key: ValueKey('home_${locale.toString()}'),
+        create: (_) => HomeViewModel(),
+        child: const HomeScreen(),
+      ),
+      ChangeNotifierProvider<FireNewsViewModel>(
+        key: ValueKey('news_${locale.toString()}'),
+        create: (_) => FireNewsViewModel(),
+        child: const FireNewsScreen(),
+      ),
+      ChangeNotifierProvider<FireSafetySkillsViewModel>(
+        key: ValueKey('skills_${locale.toString()}'),
+        create: (_) => FireSafetySkillsViewModel(),
+        child: const FireSafetySkillsScreen(),
+      ),
+      ChangeNotifierProvider<PersonalProfileViewModel>(
+        key: ValueKey('profile_${locale.toString()}'),
+        create: (_) => PersonalProfileViewModel(),
+        child: const PersonalProfileScreen(),
+      ),
+    ];
+
     return Scaffold(
-      body: _widgetOptions[
+      body: widgetOptions[
           _selectedIndex], // Hiển thị màn hình tương ứng với chỉ số hiện tại
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

@@ -38,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// final authService = AuthWithFirebase(); // Firebase Authentication Service
   bool isVietnamese = true;
+  bool _didInitLocale = false;
 
   @override
   void initState() {
@@ -52,6 +53,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if (savedLocale != null) {
       isVietnamese = savedLocale == 'vi';
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didInitLocale) return;
+    isVietnamese = context.locale.languageCode == 'vi';
+    _didInitLocale = true;
   }
 
   @override

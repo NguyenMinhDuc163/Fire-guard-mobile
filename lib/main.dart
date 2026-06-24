@@ -37,13 +37,7 @@ void main() async {
 
   // Khởi tạo FirebaseService để kích hoạt Remote Config
 
-  Locale defaultLocale = const Locale('en', 'US');
-  String? savedLocale = LocalStorageHelper.getValue('languageCode');
-  if (savedLocale != null) {
-    defaultLocale = savedLocale == 'vi'
-        ? const Locale('vi', 'VN')
-        : const Locale('en', 'US');
-  }
+  final savedLocale = _getSavedLocale();
 
   await ErrorStack.init();
 
@@ -52,13 +46,22 @@ void main() async {
       supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
-      startLocale: defaultLocale,
+      startLocale: savedLocale,
       child: MultiProvider(
         providers: ProviderSetup.getProviders(),
         child: const MyApp(),
       ),
     ),
   );
+}
+
+Locale? _getSavedLocale() {
+  final savedLanguageCode = LocalStorageHelper.getValue('languageCode');
+  if (savedLanguageCode == null) return null;
+
+  return savedLanguageCode == 'vi'
+      ? const Locale('vi', 'VN')
+      : const Locale('en', 'US');
 }
 
 Future<void> _initializeFirebase() async {
