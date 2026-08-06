@@ -3,11 +3,15 @@ import 'dart:io';
 
 import 'package:fire_guard/service/admob/admob_ids.dart';
 import 'package:fire_guard/service/admob/app_open_ad_manager.dart';
+import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdMobService {
   AdMobService._() {
+    _adsEnabledNotifier = ValueNotifier<bool>(
+      _shouldEnableAds(LocalStorageHelper.getValue(_adsPreferenceKey)),
+    );
     _appOpenAdManager = AppOpenAdManager(
       canShowFullScreenAd: _canShowAppOpenAd,
       onFullScreenAdOpening: _markFullScreenAdOpening,
@@ -21,7 +25,9 @@ class AdMobService {
   static const int contentThreshold = 2;
   static const Duration minimumInterval = Duration(seconds: 90);
   static const int maximumPerSession = 3;
+  static const String _adsPreferenceKey = 'isAds';
 
+  late final ValueNotifier<bool> _adsEnabledNotifier;
   late final AppOpenAdManager _appOpenAdManager;
   Future<bool>? _initialization;
   InterstitialAd? _interstitialAd;
@@ -29,28 +35,51 @@ class AdMobService {
   bool _isFullScreenAdShowing = false;
   int _completedContentCount = 0;
   int _interstitialsShownThisSession = 0;
+  int _configurationGeneration = 0;
+  bool _hasRecordedLaunch = false;
   DateTime? _lastFullScreenAdShownAt;
 
-  Future<bool> get adsReady => _initialization ?? Future.value(false);
+  bool get adsEnabled => _adsEnabledNotifier.value;
+
+  ValueListenable<bool> get adsEnabledListenable => _adsEnabledNotifier;
+
+  Future<bool> get adsReady =>
+      adsEnabled ? _initialization ?? Future.value(false) : Future.value(false);
+
+  static bool _shouldEnableAds(dynamic value) {
+    return value?.toString().trim().toUpperCase() != 'N';
+  }
 
   Future<bool> initialize() {
     final existingInitialization = _initialization;
     if (existingInitialization != null) return existingInitialization;
 
-    _appOpenAdManager.recordLaunch();
-    final initialization = _initializeAds();
+    if (!_hasRecordedLaunch) {
+      _hasRecordedLaunch = true;
+      _appOpenAdManager.recordLaunch();
+    }
+
+    final initialization = adsEnabled
+        ? _initializeAds(_configurationGeneration)
+        : Future.value(false);
     _initialization = initialization;
     return initialization;
   }
 
-  Future<bool> _initializeAds() async {
+  Future<bool> _initializeAds(int generation) async {
     if (!Platform.isAndroid && !Platform.isIOS) return false;
 
     try {
       final canRequestAds = await _requestConsent();
-      if (!canRequestAds) return false;
+      if (!canRequestAds ||
+          !adsEnabled ||
+          generation != _configurationGeneration) {
+        return false;
+      }
 
       await MobileAds.instance.initialize();
+      if (!adsEnabled || generation != _configurationGeneration) return false;
+
       _loadInterstitial();
       _appOpenAdManager.start();
       return true;
@@ -111,6 +140,8 @@ class AdMobService {
   }
 
   void recordContentCompleted() {
+    if (!adsEnabled) return;
+
     _completedContentCount++;
     if (_completedContentCount < contentThreshold) return;
 
@@ -121,7 +152,8 @@ class AdMobService {
 
   bool _tryShowInterstitial() {
     final ad = _interstitialAd;
-    if (ad == null ||
+    if (!adsEnabled ||
+        ad == null ||
         _isFullScreenAdShowing ||
         _interstitialsShownThisSession >= maximumPerSession ||
         !_hasMinimumIntervalElapsed()) {
@@ -169,8 +201,11 @@ class AdMobService {
   }
 
   void _loadInterstitial() {
-    if (_isLoadingInterstitial || _interstitialAd != null) return;
+    if (!adsEnabled || _isLoadingInterstitial || _interstitialAd != null) {
+      return;
+    }
 
+    final generation = _configurationGeneration;
     _isLoadingInterstitial = true;
     unawaited(
       InterstitialAd.load(
@@ -178,15 +213,21 @@ class AdMobService {
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (ad) {
+            if (!adsEnabled || generation != _configurationGeneration) {
+              ad.dispose();
+              return;
+            }
             _isLoadingInterstitial = false;
             _interstitialAd = ad;
           },
           onAdFailedToLoad: (error) {
+            if (generation != _configurationGeneration) return;
             _isLoadingInterstitial = false;
             debugPrint('AdMob Interstitial load failed: $error');
           },
         ),
       ).catchError((Object error) {
+        if (generation != _configurationGeneration) return;
         _isLoadingInterstitial = false;
         debugPrint('AdMob Interstitial load failed: $error');
       }),
@@ -194,7 +235,9 @@ class AdMobService {
   }
 
   bool _canShowAppOpenAd() {
-    return !_isFullScreenAdShowing && _hasMinimumIntervalElapsed();
+    return adsEnabled &&
+        !_isFullScreenAdShowing &&
+        _hasMinimumIntervalElapsed();
   }
 
   bool _hasMinimumIntervalElapsed() {
@@ -217,6 +260,29 @@ class AdMobService {
 
   void suppressNextAppOpenAd() {
     _appOpenAdManager.suppressNextAppOpenAd();
+  }
+
+  void updateAdsPreference(dynamic value) {
+    final normalizedValue = value?.toString().trim().toUpperCase();
+    LocalStorageHelper.setValue(_adsPreferenceKey, normalizedValue);
+
+    final shouldEnableAds = _shouldEnableAds(normalizedValue);
+    if (shouldEnableAds == adsEnabled) return;
+
+    _configurationGeneration++;
+    _adsEnabledNotifier.value = shouldEnableAds;
+    _completedContentCount = 0;
+
+    if (!shouldEnableAds) {
+      _interstitialAd?.dispose();
+      _interstitialAd = null;
+      _isLoadingInterstitial = false;
+      _appOpenAdManager.dispose();
+      return;
+    }
+
+    _initialization = null;
+    unawaited(initialize());
   }
 
   void dispose() {

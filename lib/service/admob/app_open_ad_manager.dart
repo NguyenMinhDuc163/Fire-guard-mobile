@@ -28,6 +28,7 @@ class AppOpenAdManager with WidgetsBindingObserver {
   DateTime? _loadedAt;
   bool _isLoading = false;
   bool _isShowing = false;
+  bool _isStarted = false;
   bool _suppressNextAppOpenAd = false;
   bool _wasIntroCompletedBeforeLaunch = false;
   int _launchCount = 0;
@@ -41,6 +42,8 @@ class AppOpenAdManager with WidgetsBindingObserver {
   }
 
   void start() {
+    if (_isStarted) return;
+    _isStarted = true;
     WidgetsBinding.instance.addObserver(this);
     loadAd();
   }
@@ -62,7 +65,7 @@ class AppOpenAdManager with WidgetsBindingObserver {
   }
 
   void loadAd() {
-    if (_isLoading || _appOpenAd != null) return;
+    if (!_isStarted || _isLoading || _appOpenAd != null) return;
 
     _isLoading = true;
     unawaited(
@@ -72,6 +75,10 @@ class AppOpenAdManager with WidgetsBindingObserver {
         adLoadCallback: AppOpenAdLoadCallback(
           onAdLoaded: (ad) {
             _isLoading = false;
+            if (!_isStarted) {
+              ad.dispose();
+              return;
+            }
             _appOpenAd = ad;
             _loadedAt = DateTime.now();
             showAdIfAvailable();
@@ -89,6 +96,8 @@ class AppOpenAdManager with WidgetsBindingObserver {
   }
 
   void showAdIfAvailable() {
+    if (!_isStarted) return;
+
     if (!_isEligibleToShow()) {
       if (_appOpenAd == null) loadAd();
       return;
@@ -173,8 +182,12 @@ class AppOpenAdManager with WidgetsBindingObserver {
   }
 
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    if (_isStarted) {
+      WidgetsBinding.instance.removeObserver(this);
+      _isStarted = false;
+    }
     _appOpenAd?.dispose();
     _appOpenAd = null;
+    _loadedAt = null;
   }
 }

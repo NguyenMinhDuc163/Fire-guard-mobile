@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/screens/authen_screen/models/auth_model.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:fire_guard/service/api_service/api_service.dart';
 import 'package:fire_guard/service/api_service/request/forgot_password_request.dart';
 import 'package:fire_guard/service/api_service/request/login_request.dart';
@@ -51,6 +52,7 @@ class AuthViewModel extends BaseViewModel {
             LocalStorageHelper.setValue("userId", userMap['id']);
             LocalStorageHelper.setValue("isAdmin", userMap["is_admin"]);
             LocalStorageHelper.setValue("alertPhone", userMap["alert_phone"]);
+            AdMobService.instance.updateAdsPreference(userMap['isAds']);
             break; // Dừng vòng lặp khi tìm thấy user
           }
         }
@@ -151,6 +153,8 @@ class AuthViewModel extends BaseViewModel {
         final UserCredential authResult = await _auth.signInWithCredential(credential);
         User? user = authResult.user;
 
+        // Google login không có trường `isAds`, nên áp dụng mặc định có quảng cáo.
+        AdMobService.instance.updateAdsPreference(null);
 
         // bool? isLoginSUCC = await checkLoginGoogle(_user!);
 

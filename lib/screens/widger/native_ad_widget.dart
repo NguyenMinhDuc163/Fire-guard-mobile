@@ -77,24 +77,31 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final ad = _nativeAd;
-    if (!_isLoaded || ad == null) return const SizedBox.shrink();
+    return ValueListenableBuilder<bool>(
+      valueListenable: AdMobService.instance.adsEnabledListenable,
+      builder: (context, adsEnabled, child) {
+        final ad = _nativeAd;
+        if (!adsEnabled || !_isLoaded || ad == null) {
+          return const SizedBox.shrink();
+        }
 
-    return Semantics(
-      label: 'Quảng cáo',
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: SizedBox(
-          height: _templateHeight,
-          width: double.infinity,
-          child: AdWidget(ad: ad),
-        ),
-      ),
+        return Semantics(
+          label: 'Quảng cáo',
+          child: Card(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: SizedBox(
+              height: _templateHeight,
+              width: double.infinity,
+              child: AdWidget(ad: ad),
+            ),
+          ),
+        );
+      },
     );
   }
 

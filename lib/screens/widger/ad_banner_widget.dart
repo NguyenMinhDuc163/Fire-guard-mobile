@@ -81,37 +81,44 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth.isFinite
-            ? constraints.maxWidth.floor()
-            : MediaQuery.sizeOf(context).width.floor();
+    return ValueListenableBuilder<bool>(
+      valueListenable: AdMobService.instance.adsEnabledListenable,
+      builder: (context, adsEnabled, child) {
+        if (!adsEnabled) return const SizedBox.shrink();
 
-        if (availableWidth > 0 &&
-            availableWidth != _requestedWidth &&
-            !_isLoadScheduled) {
-          _isLoadScheduled = true;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) _loadAd(availableWidth);
-          });
-        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final availableWidth = constraints.maxWidth.isFinite
+                ? constraints.maxWidth.floor()
+                : MediaQuery.sizeOf(context).width.floor();
 
-        final ad = _bannerAd;
-        if (!_isLoaded || ad == null) return const SizedBox.shrink();
+            if (availableWidth > 0 &&
+                availableWidth != _requestedWidth &&
+                !_isLoadScheduled) {
+              _isLoadScheduled = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _loadAd(availableWidth);
+              });
+            }
 
-        return SafeArea(
-          top: false,
-          child: SizedBox(
-            width: double.infinity,
-            height: ad.size.height.toDouble(),
-            child: Center(
+            final ad = _bannerAd;
+            if (!_isLoaded || ad == null) return const SizedBox.shrink();
+
+            return SafeArea(
+              top: false,
               child: SizedBox(
-                width: ad.size.width.toDouble(),
+                width: double.infinity,
                 height: ad.size.height.toDouble(),
-                child: AdWidget(ad: ad),
+                child: Center(
+                  child: SizedBox(
+                    width: ad.size.width.toDouble(),
+                    height: ad.size.height.toDouble(),
+                    child: AdWidget(ad: ad),
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
