@@ -101,11 +101,15 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
 
         return SafeArea(
           top: false,
-          child: Center(
-            child: SizedBox(
-              width: ad.size.width.toDouble(),
-              height: ad.size.height.toDouble(),
-              child: AdWidget(ad: ad),
+          child: SizedBox(
+            width: double.infinity,
+            height: ad.size.height.toDouble(),
+            child: Center(
+              child: SizedBox(
+                width: ad.size.width.toDouble(),
+                height: ad.size.height.toDouble(),
+                child: AdWidget(ad: ad),
+              ),
             ),
           ),
         );

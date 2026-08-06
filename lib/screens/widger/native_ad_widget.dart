@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fire_guard/service/admob/admob_ids.dart';
 import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,8 @@ class NativeAdWidget extends StatefulWidget {
 }
 
 class _NativeAdWidgetState extends State<NativeAdWidget> {
+  static double get _templateHeight => Platform.isIOS ? 101 : 90;
+
   NativeAd? _nativeAd;
   bool _isLoaded = false;
 
@@ -46,6 +50,7 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
       nativeTemplateStyle: NativeTemplateStyle(
         templateType: TemplateType.small,
         mainBackgroundColor: Colors.white,
+        cornerRadius: 10,
         callToActionTextStyle: NativeTemplateTextStyle(
           textColor: Colors.white,
           backgroundColor: Colors.orange,
@@ -78,28 +83,16 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
     return Semantics(
       label: 'Quảng cáo',
       child: Card(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: Text(
-                'Quảng cáo',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 110,
-              width: double.infinity,
-              child: AdWidget(ad: ad),
-            ),
-          ],
+        child: SizedBox(
+          height: _templateHeight,
+          width: double.infinity,
+          child: AdWidget(ad: ad),
         ),
       ),
     );
