@@ -66,9 +66,8 @@ android {
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        manifestPlaceholders = [
-            admobAppId: "ca-app-pub-3940256099942544~3347511713"
-        ]
+        // Chỉ thêm App ID test, không ghi đè `applicationName` của Flutter.
+        manifestPlaceholders.admobAppId = "ca-app-pub-3940256099942544~3347511713"
     }
     signingConfigs {
         create("release") {
