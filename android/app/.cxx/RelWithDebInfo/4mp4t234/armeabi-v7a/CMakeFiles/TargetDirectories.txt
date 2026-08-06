@@ -1,0 +1,2 @@
+/Users/seatech/Desktop/project/workspace/Fire-guard-mobile/android/app/.cxx/RelWithDebInfo/4mp4t234/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/seatech/Desktop/project/workspace/Fire-guard-mobile/android/app/.cxx/RelWithDebInfo/4mp4t234/armeabi-v7a/CMakeFiles/rebuild_cache.dir
