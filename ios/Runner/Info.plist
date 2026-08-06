@@ -91,8 +91,6 @@
 	<string>Fire Guard uses your location to show nearby fire alerts, display your position on the map, and save monitoring coordinates when you use location-based features.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Fire Guard uses your location to show your position on the fire map and help you save monitoring coordinates.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>This identifier may be used to deliver and measure relevant advertisements.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
