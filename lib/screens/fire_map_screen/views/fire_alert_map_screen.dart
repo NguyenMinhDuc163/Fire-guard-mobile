@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/init.dart';
 import 'package:fire_guard/screens/fire_map_screen/providers/fire_map_view_model.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:fire_guard/utils/core/helpers/location_permission_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -151,6 +152,7 @@ class _FireAlertMapScreenState extends State<FireAlertMapScreen> {
 
     if (await canLaunchUrl(googleMapsUri)) {
       try {
+        AdMobService.instance.suppressNextAppOpenAd();
         await launchUrl(
           googleMapsUri,
           mode: LaunchMode.externalApplication, // Cố mở trong ứng dụng trước

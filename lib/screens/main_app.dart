@@ -9,6 +9,7 @@ import 'package:fire_guard/screens/fire_news_screen/providers/fire_news_view_mod
 import 'package:fire_guard/screens/fire_safety_skills_screen/providers/fire_safety_skills_view_model.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
 import 'package:fire_guard/service/service_config/notification_service.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -120,6 +121,7 @@ class _MainAppState extends State<MainApp> {
     );
 
     if (shouldRequest == true) {
+      AdMobService.instance.suppressNextAppOpenAd();
       await notificationService.requestPermissionAndSaveToken();
     }
   }

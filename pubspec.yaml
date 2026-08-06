@@ -73,6 +73,7 @@ dependencies:
   flutter_compass: ^0.8.1
   device_preview_plus: ^2.1.3
   google_sign_in: ^6.2.2
+  google_mobile_ads: ^6.0.0
 
 dependency_overrides:
   # app_links 6.4.x dùng `flutter.compileSdkVersion` trong khối `android {}` — Gradle coi `flutter`

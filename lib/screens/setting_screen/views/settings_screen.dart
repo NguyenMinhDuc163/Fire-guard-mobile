@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart'; // Thư viện đổi ngôn ngữ
 import 'package:provider/provider.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
+import 'package:fire_guard/screens/widger/ad_banner_widget.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -317,6 +318,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                     iconColor: Colors.indigo,
                   ),
+                  const SizedBox(height: 16),
+                  const AdBannerWidget(),
+                  const SizedBox(height: 24),
                   _buildSettingCard(
                     icon: Icons.delete,
                     title: context.tr('settings.delete_account'),

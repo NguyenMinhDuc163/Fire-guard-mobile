@@ -7,6 +7,8 @@ import 'package:fire_guard/screens/profile_screen/providers/persional_profile_vi
 import 'package:fire_guard/screens/profile_screen/providers/sensor_view_model.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
 import 'package:fire_guard/screens/widger/app_bar_widget.dart';
+import 'package:fire_guard/screens/widger/ad_banner_widget.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:fire_guard/utils/core/helpers/asset_helper.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
@@ -244,6 +246,8 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                       const SizedBox(height: 20),
                       _buildSectionTitle('profile_screen.recent_alerts'.tr()),
                       _buildAlertHistoryList(),
+                      const SizedBox(height: 20),
+                      const AdBannerWidget(),
                       const SizedBox(height: 20),
                       _buildActionButtons(),
                     ],
@@ -855,6 +859,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
     );
 
     if (await canLaunchUrl(emailLaunchUri)) {
+      AdMobService.instance.suppressNextAppOpenAd();
       await launchUrl(emailLaunchUri);
     } else {
       if (context.mounted) {

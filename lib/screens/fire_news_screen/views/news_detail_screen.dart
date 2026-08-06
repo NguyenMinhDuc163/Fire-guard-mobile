@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 
 class NewsDetailScreen extends StatelessWidget {
   final String title;
@@ -28,6 +29,7 @@ class NewsDetailScreen extends StatelessWidget {
     }
 
     try {
+      AdMobService.instance.suppressNextAppOpenAd();
       final isOpened = await launchUrl(
         uri,
         mode: LaunchMode.externalApplication,

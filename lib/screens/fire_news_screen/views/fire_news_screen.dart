@@ -3,7 +3,10 @@ import 'package:fire_guard/screens/fire_news_screen/providers/fire_news_view_mod
 import 'package:fire_guard/screens/fire_news_screen/views/news_detail_screen.dart';
 import 'package:fire_guard/screens/home_screen/views/notification_screen.dart';
 import 'package:fire_guard/screens/widger/app_bar_widget.dart';
+import 'package:fire_guard/screens/widger/ad_banner_widget.dart';
+import 'package:fire_guard/screens/widger/native_ad_widget.dart';
 import 'package:fire_guard/service/api_service/response/guide_and_news_response.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +34,7 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
 
       appBar: AppBarWidget(title: 'fire_news.title'.tr(), route: NotificationsScreen.routeName),
       drawer: const DrawerWidget(),
+      bottomNavigationBar: const AdBannerWidget(),
       body: Consumer<FireNewsViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
@@ -90,11 +94,26 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
       );
     }
 
+    final nativeAdCount = news.length >= 7
+        ? 2
+        : news.length >= 2
+            ? 1
+            : 0;
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: news.length,
-      itemBuilder: (context, index) {
-        final item = news[index];
+      itemCount: news.length + nativeAdCount,
+      itemBuilder: (context, displayIndex) {
+        if (displayIndex == 2 || (displayIndex == 8 && nativeAdCount == 2)) {
+          return const NativeAdWidget();
+        }
+
+        final newsIndex = displayIndex < 2
+            ? displayIndex
+            : displayIndex < 8
+                ? displayIndex - 1
+                : displayIndex - 2;
+        final item = news[newsIndex];
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           elevation: 2,
@@ -102,8 +121,8 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: InkWell(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => NewsDetailScreen(
@@ -115,6 +134,7 @@ class _FireNewsScreenState extends State<FireNewsScreen> {
                   ),
                 ),
               );
+              AdMobService.instance.recordContentCompleted();
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

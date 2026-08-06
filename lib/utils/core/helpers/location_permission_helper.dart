@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -29,6 +30,7 @@ class LocationPermissionHelper {
           context.mounted ? await _showLocationRationaleDialog(context) : false;
       if (!shouldRequest) return false;
 
+      AdMobService.instance.suppressNextAppOpenAd();
       permission = await Geolocator.requestPermission();
     }
 
@@ -75,6 +77,7 @@ class LocationPermissionHelper {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
+                AdMobService.instance.suppressNextAppOpenAd();
                 Geolocator.openAppSettings();
               },
               child: Text('permissions.open_settings'.tr()),

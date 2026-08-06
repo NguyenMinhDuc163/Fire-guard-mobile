@@ -1,6 +1,7 @@
 import 'package:fire_guard/service/common/status_api.dart';
 import 'package:fire_guard/utils/core/constants/error_constants.dart';
 import 'package:fire_guard/screens/widger/LoadingWidget.dart';
+import 'package:fire_guard/screens/widger/ad_banner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fire_guard/utils/core/constants/color_constants.dart';
@@ -150,6 +151,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ],
                   ),
                 ),
+                const AdBannerWidget(),
                 Expanded(
                   child: notifications.isNotEmpty
                       ? ListView.builder(

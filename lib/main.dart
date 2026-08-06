@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:error_stack/error_stack.dart';
 import 'package:fire_guard/config/firebase_app_config.dart';
@@ -12,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import 'providers/provider_setup.dart';
 import 'screens/authen_screen/view/splash_screen.dart';
+import 'service/admob/admob_service.dart';
 import 'service/service_config//notification_service.dart';
 import 'service/service_config/firebase_service.dart';
 
@@ -72,7 +75,8 @@ class MyApp extends StatelessWidget {
     final NotificationService notificationService = NotificationService();
     // Khởi tạo Notification Service với context
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      notificationService.init(context);
+      unawaited(notificationService.init(context));
+      unawaited(AdMobService.instance.initialize());
     });
 
     return ScreenUtilInit(

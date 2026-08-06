@@ -37,6 +37,11 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
 
+        <!-- Debug dùng App ID test; release dùng ANDROID_ADMOB_APP_ID từ build.gradle. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
+
         <!-- Cấu hình Activity chính -->
         <activity
             android:name=".MainActivity"

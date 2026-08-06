@@ -3,6 +3,8 @@ import 'package:fire_guard/screens/fire_safety_skills_screen/models/skill_item.d
 import 'package:fire_guard/screens/fire_safety_skills_screen/providers/fire_safety_skills_view_model.dart';
 import 'package:fire_guard/screens/home_screen/views/notification_screen.dart';
 import 'package:fire_guard/screens/widger/app_bar_widget.dart';
+import 'package:fire_guard/screens/widger/ad_banner_widget.dart';
+import 'package:fire_guard/screens/widger/native_ad_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +36,7 @@ class _FireSafetySkillsScreenState extends State<FireSafetySkillsScreen> {
     return Scaffold(
       appBar: AppBarWidget(title: 'fire_safety_skills.fire_safety_skills_escape'.tr(), route: NotificationsScreen.routeName),
       drawer: const DrawerWidget(),
+      bottomNavigationBar: const AdBannerWidget(),
       body: Column(
         children: [
           Padding(
@@ -108,11 +111,27 @@ class _FireSafetySkillsScreenState extends State<FireSafetySkillsScreen> {
                   );
                 }
 
+                final nativeAdCount = items.length >= 7
+                    ? 2
+                    : items.length >= 2
+                        ? 1
+                        : 0;
+
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final item = items[index];
+                  itemCount: items.length + nativeAdCount,
+                  itemBuilder: (context, displayIndex) {
+                    if (displayIndex == 2 ||
+                        (displayIndex == 8 && nativeAdCount == 2)) {
+                      return const NativeAdWidget();
+                    }
+
+                    final itemIndex = displayIndex < 2
+                        ? displayIndex
+                        : displayIndex < 8
+                            ? displayIndex - 1
+                            : displayIndex - 2;
+                    final item = items[itemIndex];
                     return SkillItem(
                       number: item.type ?? '',
                       title: item.title ?? '',

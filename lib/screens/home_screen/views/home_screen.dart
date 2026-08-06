@@ -6,6 +6,7 @@ import 'package:fire_guard/screens/widger/app_bar_widget.dart';
 import 'package:fire_guard/utils/core/common/drawer_widget.dart';
 import 'package:fire_guard/utils/core/helpers/location_permission_helper.dart';
 import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -189,6 +190,7 @@ class HomeScreen extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
+                          AdMobService.instance.suppressNextAppOpenAd();
                           final isCallOpened = await homeViewModel.directCall();
                           if (!isCallOpened) {
                             showToast(

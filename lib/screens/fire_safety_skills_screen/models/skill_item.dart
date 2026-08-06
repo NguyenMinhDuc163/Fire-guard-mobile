@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../views/skill_detail_screen.dart'; // Import màn hình chi tiết
+import 'package:fire_guard/service/admob/admob_service.dart';
 
 class SkillItem extends StatelessWidget {
   final String number;
@@ -18,9 +19,9 @@ class SkillItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         // Điều hướng đến màn hình chi tiết khi nhấn vào
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SkillDetailScreen(
@@ -30,6 +31,7 @@ class SkillItem extends StatelessWidget {
             ),
           ),
         );
+        AdMobService.instance.recordContentCompleted();
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8.0),

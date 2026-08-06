@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:fire_guard/screens/family_manager_screen/providers/family_manager_view_model.dart';
+import 'package:fire_guard/screens/widger/ad_banner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -270,6 +271,7 @@ class _FamilyManagementScreenState extends State<FamilyManagementScreen> {
           );
         },
       ),
+      bottomNavigationBar: const AdBannerWidget(),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddMemberBottomSheet,
         backgroundColor: Colors.orange,
