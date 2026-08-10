@@ -1,3 +1,4 @@
+import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:fire_guard/utils/core/constants/dimension_constants.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -5,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 class NotificationService {
   static bool _isInitialized = false;
@@ -53,6 +55,11 @@ class NotificationService {
     return settings.authorizationStatus == AuthorizationStatus.notDetermined;
   }
 
+  Future<AuthorizationStatus> getPermissionStatus() async {
+    final settings = await _firebaseMessaging.getNotificationSettings();
+    return settings.authorizationStatus;
+  }
+
   Future<bool> requestPermissionAndSaveToken() async {
     NotificationSettings settings =
         await _firebaseMessaging.getNotificationSettings();
@@ -91,6 +98,11 @@ class NotificationService {
       print(stackTrace);
       return false;
     }
+  }
+
+  Future<void> openNotificationSettings() async {
+    AdMobService.instance.suppressNextAppOpenAd();
+    await Geolocator.openAppSettings();
   }
 
   // Phát âm thanh báo động

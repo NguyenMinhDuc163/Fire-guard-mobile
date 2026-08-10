@@ -11,6 +11,7 @@ import 'package:fire_guard/screens/home_screen/providers/home_view_model.dart';
 import 'package:fire_guard/service/service_config/notification_service.dart';
 import 'package:fire_guard/service/admob/admob_service.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -90,32 +91,39 @@ class _MainAppState extends State<MainApp> {
 
   Future<void> _showNotificationPermissionIfNeeded() async {
     final notificationService = NotificationService();
-    final shouldAsk =
-        await notificationService.isNotificationPermissionNotDetermined();
-    if (!shouldAsk) {
+    final status = await notificationService.getPermissionStatus();
+
+    // Already authorized or provisional -> just ensure token is saved
+    if (status == AuthorizationStatus.authorized ||
+        status == AuthorizationStatus.provisional) {
       await notificationService.requestPermissionAndSaveToken();
       return;
     }
 
+    // Denied -> do nothing, don't ask again
+    if (status == AuthorizationStatus.denied) {
+      return;
+    }
+
+    // Only show explanation dialog when notDetermined
     if (!mounted) return;
 
     final shouldRequest = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: Text('permissions.notification_title'.tr()),
-          content: Text('permissions.notification_body'.tr()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text('permissions.not_now'.tr()),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: Text('permissions.allow'.tr()),
-            ),
-          ],
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            title: Text('permissions.notification_title'.tr()),
+            content: Text('permissions.notification_body'.tr()),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text('permissions.continue'.tr()),
+              ),
+            ],
+          ),
         );
       },
     );

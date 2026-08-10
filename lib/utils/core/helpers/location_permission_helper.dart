@@ -41,20 +41,20 @@ class LocationPermissionHelper {
   static Future<bool> _showLocationRationaleDialog(BuildContext context) async {
     final result = await showDialog<bool>(
       context: context,
+      barrierDismissible: false,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: Text('permissions.location_title'.tr()),
-          content: Text('permissions.location_body'.tr()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text('common.cancel'.tr()),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: Text('permissions.allow'.tr()),
-            ),
-          ],
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            title: Text('permissions.location_title'.tr()),
+            content: Text('permissions.location_body'.tr()),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text('permissions.continue'.tr()),
+              ),
+            ],
+          ),
         );
       },
     );

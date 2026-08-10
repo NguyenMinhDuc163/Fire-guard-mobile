@@ -4,6 +4,8 @@ import 'package:fire_guard/screens/setting_screen/views/click_send_settings_scre
 import 'package:fire_guard/screens/setting_screen/views/settings_detail_screen.dart';
 import 'package:fire_guard/utils/core/helpers/local_storage_helper.dart';
 import 'package:fire_guard/screens/setting_screen/views/change_password_screen.dart';
+import 'package:fire_guard/service/service_config/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart'; // Thư viện đổi ngôn ngữ
 import 'package:provider/provider.dart';
@@ -93,6 +95,86 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final color = success ? Colors.green : Colors.red;
 
     _showMessage(message, color);
+  }
+
+  Future<void> _handleNotificationPermission() async {
+    final notificationService = NotificationService();
+    final status = await notificationService.getPermissionStatus();
+
+    if (!mounted) return;
+
+    if (status == AuthorizationStatus.authorized ||
+        status == AuthorizationStatus.provisional) {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text('permissions.notification_title'.tr()),
+            content: Text('permissions.notification_enabled'.tr()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: Text('common.ok'.tr()),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    if (status == AuthorizationStatus.notDetermined) {
+      if (!mounted) return;
+
+      final shouldRequest = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          return PopScope(
+            canPop: false,
+            child: AlertDialog(
+              title: Text('permissions.notification_title'.tr()),
+              content: Text('permissions.notification_body'.tr()),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: Text('permissions.continue'.tr()),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      if (shouldRequest == true) {
+        await notificationService.requestPermissionAndSaveToken();
+      }
+      return;
+    }
+
+    // Denied -> show settings dialog
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text('permissions.notification_denied_title'.tr()),
+          content: Text('permissions.notification_denied_body'.tr()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text('common.cancel'.tr()),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                notificationService.openNotificationSettings();
+              },
+              child: Text('permissions.open_settings'.tr()),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _showDeleteAccountDialog(BuildContext context) async {
@@ -317,6 +399,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     },
                     iconColor: Colors.indigo,
+                  ),
+                  _buildSettingCard(
+                    icon: Icons.notifications,
+                    title: context.tr('settings.settings_notification_permission'),
+                    onTap: () => _handleNotificationPermission(),
+                    iconColor: Colors.teal,
                   ),
                   const SizedBox(height: 16),
                   const AdBannerWidget(),
