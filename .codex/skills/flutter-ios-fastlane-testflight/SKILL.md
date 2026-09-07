@@ -162,11 +162,11 @@ For `ARCHIVE SUCCEEDED` followed by `Error packaging up the application` and `Lo
 
 - Treat this as an export/signing problem, not a Flutter compile problem.
 - Do not assume the 3 App Store Connect API key values are enough for a clean hosted macOS runner.
-- Install an Apple Distribution `.p12` certificate and an App Store `.mobileprovision` profile into the runner keychain/profile directory, then pass the extracted profile name through `IOS_PROVISIONING_PROFILE_NAME`.
+- Run `setup_ci`, then use `match(type: "appstore", readonly: true)` to install the existing Apple Distribution certificate and App Store profile. Read `SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING`, validate the Match profile's team, app identifier, and required production entitlements, then pass the profile name through `IOS_PROVISIONING_PROFILE_NAME`.
 - Use `export_options` with `signingStyle: "manual"` and `provisioningProfiles: { APP_IDENTIFIER => profile_name }` when `IOS_PROVISIONING_PROFILE_NAME` is present.
 - Upload `~/Library/Logs/gym/*.log` as a failure artifact so the real `xcodebuild -exportArchive` error is available.
 - Required GitHub Actions secrets for this workflow:
-  `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_API_KEY_P8`, `IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64`, `IOS_DISTRIBUTION_CERTIFICATE_PASSWORD`, `IOS_APPSTORE_PROVISIONING_PROFILE_BASE64`.
+  `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_API_KEY_P8`, `IOS_TEAM_ID`, `MATCH_GIT_URL`, `MATCH_PASSWORD`, `MATCH_GIT_BASIC_AUTHORIZATION`, and `ENV_FILE_CONTENTS`. Use Match read-only; do not manually import P12/profile assets or create a custom signing keychain.
 
 For `xcodebuild -exportArchive` exit status `64` after `ARCHIVE SUCCEEDED`:
 

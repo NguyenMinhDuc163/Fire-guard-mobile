@@ -36,13 +36,27 @@ GitHub Actions secrets:
 APP_STORE_CONNECT_KEY_ID
 APP_STORE_CONNECT_ISSUER_ID
 APP_STORE_CONNECT_API_KEY_P8
-IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64
-IOS_DISTRIBUTION_CERTIFICATE_PASSWORD
-IOS_APPSTORE_PROVISIONING_PROFILE_BASE64
+IOS_TEAM_ID
+MATCH_GIT_URL
+MATCH_PASSWORD
+MATCH_GIT_BASIC_AUTHORIZATION
+ENV_FILE_CONTENTS
 ```
 
-The App Store provisioning profile must match:
+The reusable iOS workflow uses `setup_ci` and Fastlane Match in read-only mode
+to install the existing Apple Distribution certificate and App Store profile.
+`MATCH_GIT_BASIC_AUTHORIZATION` is Base64(`NguyenMinhDuc163:PAT`), not a raw
+PAT; the PAT needs read-only Contents access to `NguyenMinhDuc163/apple-signing`.
+
+The Match profile must validate:
 
 ```text
-com.nguyenduc.fireGuard
+Team ID: Q236Z72BGN
+Application identifier: Q236Z72BGN.com.nguyenduc.fireGuard
+aps-environment: production
 ```
+
+The workflow fails before build if this profile validation fails, and fails
+before TestFlight upload if the archive version/build number or signed Push
+Notifications entitlement differs from the expected production values. Do not
+use `readonly: false`, `force`, or `match nuke` in routine CI.

@@ -1,0 +1,11 @@
+git_url(ENV.fetch("MATCH_GIT_URL"))
+storage_mode("git")
+git_branch("main")
+
+app_identifier([
+  "com.nguyenduc.fireGuard"
+])
+
+type("appstore")
+
+team_id(ENV["IOS_TEAM_ID"]) unless ENV["IOS_TEAM_ID"].to_s.strip.empty?
