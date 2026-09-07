@@ -3,6 +3,7 @@ default_platform(:ios)
 require "rbconfig"
 require "shellwords"
 require "tempfile"
+require "fileutils"
 
 APP_IDENTIFIER = "com.nguyenduc.fireGuard"
 TEAM_ID = "Q236Z72BGN"
@@ -79,8 +80,8 @@ def plist_value(plist_path, key)
   ).strip
 end
 
-def installed_match_profile_path!(profile_name)
-  profiles_directory = FastlaneCore::ProvisioningProfile.profiles_path
+def installed_match_profile_path!(profile_name, profiles_directory: nil)
+  profiles_directory ||= FastlaneCore::ProvisioningProfile.profiles_path
   profile_path = Dir.glob(File.join(profiles_directory, "*.mobileprovision")).find do |candidate|
     FastlaneCore::ProvisioningProfile.name(candidate) == profile_name
   end
@@ -92,8 +93,11 @@ def installed_match_profile_path!(profile_name)
   profile_path
 end
 
-def validate_match_profile!(profile_name)
-  profile_path = installed_match_profile_path!(profile_name)
+def validate_match_profile!(profile_name, profiles_directory: nil)
+  profile_path = installed_match_profile_path!(
+    profile_name,
+    profiles_directory: profiles_directory
+  )
   profile = FastlaneCore::ProvisioningProfile.parse(profile_path)
   team_id = Array(profile["TeamIdentifier"]).first
   entitlements = profile.fetch("Entitlements", {})
@@ -266,6 +270,9 @@ platform :ios do
 
   desc "Validate read-only iOS release access and profile configuration"
   lane :validate_release do
+    validation_profile_directory = ENV.fetch("MATCH_VALIDATION_PROFILE_DIRECTORY")
+    FileUtils.mkdir_p(validation_profile_directory)
+
     api_key = app_store_connect_api_key(
       key_id: ENV.fetch("APP_STORE_CONNECT_KEY_ID"),
       issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
@@ -282,10 +289,14 @@ platform :ios do
       platform: "ios",
       app_identifier: APP_IDENTIFIER,
       readonly: true,
-      api_key: api_key
+      api_key: api_key,
+      output_path: validation_profile_directory
     )
 
-    validate_match_profile!(match_provisioning_profile_name!)
+    validate_match_profile!(
+      match_provisioning_profile_name!,
+      profiles_directory: validation_profile_directory
+    )
     UI.success("Read-only iOS release validation passed for #{APP_IDENTIFIER}.")
   end
 end

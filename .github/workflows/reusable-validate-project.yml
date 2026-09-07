@@ -115,6 +115,14 @@ jobs:
           bundler-cache: true
           working-directory: ios
 
+      - name: Prepare Match validation profile directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          profile_directory="$RUNNER_TEMP/match-profiles"
+          mkdir -p "$profile_directory"
+          echo "MATCH_VALIDATION_PROFILE_DIRECTORY=$profile_directory" >> "$GITHUB_ENV"
+
       - name: Validate App Store Connect, Match, and Push profile
         working-directory: ios
         shell: bash
