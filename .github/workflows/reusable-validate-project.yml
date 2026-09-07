@@ -17,8 +17,6 @@ on:
         required: true
       MATCH_GIT_BASIC_AUTHORIZATION:
         required: true
-      ENV_FILE_CONTENTS:
-        required: true
 
 jobs:
   validate_project:
@@ -44,7 +42,6 @@ jobs:
         shell: bash
         env:
           APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
-          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
         run: |
           set -euo pipefail
           missing=0
@@ -56,8 +53,7 @@ jobs:
             IOS_TEAM_ID \
             MATCH_GIT_URL \
             MATCH_PASSWORD \
-            MATCH_GIT_BASIC_AUTHORIZATION \
-            ENV_FILE_CONTENTS
+            MATCH_GIT_BASIC_AUTHORIZATION
           do
             if [ -z "${!name:-}" ]; then
               echo "❌ $name missing"
@@ -71,7 +67,7 @@ jobs:
             exit 1
           fi
 
-          echo "✅ Required secrets: $present/8"
+          echo "✅ Required secrets: $present/7"
 
       - name: Validate static secret values
         shell: bash
@@ -90,49 +86,6 @@ jobs:
           echo "✅ MATCH_GIT_URL valid"
           echo "✅ ASC .p8 format valid"
           echo "✅ MATCH Git authorization valid"
-
-      - name: Validate Flutter dotenv configuration
-        shell: bash
-        env:
-          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
-        run: |
-          set -euo pipefail
-          python3 <<'PY'
-          import os
-          from pathlib import Path
-
-          def parse_dotenv(text):
-              values = {}
-              for line in text.splitlines():
-                  line = line.strip()
-                  if not line or line.startswith("#"):
-                      continue
-                  if line.startswith("export "):
-                      line = line[7:].lstrip()
-                  if "=" not in line:
-                      continue
-                  key, value = line.split("=", 1)
-                  values[key.strip()] = value.strip().strip('"').strip("'")
-              return values
-
-          required = set(parse_dotenv(Path(".env.example").read_text()))
-          supplied = parse_dotenv(os.environ["ENV_FILE_CONTENTS"])
-          placeholders = ("YOUR_KEY", "CHANGE_ME", "TODO", "REPLACE_ME")
-          invalid = []
-          for key in sorted(required):
-              value = supplied.get(key, "")
-              if not value:
-                  invalid.append(f"Missing env key: {key}")
-              elif any(token in value.upper() for token in placeholders):
-                  invalid.append(f"Placeholder env key: {key}")
-
-          if invalid:
-              for message in invalid:
-                  print(f"❌ {message}")
-              raise SystemExit(1)
-
-          print(f"✅ ENV_FILE_CONTENTS: {len(required)}/{len(required)} required keys present")
-          PY
 
       - name: Validate apple-signing repository access
         shell: bash

@@ -22,8 +22,6 @@ on:
         required: true
       MATCH_GIT_BASIC_AUTHORIZATION:
         required: true
-      ENV_FILE_CONTENTS:
-        required: true
 
 jobs:
   build_testflight:
@@ -50,7 +48,6 @@ jobs:
         shell: bash
         env:
           APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
-          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
         run: |
           set -euo pipefail
           missing=0
@@ -61,8 +58,7 @@ jobs:
             IOS_TEAM_ID \
             MATCH_GIT_URL \
             MATCH_PASSWORD \
-            MATCH_GIT_BASIC_AUTHORIZATION \
-            ENV_FILE_CONTENTS
+            MATCH_GIT_BASIC_AUTHORIZATION
           do
             if [ -z "${!name:-}" ]; then
               echo "::error::$name is not set"
@@ -73,15 +69,6 @@ jobs:
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
-
-      - name: Write Flutter dotenv file
-        shell: bash
-        env:
-          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
-        run: |
-          set -euo pipefail
-          printf '%s' "$ENV_FILE_CONTENTS" > .env
-          chmod 600 .env
 
       - name: Write App Store Connect API key
         shell: bash
@@ -235,4 +222,4 @@ jobs:
       - name: Cleanup temporary release files
         if: always()
         shell: bash
-        run: rm -f "$RUNNER_TEMP/AuthKey.p8" .env
+        run: rm -f "$RUNNER_TEMP/AuthKey.p8"
