@@ -2,10 +2,17 @@ default_platform(:ios)
 
 require "rbconfig"
 require "shellwords"
+require "tempfile"
 
 APP_IDENTIFIER = "com.nguyenduc.fireGuard"
 TEAM_ID = "Q236Z72BGN"
 APP_ARTIFACT_NAME = "Fire-Guard"
+REPOSITORY_ROOT = ENV["GITHUB_WORKSPACE"].to_s.strip.empty? ?
+  File.expand_path("../..", __dir__) :
+  File.expand_path(ENV.fetch("GITHUB_WORKSPACE"))
+IOS_BUILD_ROOT = File.join(REPOSITORY_ROOT, "build", "ios")
+IOS_ARCHIVE_PATH = File.join(IOS_BUILD_ROOT, "archive", "Runner.xcarchive")
+IOS_IPA_OUTPUT_DIRECTORY = File.join(IOS_BUILD_ROOT, "ipa")
 
 def bundle_command
   ENV["BUNDLE_BIN"] || File.join(File.dirname(RbConfig.ruby), "bundle")
@@ -48,6 +55,90 @@ def ci_provisioning_profile_name
   ENV["IOS_PROVISIONING_PROFILE_NAME"].to_s.strip
 end
 
+def match_provisioning_profile_name!
+  profiles = Actions.lane_context[
+    SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING
+  ]
+
+  unless profiles.is_a?(Hash)
+    UI.user_error!("Fastlane Match did not return provisioning profile mapping.")
+  end
+
+  profile_name = profiles[APP_IDENTIFIER].to_s.strip
+  if profile_name.empty?
+    UI.user_error!("Match did not provide an App Store profile for #{APP_IDENTIFIER}.")
+  end
+
+  profile_name
+end
+
+def with_decoded_provisioning_profile(profile_path)
+  Tempfile.create(["match-profile", ".plist"]) do |profile_plist|
+    if File.executable?("/usr/bin/security")
+      sh(
+        "/usr/bin/security cms -D -i #{Shellwords.escape(profile_path)} > " \
+        "#{Shellwords.escape(profile_plist.path)}"
+      )
+    else
+      sh(
+        "openssl smime -inform der -verify -noverify -in " \
+        "#{Shellwords.escape(profile_path)} > #{Shellwords.escape(profile_plist.path)}"
+      )
+    end
+    yield profile_plist.path
+  end
+end
+
+def plist_value(plist_path, key)
+  sh(
+    "/usr/libexec/PlistBuddy -c #{Shellwords.escape("Print :#{key}")} " \
+    "#{Shellwords.escape(plist_path)} 2>/dev/null || true"
+  ).strip
+end
+
+def installed_match_profile_path!(profile_name)
+  profiles_directory = File.expand_path("~/Library/MobileDevice/Provisioning Profiles")
+  profile_path = Dir.glob(File.join(profiles_directory, "*.mobileprovision")).find do |candidate|
+    with_decoded_provisioning_profile(candidate) do |profile_plist|
+      plist_value(profile_plist, "Name") == profile_name
+    end
+  end
+
+  unless profile_path
+    UI.user_error!("Match-installed provisioning profile #{profile_name.inspect} was not found.")
+  end
+
+  profile_path
+end
+
+def validate_match_profile!(profile_name)
+  profile_path = installed_match_profile_path!(profile_name)
+
+  with_decoded_provisioning_profile(profile_path) do |profile_plist|
+    team_id = plist_value(profile_plist, "TeamIdentifier:0")
+    application_identifier = plist_value(profile_plist, "Entitlements:application-identifier")
+    aps_environment = plist_value(profile_plist, "Entitlements:aps-environment")
+    expected_application_identifier = "#{TEAM_ID}.#{APP_IDENTIFIER}"
+
+    if team_id != TEAM_ID
+      UI.user_error!("Match profile team id mismatch: expected #{TEAM_ID}, got #{team_id.inspect}.")
+    end
+
+    if application_identifier != expected_application_identifier
+      UI.user_error!(
+        "Match profile application identifier mismatch: expected " \
+        "#{expected_application_identifier}, got #{application_identifier.inspect}."
+      )
+    end
+
+    if aps_environment != "production"
+      UI.user_error!(
+        "Match profile aps-environment must be production, got #{aps_environment.inspect}."
+      )
+    end
+  end
+end
+
 def build_export_options
   options = {
     method: "app-store",
@@ -84,6 +175,49 @@ def configure_ci_code_signing
   )
 end
 
+def archive_app_path
+  File.join(IOS_ARCHIVE_PATH, "Products", "Applications", "Runner.app")
+end
+
+def validate_archive_version!(version)
+  archive_info_plist = File.join(archive_app_path, "Info.plist")
+  unless File.file?(archive_info_plist)
+    UI.user_error!("Built archive app Info.plist was not found at #{archive_info_plist}.")
+  end
+
+  actual_version = plist_value(archive_info_plist, "CFBundleShortVersionString")
+  actual_build = plist_value(archive_info_plist, "CFBundleVersion")
+
+  return if actual_version == version[:name] && actual_build == version[:number]
+
+  UI.user_error!(
+    "Archive version validation failed. Expected version #{version[:name]}, " \
+    "actual version #{actual_version.inspect}. Expected build number #{version[:number]}, " \
+    "actual build number #{actual_build.inspect}."
+  )
+end
+
+def validate_archive_push_entitlement!
+  app_path = archive_app_path
+  unless File.directory?(app_path)
+    UI.user_error!("Built archive app was not found at #{app_path}.")
+  end
+
+  Tempfile.create(["runner-entitlements", ".plist"]) do |entitlements_plist|
+    sh(
+      "/usr/bin/codesign -d --entitlements :- #{Shellwords.escape(app_path)} > " \
+      "#{Shellwords.escape(entitlements_plist.path)} 2>/dev/null"
+    )
+    aps_environment = plist_value(entitlements_plist.path, "aps-environment")
+
+    unless aps_environment == "production"
+      UI.user_error!(
+        "Archived Runner.app aps-environment must be production, got #{aps_environment.inspect}."
+      )
+    end
+  end
+end
+
 platform :ios do
   before_all do
     ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] ||= "120"
@@ -108,8 +242,8 @@ platform :ios do
       scheme: "Runner",
       configuration: "Release",
       export_options: build_export_options,
-      archive_path: "../build/ios/archive/Runner.xcarchive",
-      output_directory: "../build/ios/ipa",
+      archive_path: IOS_ARCHIVE_PATH,
+      output_directory: IOS_IPA_OUTPUT_DIRECTORY,
       output_name: "#{APP_ARTIFACT_NAME}-#{version[:name]}-#{version[:number]}.ipa",
       clean: true,
       include_symbols: true,
@@ -119,18 +253,59 @@ platform :ios do
 
   desc "Build & upload iOS app to TestFlight"
   lane :beta do
+    setup_ci
+
     api_key = app_store_connect_api_key(
       key_id: ENV.fetch("APP_STORE_CONNECT_KEY_ID"),
       issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
       key_filepath: ENV.fetch("APP_STORE_CONNECT_API_KEY_KEY_FILEPATH")
     )
 
+    match(
+      type: "appstore",
+      platform: "ios",
+      app_identifier: APP_IDENTIFIER,
+      readonly: true,
+      api_key: api_key
+    )
+
+    profile_name = match_provisioning_profile_name!
+    ENV["IOS_PROVISIONING_PROFILE_NAME"] = profile_name
+    validate_match_profile!(profile_name)
+
     build
+    validate_archive_version!(pubspec_version)
+    validate_archive_push_entitlement!
 
     upload_to_testflight(
       api_key: api_key,
       app_identifier: APP_IDENTIFIER,
       skip_waiting_for_build_processing: true
     )
+  end
+
+  desc "Validate read-only iOS release access and profile configuration"
+  lane :validate_release do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("APP_STORE_CONNECT_KEY_ID"),
+      issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
+      key_filepath: ENV.fetch("APP_STORE_CONNECT_API_KEY_KEY_FILEPATH")
+    )
+
+    app = Spaceship::ConnectAPI::App.find(APP_IDENTIFIER)
+    unless app
+      UI.user_error!("App Store Connect API key cannot access #{APP_IDENTIFIER}.")
+    end
+
+    match(
+      type: "appstore",
+      platform: "ios",
+      app_identifier: APP_IDENTIFIER,
+      readonly: true,
+      api_key: api_key
+    )
+
+    validate_match_profile!(match_provisioning_profile_name!)
+    UI.success("Read-only iOS release validation passed for #{APP_IDENTIFIER}.")
   end
 end

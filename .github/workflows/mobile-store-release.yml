@@ -105,7 +105,9 @@ jobs:
 
   bump_version:
     name: Bump pubspec build number
-    needs: release_config
+    needs:
+      - release_config
+      - validate_project
     if: ${{ !contains(github.event.head_commit.message || '', '[skip ci]') && (needs.release_config.outputs.run_ios == 'true' || needs.release_config.outputs.run_android == 'true') }}
     runs-on: ubuntu-24.04
     permissions:
@@ -163,6 +165,15 @@ jobs:
           git commit -m "ci: bump mobile build to ${{ steps.bump.outputs.version }}+${{ steps.bump.outputs.build_number }} [skip ci]"
           git push
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  validate_project:
+    name: Validate release configuration
+    needs: release_config
+    if: ${{ !contains(github.event.head_commit.message || '', '[skip ci]') && (needs.release_config.outputs.run_ios == 'true' || needs.release_config.outputs.run_android == 'true') }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/reusable-validate-project.yml
+    secrets: inherit
 
   build_testflight:
     name: Build and upload TestFlight

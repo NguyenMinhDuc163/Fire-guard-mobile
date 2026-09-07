@@ -1,0 +1,173 @@
+name: Reusable Project Validation
+
+on:
+  workflow_call:
+    secrets:
+      APP_STORE_CONNECT_KEY_ID:
+        required: true
+      APP_STORE_CONNECT_ISSUER_ID:
+        required: true
+      APP_STORE_CONNECT_API_KEY_P8:
+        required: true
+      IOS_TEAM_ID:
+        required: true
+      MATCH_GIT_URL:
+        required: true
+      MATCH_PASSWORD:
+        required: true
+      MATCH_GIT_BASIC_AUTHORIZATION:
+        required: true
+      ENV_FILE_CONTENTS:
+        required: true
+
+jobs:
+  validate_project:
+    name: Validate release configuration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+      MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+      FASTLANE_HIDE_CHANGELOG: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate required secrets
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
+        run: |
+          set -euo pipefail
+          missing=0
+          present=0
+          for name in \
+            APP_STORE_CONNECT_KEY_ID \
+            APP_STORE_CONNECT_ISSUER_ID \
+            APP_STORE_CONNECT_API_KEY_P8 \
+            IOS_TEAM_ID \
+            MATCH_GIT_URL \
+            MATCH_PASSWORD \
+            MATCH_GIT_BASIC_AUTHORIZATION \
+            ENV_FILE_CONTENTS
+          do
+            if [ -z "${!name:-}" ]; then
+              echo "❌ $name missing"
+              missing=1
+            else
+              present=$((present + 1))
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+          echo "✅ Required secrets: $present/8"
+
+      - name: Validate static secret values
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          [ "$IOS_TEAM_ID" = "Q236Z72BGN" ] || { echo "❌ IOS_TEAM_ID invalid"; exit 1; }
+          [ "$MATCH_GIT_URL" = "https://github.com/NguyenMinhDuc163/apple-signing.git" ] || { echo "❌ MATCH_GIT_URL invalid"; exit 1; }
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_P8" | grep -q "BEGIN PRIVATE KEY"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_P8" | grep -q "END PRIVATE KEY"
+          decoded_auth="$(printf '%s' "$MATCH_GIT_BASIC_AUTHORIZATION" | base64 --decode 2>/dev/null)" || { echo "❌ MATCH_GIT_BASIC_AUTHORIZATION invalid"; exit 1; }
+          case "$decoded_auth" in *:*) ;; *) echo "❌ MATCH_GIT_BASIC_AUTHORIZATION invalid"; exit 1 ;; esac
+          unset decoded_auth
+          echo "✅ IOS_TEAM_ID valid"
+          echo "✅ MATCH_GIT_URL valid"
+          echo "✅ ASC .p8 format valid"
+          echo "✅ MATCH Git authorization valid"
+
+      - name: Validate Flutter dotenv configuration
+        shell: bash
+        env:
+          ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import os
+          from pathlib import Path
+
+          def parse_dotenv(text):
+              values = {}
+              for line in text.splitlines():
+                  line = line.strip()
+                  if not line or line.startswith("#"):
+                      continue
+                  if line.startswith("export "):
+                      line = line[7:].lstrip()
+                  if "=" not in line:
+                      continue
+                  key, value = line.split("=", 1)
+                  values[key.strip()] = value.strip().strip('"').strip("'")
+              return values
+
+          required = set(parse_dotenv(Path(".env.example").read_text()))
+          supplied = parse_dotenv(os.environ["ENV_FILE_CONTENTS"])
+          placeholders = ("YOUR_KEY", "CHANGE_ME", "TODO", "REPLACE_ME")
+          invalid = []
+          for key in sorted(required):
+              value = supplied.get(key, "")
+              if not value:
+                  invalid.append(f"Missing env key: {key}")
+              elif any(token in value.upper() for token in placeholders):
+                  invalid.append(f"Placeholder env key: {key}")
+
+          if invalid:
+              for message in invalid:
+                  print(f"❌ {message}")
+              raise SystemExit(1)
+
+          print(f"✅ ENV_FILE_CONTENTS: {len(required)}/{len(required)} required keys present")
+          PY
+
+      - name: Validate apple-signing repository access
+        shell: bash
+        run: |
+          set -euo pipefail
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: Basic $MATCH_GIT_BASIC_AUTHORIZATION" \
+            git ls-remote "$MATCH_GIT_URL" HEAD >/dev/null
+          echo "✅ apple-signing repository readable"
+
+      - name: Write App Store Connect API key
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          key_path="$RUNNER_TEMP/AuthKey.p8"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_P8" > "$key_path"
+          chmod 600 "$key_path"
+          echo "APP_STORE_CONNECT_API_KEY_KEY_FILEPATH=$key_path" >> "$GITHUB_ENV"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Validate App Store Connect, Match, and Push profile
+        working-directory: ios
+        shell: bash
+        run: bundle exec fastlane ios validate_release
+
+      - name: Cleanup App Store Connect API key
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/AuthKey.p8"
