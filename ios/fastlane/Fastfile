@@ -72,23 +72,6 @@ def match_provisioning_profile_name!
   profile_name
 end
 
-def with_decoded_provisioning_profile(profile_path)
-  Tempfile.create(["match-profile", ".plist"]) do |profile_plist|
-    if File.executable?("/usr/bin/security")
-      sh(
-        "/usr/bin/security cms -D -i #{Shellwords.escape(profile_path)} > " \
-        "#{Shellwords.escape(profile_plist.path)}"
-      )
-    else
-      sh(
-        "openssl smime -inform der -verify -noverify -in " \
-        "#{Shellwords.escape(profile_path)} > #{Shellwords.escape(profile_plist.path)}"
-      )
-    end
-    yield profile_plist.path
-  end
-end
-
 def plist_value(plist_path, key)
   sh(
     "/usr/libexec/PlistBuddy -c #{Shellwords.escape("Print :#{key}")} " \
@@ -97,11 +80,9 @@ def plist_value(plist_path, key)
 end
 
 def installed_match_profile_path!(profile_name)
-  profiles_directory = File.expand_path("~/Library/MobileDevice/Provisioning Profiles")
+  profiles_directory = FastlaneCore::ProvisioningProfile.profiles_path
   profile_path = Dir.glob(File.join(profiles_directory, "*.mobileprovision")).find do |candidate|
-    with_decoded_provisioning_profile(candidate) do |profile_plist|
-      plist_value(profile_plist, "Name") == profile_name
-    end
+    FastlaneCore::ProvisioningProfile.name(candidate) == profile_name
   end
 
   unless profile_path
@@ -113,29 +94,28 @@ end
 
 def validate_match_profile!(profile_name)
   profile_path = installed_match_profile_path!(profile_name)
+  profile = FastlaneCore::ProvisioningProfile.parse(profile_path)
+  team_id = Array(profile["TeamIdentifier"]).first
+  entitlements = profile.fetch("Entitlements", {})
+  application_identifier = entitlements["application-identifier"]
+  aps_environment = entitlements["aps-environment"]
+  expected_application_identifier = "#{TEAM_ID}.#{APP_IDENTIFIER}"
 
-  with_decoded_provisioning_profile(profile_path) do |profile_plist|
-    team_id = plist_value(profile_plist, "TeamIdentifier:0")
-    application_identifier = plist_value(profile_plist, "Entitlements:application-identifier")
-    aps_environment = plist_value(profile_plist, "Entitlements:aps-environment")
-    expected_application_identifier = "#{TEAM_ID}.#{APP_IDENTIFIER}"
+  if team_id != TEAM_ID
+    UI.user_error!("Match profile team id mismatch: expected #{TEAM_ID}, got #{team_id.inspect}.")
+  end
 
-    if team_id != TEAM_ID
-      UI.user_error!("Match profile team id mismatch: expected #{TEAM_ID}, got #{team_id.inspect}.")
-    end
+  if application_identifier != expected_application_identifier
+    UI.user_error!(
+      "Match profile application identifier mismatch: expected " \
+      "#{expected_application_identifier}, got #{application_identifier.inspect}."
+    )
+  end
 
-    if application_identifier != expected_application_identifier
-      UI.user_error!(
-        "Match profile application identifier mismatch: expected " \
-        "#{expected_application_identifier}, got #{application_identifier.inspect}."
-      )
-    end
-
-    if aps_environment != "production"
-      UI.user_error!(
-        "Match profile aps-environment must be production, got #{aps_environment.inspect}."
-      )
-    end
+  if aps_environment != "production"
+    UI.user_error!(
+      "Match profile aps-environment must be production, got #{aps_environment.inspect}."
+    )
   end
 end
 
